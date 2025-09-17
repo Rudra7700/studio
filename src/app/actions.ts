@@ -8,6 +8,7 @@ import {
   summarizeFieldHealth,
   SummarizeFieldHealthInput,
 } from '@/ai/flows/summarize-field-health';
+import { assistant, AssistantInput } from '@/ai/flows/assistant-flow';
 
 export async function getTreatmentPlan(
   input: GetTreatmentRecommendationsInput
@@ -30,5 +31,15 @@ export async function getHealthSummary(
   } catch (error) {
     console.error(error);
     return { success: false, error: 'Failed to get field health summary.' };
+  }
+}
+
+export async function getAssistantResponse(input: AssistantInput) {
+  try {
+    const result = await assistant(input);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Failed to get assistant response.' };
   }
 }

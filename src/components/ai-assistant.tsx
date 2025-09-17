@@ -7,8 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, Send, User, Loader2, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Message } from '@/lib/types';
-import { getHealthSummary } from '@/app/actions';
-import { mockSensorData, mockFields } from '@/lib/mock-data';
+import { getAssistantResponse } from '@/app/actions';
 
 const initialMessages: Message[] = [
     { id: '1', role: 'assistant', text: "Hello! I'm your Agri-AI assistant. How can I help you today? You can ask in English or हिंदी." },
@@ -34,27 +33,22 @@ export function AiAssistant() {
         if (!input.trim() || isPending) return;
 
         const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input };
-        setMessages(prev => [...prev, userMessage]);
+        const newMessages = [...messages, userMessage];
+        setMessages(newMessages);
         setInput('');
 
         startTransition(async () => {
             const assistantLoadingMessage: Message = { id: 'loading', role: 'assistant', text: '...' };
             setMessages(prev => [...prev, assistantLoadingMessage]);
 
-            // For this demo, we'll use a fixed field and mock data for the AI context
-            const field = mockFields[1]; // "West Wheat Patch" which has "Mild" status
-            const sensorData = mockSensorData;
-            
-            const response = await getHealthSummary({
-                fieldId: field.id,
-                droneScanData: `Field ${field.name} (${field.id}) shows ${field.healthStatus} signs of stress. Crop type is ${field.cropType}.`,
-                sensorData: `Soil moisture: ${sensorData.soilMoisture}%, Humidity: ${sensorData.humidity}%, Temp: ${sensorData.temperature}°C. Question: ${input}`
+            const response = await getAssistantResponse({
+                history: newMessages,
+                language: language === 'Hindi' ? 'Hindi' : undefined,
             });
             
             let assistantResponse: Message;
             if (response.success && response.data) {
-                const aiText = `${response.data.summary} ${response.data.urgentProblems ? `Urgent issues: ${response.data.urgentProblems}` : ''}`;
-                assistantResponse = { id: Date.now().toString(), role: 'assistant', text: aiText };
+                assistantResponse = { id: Date.now().toString(), role: 'assistant', text: response.data.text };
             } else {
                  assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting to my knowledge base. Please try again later." };
             }
