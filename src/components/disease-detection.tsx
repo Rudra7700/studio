@@ -115,7 +115,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
                                         <span className="font-semibold">Health Score</span>
                                         <Badge variant="outline" className={cn(healthInfo[health].color, "text-white")}>{healthInfo[health].score}/100</Badge>
                                     </div>
-                                    <Progress value={healthInfo[health].score} className={healthInfo[health].color} />
+                                    <Progress value={healthInfo[health].score} className={cn('h-2', healthInfo[health].color)} />
                                 </div>
                                 <p className="text-sm text-muted-foreground"><strong>Diagnosis:</strong> {healthInfo[health].description}</p>
                                 
