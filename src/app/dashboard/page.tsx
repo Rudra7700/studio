@@ -1,3 +1,4 @@
+'use client';
 import { Droplets, Map, Scan, Tractor } from 'lucide-react';
 import { StatsCard } from '@/components/stats-card';
 import { DroneControl } from '@/components/drone-control';
@@ -23,9 +24,19 @@ import { mockTreatments } from '@/lib/mock-data';
 import { format } from 'date-fns';
 import { RealTimeAlerts } from '@/components/real-time-alerts';
 import { QuickActionsToolbar } from '@/components/quick-actions-toolbar';
+import { FieldConditions } from '@/components/field-conditions';
+import { CropReport } from '@/components/crop-report';
+import { useState } from 'react';
 
 export default function DashboardPage() {
     const upcomingTreatments = mockTreatments.filter(t => t.status === 'Scheduled').slice(0, 3);
+    const [selectedFieldForReport, setSelectedFieldForReport] = useState<string | null>(null);
+
+    const handleViewReport = (fieldId: string) => {
+        setSelectedFieldForReport(currentFieldId => currentFieldId === fieldId ? null : fieldId);
+    }
+
+
   return (
     <>
       <RealTimeAlerts />
@@ -60,10 +71,16 @@ export default function DashboardPage() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
                 <div className="space-y-4">
                   <DroneControl />
+                  <FieldConditions />
                   <QuickActionsToolbar />
                 </div>
-                <FieldOverview />
+                <FieldOverview onViewReport={handleViewReport} selectedFieldForReport={selectedFieldForReport} />
             </div>
+            
+            {selectedFieldForReport && (
+                <CropReport fieldId={selectedFieldForReport} />
+            )}
+
              <Card>
               <CardHeader>
                 <CardTitle>Upcoming Treatments</CardTitle>

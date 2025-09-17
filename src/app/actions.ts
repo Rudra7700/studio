@@ -5,6 +5,34 @@ import {
   SummarizeFieldHealthInput,
 } from '@/ai/flows/summarize-field-health';
 import { ai } from '@/ai/genkit';
+import { mockFields, mockSensorData } from '@/lib/mock-data';
+
+export async function generateCropReport(fieldId: string) {
+  const field = mockFields.find(f => f.id === fieldId);
+  if (!field) {
+    return { success: false, error: 'Field not found.' };
+  }
+  
+  const prompt = `You are an expert agronomist. Generate a concise crop status report for field "${field.name}" which is growing ${field.cropType}.
+  
+  Current field health status: ${field.healthStatus}.
+  Recent sensor data:
+  - Soil Moisture: ${mockSensorData.soilMoisture}%
+  - Temperature: ${mockSensorData.temperature}°C
+  - Humidity: ${mockSensorData.humidity}%
+  
+  Based on this data, provide a narrative summary of the current crop status and soil conditions.
+  Conclude with a short, actionable list of recommended next steps for the farmer.
+  Format the entire output as plain text, using line breaks for readability.`;
+  
+  try {
+    const { text } = await ai.generate({ prompt });
+    return { success: true, data: { report: text } };
+  } catch (error: any) {
+    console.error(`Error generating crop report for field ${fieldId}:`, error);
+    return { success: false, error: 'Failed to generate AI report. The model may be overloaded.' };
+  }
+}
 
 export async function getTreatmentPlan(diagnosis: string) {
   const models = [
@@ -36,17 +64,14 @@ export async function getTreatmentPlan(diagnosis: string) {
     } catch (error: any) {
       console.error(`Error with model ${modelName}:`, error);
       const errorMessage = error.message || 'An unknown error occurred.';
-      // If the model is overloaded or unavailable, and it's not the last model in the list, continue to the next one.
-      if ((errorMessage.includes('503') || errorMessage.includes('overloaded')) && modelName !== models[models.length - 1]) {
-        console.log(`Model ${modelName} is overloaded, trying next model.`);
+      if ((errorMessage.includes('503') || errorMessage.includes('overloaded')  || errorMessage.includes('Service Unavailable')) && modelName !== models[models.length - 1]) {
+        console.log(`Model ${modelName} is unavailable, trying next model.`);
         continue;
       }
-      // For the last model or for other types of errors, return the error.
       return { success: false, error: `Failed to get treatment recommendations: ${errorMessage}` };
     }
   }
 
-  // This will only be reached if the loop completes without returning, which shouldn't happen with the logic above.
   return { success: false, error: 'All models are currently unavailable. Please try again in a few minutes.' };
 }
 
