@@ -33,26 +33,15 @@ export function AiAssistant() {
         if (!input.trim() || isPending) return;
 
         const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input };
-        const newMessages = [...messages, userMessage];
-        setMessages(newMessages);
+        setMessages(prev => [...prev, userMessage]);
         const currentInput = input;
         setInput('');
 
         startTransition(async () => {
             const assistantLoadingMessage: Message = { id: 'loading', role: 'assistant', text: '...' };
             setMessages(prev => [...prev, assistantLoadingMessage]);
-
-            const history = newMessages
-                .filter(m => m.id !== 'loading' && m.id !== '1') // also filter out initial message
-                .map(m => ({
-                    role: m.role === 'user' ? 'user' : 'model' as 'user' | 'model',
-                    text: m.text
-                }));
-
-            // Remove last message from history, as it's the current prompt
-            history.pop();
             
-            const response = await sendToAssistant({prompt: currentInput, history: history});
+            const response = await sendToAssistant(currentInput);
             
             let assistantResponse: Message;
             if (response.success && response.data) {

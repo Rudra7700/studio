@@ -8,8 +8,7 @@ import {
   summarizeFieldHealth,
   SummarizeFieldHealthInput,
 } from '@/ai/flows/summarize-field-health';
-import { assistant } from '@/ai/flows/assistant-flow';
-import type { AssistantInput } from '@/ai/flows/assistant-schema';
+import { ai } from '@/ai/genkit';
 
 export async function getTreatmentPlan(
   input: GetTreatmentRecommendationsInput
@@ -35,12 +34,14 @@ export async function getHealthSummary(
   }
 }
 
-export async function sendToAssistant(input: AssistantInput) {
+export async function sendToAssistant(prompt: string) {
   try {
-    const result = await assistant(input);
-    return { success: true, data: result };
+    const { text } = await ai.generate({
+      prompt: `You are a friendly agricultural AI assistant. Answer queries about pesticide spraying, crop disease, weather, and drone operations in English or Hindi. User query: ${prompt}`,
+    });
+    return { success: true, data: { text } };
   } catch (error) {
-    console.error(error);
+    console.error('Error calling AI assistant:', error);
     return { success: false, error: 'Failed to get assistant response.' };
   }
 }
