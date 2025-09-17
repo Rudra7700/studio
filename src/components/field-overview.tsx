@@ -1,14 +1,23 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { mockFields } from '@/lib/mock-data';
-import type { Field } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
+import { format, addDays } from 'date-fns';
+import { Scan } from 'lucide-react';
+import { FieldHealthChart } from './field-health-chart';
 
-const healthStatusStyles = {
+const healthStatusStyles: Record<string, string> = {
+    Healthy: 'border-green-500/80',
+    Mild: 'border-yellow-500/80',
+    Severe: 'border-red-500/80',
+    Unknown: 'border-gray-500/80',
+};
+
+const healthBadgeStyles: Record<string, string> = {
     Healthy: 'bg-green-500/20 text-green-700 border-green-500/30',
     Mild: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
     Severe: 'bg-red-500/20 text-red-700 border-red-500/30',
@@ -16,7 +25,6 @@ const healthStatusStyles = {
 };
 
 export function FieldOverview() {
-    // Assuming one farmer for this view
     const fields = mockFields.filter(f => f.farmerId === 'farmer-1');
 
     return (
@@ -28,8 +36,8 @@ export function FieldOverview() {
             <CardContent>
                 <div className="space-y-4">
                     {fields.map(field => (
-                        <Link href={`/dashboard/fields?fieldId=${field.id}`} key={field.id} className="block">
-                            <div className="border p-4 rounded-lg hover:bg-card-foreground/5 transition-colors flex items-center gap-4">
+                        <div key={field.id} className={cn("border-2 p-4 rounded-lg transition-colors flex flex-col gap-4", healthStatusStyles[field.healthStatus])}>
+                            <Link href={`/dashboard/fields?fieldId=${field.id}`} className="flex items-center gap-4">
                                 <Image
                                     src={field.imageUrl}
                                     alt={field.name}
@@ -41,10 +49,33 @@ export function FieldOverview() {
                                 <div className="flex-grow">
                                     <p className="font-semibold">{field.name}</p>
                                     <p className="text-sm text-muted-foreground">{field.cropType}</p>
+                                    <Badge variant="outline" className={cn("mt-1", healthBadgeStyles[field.healthStatus])}>{field.healthStatus}</Badge>
                                 </div>
-                                <Badge variant="outline" className={cn(healthStatusStyles[field.healthStatus])}>{field.healthStatus}</Badge>
+                            </Link>
+
+                            <div className="text-xs text-muted-foreground space-y-1">
+                                <div className="flex justify-between">
+                                    <span>Last scan:</span>
+                                    <span className="font-medium text-foreground">2 hours ago</span>
+                                </div>
+                                 <div className="flex justify-between">
+                                    <span>Next spray:</span>
+                                    <span className="font-medium text-foreground">{format(addDays(new Date(), 2), 'PP')}</span>
+                                </div>
                             </div>
-                        </Link>
+                            
+                            <FieldHealthChart />
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                                <Button variant="outline" size="sm" className="w-full" asChild>
+                                    <Link href="/dashboard/fields">Details</Link>
+                                </Button>
+                                <Button variant="secondary" size="sm" className="w-full">
+                                    <Scan className="mr-2 h-4 w-4" />
+                                    Scan Now
+                                </Button>
+                            </div>
+                        </div>
                     ))}
                 </div>
                  <Button variant="outline" className="w-full mt-4" asChild>
