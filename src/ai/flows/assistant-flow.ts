@@ -9,11 +9,15 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { Message } from '@/lib/types';
 import {searchWeb} from '@/ai/tools/web-search';
 
+const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  text: z.string(),
+});
+
 export const AssistantInputSchema = z.object({
-  history: z.array(Message).describe('The conversation history.'),
+  history: z.array(MessageSchema).describe('The conversation history.'),
   language: z.string().optional().describe('The language for the response (e.g., "Hindi").'),
 });
 export type AssistantInput = z.infer<typeof AssistantInputSchema>;

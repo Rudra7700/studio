@@ -53,13 +53,13 @@ const prompt = ai.definePrompt({
   Weather Conditions: {{{weatherConditions}}}
   Crop Stage: {{{cropStage}}}
 
-  {% if soilAnalysis %}
+  {{#if soilAnalysis}}
   Soil Analysis: {{{soilAnalysis}}}
-  {% endif %}
+  {{/if}}
 
-  {% if fertilizerHistory %}
+  {{#if fertilizerHistory}}
   Fertilizer History: {{{fertilizerHistory}}}
-  {% endif %}
+  {{/if}}
 
   Adapt fertilizer blend recommendations to current crop and environmental status.
   Give detailed instructions on how to execute the treatment plan.
