@@ -1,33 +1,30 @@
 'use server';
 
 import {
-  GetTreatmentRecommendationsInput,
-} from '@/ai/flows/get-treatment-recommendations';
-import {
   summarizeFieldHealth,
   SummarizeFieldHealthInput,
 } from '@/ai/flows/summarize-field-health';
 import { ai } from '@/ai/genkit';
 
-export async function getTreatmentPlan(
-  input: GetTreatmentRecommendationsInput
-) {
+export async function getTreatmentPlan(diagnosis: string) {
   try {
-    const prompt = `You are an expert agricultural advisor. Based on the following information, provide a detailed treatment plan.
-
-Disease Detected: ${input.diseaseDetected}
-Weather Conditions: ${input.weatherConditions}
-Crop Stage: ${input.cropStage}
-${input.soilAnalysis ? `Soil Analysis: ${input.soilAnalysis}` : ''}
-${input.fertilizerHistory ? `Fertilizer History: ${input.fertilizerHistory}`: ''}
-
-Provide detailed treatment recommendations, including specific products, application methods, and timing. Also contain fertilizer blend recommendations adapted to the current crop and environmental status. Give detailed instructions on how to execute the treatment plan. Provide a comprehensive plan to recover the crops back to health. Explain each step in detail. Provide the recommendations as text.`;
+    const prompt = `You are an expert agricultural advisor. A crop has been diagnosed with '${diagnosis}'. 
+    
+    Provide a detailed treatment plan with the following sections:
+    1.  **Immediate Actions:** Steps to take right away to mitigate damage.
+    2.  **Pesticide/Fungicide Recommendations:** Suggest specific, commonly available products, their application rates, and methods. Mention both chemical and organic options if possible.
+    3.  **Application Schedule:** A clear timeline for when and how often to apply the treatments.
+    4.  **Cultural Practices:** Recommendations for non-chemical actions like pruning, irrigation changes, or soil management to support recovery and prevent future outbreaks.
+    5.  **Follow-up Monitoring:** Instructions on what to look for after treatment to assess effectiveness.
+    
+    Format the output as clear, actionable text.`;
 
     const { text } = await ai.generate({ prompt });
     return { success: true, data: { treatmentRecommendations: text } };
   } catch (error) {
-    console.error(error);
-    return { success: false, error: 'Failed to get treatment recommendations.' };
+    console.error('Error getting treatment plan from AI:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+    return { success: false, error: `Failed to get treatment recommendations: ${errorMessage}` };
   }
 }
 

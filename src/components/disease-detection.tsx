@@ -54,19 +54,16 @@ export function DiseaseDetection({ field }: { field: Field }) {
     };
 
     const handleGetRecommendation = () => {
-        if(health === 'Healthy' || health === 'Unknown') return;
+        const diagnosis = healthInfo[health].disease;
+        if(diagnosis === 'None' || diagnosis === 'Unknown') return;
         
         startTransition(async () => {
-            const result = await getTreatmentPlan({
-                diseaseDetected: healthInfo[health].disease,
-                weatherConditions: '28°C, 75% humidity, light winds',
-                cropStage: 'Flowering',
-            });
+            const result = await getTreatmentPlan(diagnosis);
 
             if(result.success && result.data) {
                 setRecommendation(result.data.treatmentRecommendations);
             } else {
-                setRecommendation("Failed to retrieve recommendations. Please try again.");
+                setRecommendation(result.error || "Failed to retrieve recommendations. Please check server logs and try again.");
             }
         });
     }
