@@ -27,8 +27,8 @@ export type GetTreatmentRecommendationsInput = z.infer<
 
 const GetTreatmentRecommendationsOutputSchema = z.object({
   treatmentRecommendations: z.string().describe(
-    'Detailed treatment recommendations, including specific products,
-    application methods, and timing. Also contains fertilizer blend recommendations adapted to the current crop and environmental status.'
+    `Detailed treatment recommendations, including specific products,
+    application methods, and timing. Also contains fertilizer blend recommendations adapted to the current crop and environmental status.`
   ),
 });
 export type GetTreatmentRecommendationsOutput = z.infer<
