@@ -1,3 +1,5 @@
+'use server';
+
 import {z} from 'genkit';
 
 const MessageSchema = z.object({

@@ -6,8 +6,14 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, Send, User, Loader2, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Message } from '@/lib/types';
 import { getAssistantResponse } from '@/app/actions';
+import type { AssistantInput } from '@/ai/flows/assistant-schema';
+
+type Message = {
+    id: string;
+    role: 'user' | 'assistant';
+    text: string;
+};
 
 const initialMessages: Message[] = [
     { id: '1', role: 'assistant', text: "Hello! I'm your Agri-AI assistant. How can I help you today? You can ask in English or हिंदी." },
@@ -42,7 +48,7 @@ export function AiAssistant() {
             setMessages(prev => [...prev, assistantLoadingMessage]);
 
             const response = await getAssistantResponse({
-                history: newMessages,
+                history: newMessages.filter(m => m.id !== 'loading').map(m => ({role: m.role as ('user' | 'assistant'), text: m.text})),
                 language: language === 'Hindi' ? 'Hindi' : undefined,
             });
             
