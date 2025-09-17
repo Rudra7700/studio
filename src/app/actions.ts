@@ -8,8 +8,8 @@ import {
   summarizeFieldHealth,
   SummarizeFieldHealthInput,
 } from '@/ai/flows/summarize-field-health';
-import { ai } from '@/ai/genkit';
-
+import { assistant } from '@/ai/flows/assistant-flow';
+import type { AssistantInput } from '@/ai/flows/assistant-schema';
 
 export async function getTreatmentPlan(
   input: GetTreatmentRecommendationsInput
@@ -35,27 +35,10 @@ export async function getHealthSummary(
   }
 }
 
-export async function sendToAssistant(prompt: string, history: Array<{role: 'user' | 'model', text: string}>) {
+export async function sendToAssistant(input: AssistantInput) {
   try {
-    const model = ai.getModel('googleai/gemini-2.5-flash');
-    
-    const messages = [
-        { role: 'system', text: 'You are a friendly agricultural AI assistant. Answer queries about pesticide spraying, crop disease, weather, and drone operations in English or Hindi.' },
-        ...history,
-        { role: 'user', text: prompt },
-    ] as Array<{role: 'system' | 'user' | 'model', text: string}>;
-
-
-    const response = await ai.generate({
-        model: model,
-        prompt: messages,
-    });
-    
-    const text = response.text;
-    if (!text) {
-      throw new Error('No text in response');
-    }
-    return { success: true, data: { text } };
+    const result = await assistant(input);
+    return { success: true, data: result };
   } catch (error) {
     console.error(error);
     return { success: false, error: 'Failed to get assistant response.' };

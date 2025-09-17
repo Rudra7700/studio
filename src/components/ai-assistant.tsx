@@ -7,12 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, Send, User, Loader2, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendToAssistant } from '@/app/actions';
-
-type Message = {
-    id: string;
-    role: 'user' | 'assistant';
-    text: string;
-};
+import type { Message } from '@/lib/types';
 
 const initialMessages: Message[] = [
     { id: '1', role: 'assistant', text: "Hello! I'm your Agri-AI assistant. How can I help you today? You can ask in English or हिंदी." },
@@ -48,22 +43,22 @@ export function AiAssistant() {
             setMessages(prev => [...prev, assistantLoadingMessage]);
 
             const history = newMessages
-                .filter(m => m.id !== 'loading')
+                .filter(m => m.id !== 'loading' && m.id !== '1') // also filter out initial message
                 .map(m => ({
                     role: m.role === 'user' ? 'user' : 'model' as 'user' | 'model',
                     text: m.text
                 }));
-            
+
             // Remove last message from history, as it's the current prompt
             history.pop();
-
-            const response = await sendToAssistant(currentInput, history);
+            
+            const response = await sendToAssistant({prompt: currentInput, history: history});
             
             let assistantResponse: Message;
             if (response.success && response.data) {
                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: response.data.text };
             } else {
-                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting. Please try again later." };
+                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting to my knowledge base. Please try again later." };
             }
             
             setMessages(prev => prev.filter(m => m.id !== 'loading'));
