@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bot, Send, User, Loader2, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getAssistantResponse } from '@/app/actions';
-import type { AssistantInput } from '@/ai/flows/assistant-schema';
+import { sendToAssistant } from '@/app/actions';
 
 type Message = {
     id: string;
@@ -41,22 +40,30 @@ export function AiAssistant() {
         const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input };
         const newMessages = [...messages, userMessage];
         setMessages(newMessages);
+        const currentInput = input;
         setInput('');
 
         startTransition(async () => {
             const assistantLoadingMessage: Message = { id: 'loading', role: 'assistant', text: '...' };
             setMessages(prev => [...prev, assistantLoadingMessage]);
 
-            const response = await getAssistantResponse({
-                history: newMessages.filter(m => m.id !== 'loading').map(m => ({role: m.role as ('user' | 'assistant'), text: m.text})),
-                language: language === 'Hindi' ? 'Hindi' : undefined,
-            });
+            const history = newMessages
+                .filter(m => m.id !== 'loading')
+                .map(m => ({
+                    role: m.role === 'user' ? 'user' : 'model' as 'user' | 'model',
+                    text: m.text
+                }));
+            
+            // Remove last message from history, as it's the current prompt
+            history.pop();
+
+            const response = await sendToAssistant(currentInput, history);
             
             let assistantResponse: Message;
             if (response.success && response.data) {
                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: response.data.text };
             } else {
-                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting to my knowledge base. Please try again later." };
+                 assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting. Please try again later." };
             }
             
             setMessages(prev => prev.filter(m => m.id !== 'loading'));
@@ -66,8 +73,6 @@ export function AiAssistant() {
     
     const toggleLanguage = () => {
         setLanguage(lang => lang === 'English' ? 'Hindi' : 'English');
-        // A real implementation would trigger translation or use a different AI prompt.
-        // For this demo, we just add a message.
         const langMessage : Message = {
             id: Date.now().toString(),
             role: 'assistant',
