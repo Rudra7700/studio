@@ -1,3 +1,71 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "field-1",
+      "description": "Lush green corn field under a clear blue sky.",
+      "imageUrl": "https://picsum.photos/seed/field1/800/600",
+      "imageHint": "corn field"
+    },
+    {
+      "id": "field-2",
+      "description": "Wheat field at sunset.",
+      "imageUrl": "https://picsum.photos/seed/field2/800/600",
+      "imageHint": "wheat field"
+    },
+    {
+      "id": "field-3",
+      "description": "Soybean field with visible rows.",
+      "imageUrl": "https://picsum.photos/seed/field3/800/600",
+      "imageHint": "soybean field"
+    },
+    {
+      "id": "drone-1",
+      "description": "Agricultural drone in flight over a field.",
+      "imageUrl": "https://picsum.photos/seed/drone1/400/300",
+      "imageHint": "agriculture drone"
+    },
+    {
+      "id": "drone-2",
+      "description": "A grounded drone ready for takeoff.",
+      "imageUrl": "https://picsum.photos/seed/drone2/400/300",
+      "imageHint": "drone ground"
+    },
+    {
+      "id": "admin-avatar-1",
+      "description": "Profile picture for an admin user.",
+      "imageUrl": "https://picsum.photos/seed/admin1/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "farmer-avatar-1",
+      "description": "Profile picture for a farmer user.",
+      "imageUrl": "https://picsum.photos/seed/farmer1/100/100",
+      "imageHint": "person smiling"
+    },
+    {
+      "id": "farmer-avatar-2",
+      "description": "Profile picture for another farmer user.",
+      "imageUrl": "https://picsum.photos/seed/farmer2/100/100",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "crop-disease-mild",
+      "description": "Crop with mild disease symptoms.",
+      "imageUrl": "https://picsum.photos/seed/mild_disease/800/600",
+      "imageHint": "plant disease"
+    },
+    {
+      "id": "crop-disease-severe",
+      "description": "Crop with severe disease symptoms.",
+      "imageUrl": "https://picsum.photos/seed/severe_disease/800/600",
+      "imageHint": "wilted plant"
+    },
+    {
+      "id": "healthy-crop",
+      "description": "A healthy, vibrant crop.",
+      "imageUrl": "https://picsum.photos/seed/healthy_crop/800/600",
+      "imageHint": "healthy plant"
+    }
+  ]
 }
