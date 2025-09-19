@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { mockTreatments } from '@/lib/mock-data';
+import { mockTreatments, mockFields } from '@/lib/mock-data';
 import { format } from 'date-fns';
 import { RealTimeAlerts } from '@/components/real-time-alerts';
 import { QuickActionsToolbar } from '@/components/quick-actions-toolbar';
@@ -99,26 +99,25 @@ export default function DashboardPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                     {upcomingTreatments.map(treatment => (
-                        <TableRow key={treatment.id}>
-                            <TableCell>
-                                <div className="font-medium">
-                                {
-                                    mockTreatments.find(t => t.id === treatment.id)?.fieldId === 'field-2' ? 'West Wheat Patch' : 'Soybean Central'
-                                }
-                                </div>
-                            </TableCell>
-                            <TableCell>
-                                <Badge className="text-xs" variant="outline">
-                                {treatment.status}
-                                </Badge>
-                            </TableCell>
-                            <TableCell>{treatment.disease}</TableCell>
-                            <TableCell className="text-right">
-                                {format(new Date(treatment.scheduledDate), 'PPP')}
-                            </TableCell>
-                        </TableRow>
-                     ))}
+                     {upcomingTreatments.map(treatment => {
+                        const field = mockFields.find(f => f.id === treatment.fieldId);
+                        return (
+                          <TableRow key={treatment.id}>
+                              <TableCell>
+                                  <div className="font-medium">{field?.name}</div>
+                              </TableCell>
+                              <TableCell>
+                                  <Badge className="text-xs" variant="outline">
+                                  {treatment.status}
+                                  </Badge>
+                              </TableCell>
+                              <TableCell>{treatment.disease}</TableCell>
+                              <TableCell className="text-right">
+                                  {format(new Date(treatment.scheduledDate), 'PPP')}
+                              </TableCell>
+                          </TableRow>
+                        )
+                     })}
                   </TableBody>
                 </Table>
               </CardContent>

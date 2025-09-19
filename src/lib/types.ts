@@ -10,7 +10,7 @@ export type Field = {
   id: string;
   name:string;
   farmerId: string;
-  cropType: 'Corn' | 'Wheat' | 'Soybean' | 'Other';
+  cropType: 'Corn' | 'Wheat' | 'Soybean' | 'Other' | 'Rice' | 'Maize' | 'Millets' | 'Pulses' | 'Gram' | 'Sugarcane' | 'Cotton' | 'Jute' | 'Oilseeds' | 'Tea' | 'Coffee' | 'Rubber' | 'Coconut' | 'Fruits' | 'Vegetables' | 'Spices' | 'Medicinal Plants' | 'Mango' | 'Banana' | 'Grapes' | 'Potato' | 'Tomato';
   gpsCoordinates: {
     lat: number;
     lng: number;

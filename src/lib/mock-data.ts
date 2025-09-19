@@ -47,14 +47,14 @@ export const mockFields: Field[] = [
   },
   {
     id: 'field-3',
-    name: 'Soybean Central',
+    name: 'Central Rice Paddy',
     farmerId: 'farmer-2',
-    cropType: 'Soybean',
+    cropType: 'Rice',
     gpsCoordinates: { lat: 28.5900, lng: 77.2150 },
     boundary: [],
     healthStatus: 'Severe',
     imageUrl: 'https://picsum.photos/seed/field3/800/600',
-    imageHint: 'soybean field',
+    imageHint: 'rice paddy',
   },
 ];
 
@@ -98,8 +98,8 @@ export const mockTreatments: Treatment[] = [
   {
     id: 'treat-2',
     fieldId: 'field-3',
-    disease: 'Soybean Aphids',
-    treatment: 'Insecticide Application - Lambda-cyhalothrin',
+    disease: 'Rice Blast',
+    treatment: 'Fungicide Application - Tricyclazole',
     scheduledDate: new Date().toISOString(),
     status: 'Completed',
     executedBy: 'drone-002',
@@ -107,8 +107,8 @@ export const mockTreatments: Treatment[] = [
     {
     id: 'treat-3',
     fieldId: 'field-3',
-    disease: 'Root Rot',
-    treatment: 'Nutrient Boost and Soil Aeration',
+    disease: 'Brown Spot',
+    treatment: 'Nutrient Boost and Water Management',
     scheduledDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     status: 'Completed',
     executedBy: 'drone-001',
