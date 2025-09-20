@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -20,6 +21,15 @@ import { FileDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import type { Treatment } from '@/lib/types';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+declare module 'jspdf' {
+    interface jsPDF {
+      autoTable: (options: any) => jsPDF;
+    }
+}
+
 
 const statusStyles: Record<Treatment['status'], string> = {
   Scheduled: 'bg-blue-500/20 text-blue-700 border-blue-500/30',
@@ -31,6 +41,37 @@ const statusStyles: Record<Treatment['status'], string> = {
 export default function TreatmentsPage() {
   const treatments = [...mockTreatments].sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime());
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.text("Treatment History", 14, 16);
+
+    const tableColumn = ["Date", "Field", "Crop", "Disease", "Treatment", "Drone", "Status"];
+    const tableRows: any[][] = [];
+
+    treatments.forEach(treatment => {
+      const field = mockFields.find(f => f.id === treatment.fieldId);
+      const treatmentData = [
+        format(new Date(treatment.scheduledDate), 'PP'),
+        field?.name || 'Unknown Field',
+        field?.cropType || 'N/A',
+        treatment.disease,
+        treatment.treatment,
+        treatment.executedBy,
+        treatment.status,
+      ];
+      tableRows.push(treatmentData);
+    });
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 22,
+    });
+
+    doc.save('treatment-history.pdf');
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -38,7 +79,7 @@ export default function TreatmentsPage() {
             <CardTitle>Treatment History</CardTitle>
             <CardDescription>A log of all treatments for your fields.</CardDescription>
         </div>
-        <Button variant="outline"><FileDown className="mr-2 h-4 w-4"/> Export CSV</Button>
+        <Button variant="outline" onClick={handleExportPDF}><FileDown className="mr-2 h-4 w-4"/> Save as PDF</Button>
       </CardHeader>
       <CardContent>
         <Table>
