@@ -21,7 +21,7 @@ export const AgriEyeDiseaseAnalysisInputSchema = z.object({
   imageDataUri: z
     .string()
     .describe(
-      "A high-resolution RGB image of a plant leaf, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A high-resolution 224x224x3 RGB image of a plant leaf, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
 });
 export type AgriEyeDiseaseAnalysisInput = z.infer<typeof AgriEyeDiseaseAnalysisInputSchema>;
@@ -31,34 +31,41 @@ export type AgriEyeDiseaseAnalysisInput = z.infer<typeof AgriEyeDiseaseAnalysisI
  * This format is critical for integration with downstream control systems (drones, sprayers).
  */
 export const AgriEyeDiseaseAnalysisOutputSchema = z.object({
-  is_healthy: z
-    .boolean()
-    .describe("Classification result: true if the leaf is healthy, false if diseased."),
-  disease_name: z
+  health_status: z
+    .enum(["healthy", "diseased"])
+    .describe("Binary classification result: 'healthy' or 'diseased'."),
+  confidence: z
+    .number()
+    .describe("The confidence score (0.0 to 1.0) for the health_status classification."),
+  disease_type: z
     .string()
-    .describe("The identified disease name (e.g., 'Late Blight', 'Powdery Mildew') if is_healthy is false."),
+    .describe("The identified disease name (e.g., 'powdery_mildew', 'rust') if status is 'diseased'."),
   disease_confidence: z
     .number()
-    .describe("The confidence score (0.0 to 1.0) for the disease identification."),
-  infection_severity_level: z
-    .enum(["Level 0: Healthy", "Level 1: Mild", "Level 2: Moderate", "Level 3: Severe"])
-    .describe("The quantified severity level of the infection based on leaf area coverage."),
-  infected_area_percentage: z
+    .describe("The confidence score for the identified disease type."),
+  infection_severity: z
     .number()
-    .describe("The estimated percentage of the leaf surface area that is infected."),
-  infected_zones: z
-    .array(
-      z.object({
-        bounding_box: z.tuple([z.number(), z.number(), z.number(), z.number()])
-          .describe("The [x, y, width, height] coordinates of the detected infected zone."),
-        confidence: z
-          .number()
-          .describe("The confidence score for the localization of this specific infected zone.")
-      })
-    ).describe("An array of all localized infected areas on the leaf."),
+    .describe("The infection coverage percentage on the leaf surface (0-100%)."),
+  affected_area_pixels: z
+    .number()
+    .describe("The total number of pixels identified as affected by the disease."),
+  total_leaf_pixels: z
+    .number()
+    .describe("The total number of pixels corresponding to the leaf area."),
+  infection_level: z
+    .enum(["Level 0: Healthy", "Level 1: Mild", "Level 2: Moderate", "Level 3: Severe"])
+    .describe("The classified severity level based on infection percentage."),
   recommended_action: z
-    .string()
-    .describe("The recommended next step for the control system (e.g., 'Initiate targeted spraying')."),
+    .enum(["no_action", "preventive_spray", "targeted_treatment", "intensive_treatment", "immediate_treatment_required"])
+    .describe("The recommended action based on the severity level."),
+  treatment_intensity: z
+    .enum(["none", "low", "medium", "high"])
+    .describe("The suggested intensity for the treatment action."),
+  coordinates: z
+    .array(
+      z.tuple([z.number(), z.number(), z.number(), z.number()])
+    )
+    .describe("An array of bounding boxes [x1, y1, x2, y2] for all detected infected zones."),
 });
 export type AgriEyeDiseaseAnalysisOutput = z.infer<typeof AgriEyeDiseaseAnalysisOutputSchema>;
 
@@ -97,24 +104,22 @@ const agriEyeDiseaseAnalysisFlow = ai.defineFlow(
 
     console.log(`Simulating Agri-Eye analysis for image: ${input.imageDataUri.substring(0, 50)}...`);
 
-    // Mock response simulating a moderately infected leaf
+    // Mock response simulating a moderately infected leaf based on the new spec
     return {
-      is_healthy: false,
-      disease_name: "Late Blight",
-      disease_confidence: 0.96,
-      infection_severity_level: "Level 2: Moderate",
-      infected_area_percentage: 25.5,
-      infected_zones: [
-        {
-          bounding_box: [150, 200, 80, 120], // Mock coordinates: [x, y, width, height]
-          confidence: 0.98
-        },
-        {
-            bounding_box: [300, 350, 50, 60],
-            confidence: 0.95
-        }
-      ],
-      recommended_action: "Initiate targeted spraying at specified coordinates."
+      health_status: "diseased",
+      confidence: 0.97,
+      disease_type: "powdery_mildew",
+      disease_confidence: 0.94,
+      infection_severity: 38.5,
+      affected_area_pixels: 19280,
+      total_leaf_pixels: 50078, // 224 * 224
+      infection_level: "Level 2: Moderate",
+      recommended_action: "targeted_treatment",
+      treatment_intensity: "medium",
+      coordinates: [
+        [110, 150, 180, 240], 
+        [200, 280, 250, 330]
+      ]
     };
   }
 );
