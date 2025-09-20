@@ -3,4 +3,3 @@ config();
 
 import '@/ai/flows/summarize-field-health.ts';
 import '@/ai/flows/get-treatment-recommendations.ts';
-import '@/ai/services/disease-detection-service.ts';

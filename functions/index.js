@@ -55,28 +55,45 @@ function finalizeDetection(detection) {
 }
 
 app.post("/detect", async (req, res) => {
-  // Temporarily simplified endpoint for debugging
   try {
-    console.log("Simplified /detect endpoint hit. Body:", req.body);
-    res.set('Content-Type', 'application/json');
-    res.status(200).json({ 
-        detectionId: "test-id-123",
-        detection: {
-            finalHealthDisplay: "Test OK",
-            infectionLevel: "None",
-            infected_area_pct: 0,
-            presence_confidence: 1.0,
-            reviewRequired: false,
-            health_score: 100
-        },
-        message: "This is a temporary debug response. The backend logic is currently bypassed." 
-    });
+    const { metadata = {}, infected_area_pct, presence_confidence, severity_confidence } = req.body;
+
+    if (infected_area_pct === undefined || presence_confidence === undefined) {
+      return res.status(400).json({ error: "Missing infected_area_pct or presence_confidence" });
+    }
+
+    const infectionLevel =
+      presence_confidence < 0.6 ? "None" :
+      infected_area_pct < 5 ? "Preventive" :
+      infected_area_pct <= 25 ? "Targeted" : "Intensive";
+
+    let doc = {
+      deviceId: metadata.deviceId || null,
+      timestamp: metadata.timestamp || new Date().toISOString(),
+      cropType: metadata.cropType || null,
+      infected: infectionLevel !== "None",
+      infected_area_pct: Number(infected_area_pct),
+      infectionLevel,
+      presence_confidence: Number(presence_confidence),
+      severity_confidence: Number(severity_confidence || presence_confidence),
+      health_score: 100 - (Number(infected_area_pct) * 1.5), // Ensure health_score is present
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+
+    const finalDoc = finalizeDetection(doc);
+
+    // In a real app, we would save the full doc to Firestore.
+    // For now, we just return it.
+    // const ref = await db.collection("detections").add(finalDoc);
+
+    return res.status(200).json({ detectionId: `temp-${Date.now()}`, detection: finalDoc });
   } catch (err) {
-    // Fallback error handler for the simplified endpoint
-    console.error("Error in simplified /detect:", err.stack);
-    res.status(500).json({
-      error: "Internal Server Error in simplified endpoint",
-      message: err.message,
+    console.error("Server error in /detect:", err && err.stack ? err.stack : err);
+    const isEmulator = !!process.env.FUNCTIONS_EMULATOR;
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: err && err.message ? err.message : String(err),
+      ...(isEmulator ? { stack: err.stack } : {})
     });
   }
 });

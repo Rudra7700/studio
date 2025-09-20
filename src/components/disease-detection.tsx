@@ -42,7 +42,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
             
             reader.onloadstart = () => {
                 setStatus('uploading');
-                resetState();
+                resetState(false);
             };
 
             reader.onloadend = () => {
@@ -52,8 +52,6 @@ export function DiseaseDetection({ field }: { field: Field }) {
                 
                 startTransition(async () => {
                     try {
-                        // This is a mock implementation that generates a random result.
-                        // In a real scenario, you'd send this to a model endpoint.
                         const mockPresenceConfidence = 0.65 + Math.random() * 0.3; // 0.65 - 0.95
                         const mockInfectedArea = Math.random() * 40; // 0 - 40%
                         
@@ -61,14 +59,13 @@ export function DiseaseDetection({ field }: { field: Field }) {
                             metadata: {
                                 deviceId: 'frontend-uploader',
                                 timestamp: new Date().toISOString(),
-                                cropType: field.cropType
+                                cropType: field.cropType,
+                                gps: field.gpsCoordinates,
                             },
-                            // The backend function expects these raw values from a model.
-                            // The frontend simulates them for now.
+                            image: dataUri, // Send the image data
                             presence_confidence: mockPresenceConfidence,
                             infected_area_pct: mockInfectedArea,
-                            severity_confidence: mockPresenceConfidence - 0.1, // slightly lower
-                            health_score: 100 - (mockInfectedArea * 1.5),
+                            severity_confidence: mockPresenceConfidence - 0.1,
                         };
 
                         const response = await fetch('/api/detect', {
@@ -77,12 +74,18 @@ export function DiseaseDetection({ field }: { field: Field }) {
                             body: JSON.stringify(payload),
                         });
 
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(errorData.error || `Request failed with status ${response.status}`);
+                        const contentType = response.headers.get('content-type');
+                        if (!response.ok || !contentType || !contentType.includes('application/json')) {
+                            const errorText = await response.text();
+                            throw new Error(`Server returned an invalid response: ${errorText.substring(0, 200)}...`);
                         }
 
                         const data: DetectionResult = await response.json();
+                        
+                        if(data.error) {
+                             throw new Error(data.message || 'The server returned an error.');
+                        }
+
                         setResult(data);
                         setStatus('complete');
                     } catch (err: any) {
@@ -96,8 +99,8 @@ export function DiseaseDetection({ field }: { field: Field }) {
         }
     };
     
-    const resetState = () => {
-        setImage(null);
+    const resetState = (clearImage: boolean = true) => {
+        if(clearImage) setImage(null);
         setStatus('idle');
         setResult(null);
         setError(null);
@@ -141,7 +144,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
                      <div className="space-y-4">
                         <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                            <Image src={image} alt="Uploaded crop" layout="fill" objectFit="cover" />
-                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={resetState} disabled={isPending}><X className="h-4 w-4" /></Button>
+                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={() => resetState(true)} disabled={isPending}><X className="h-4 w-4" /></Button>
                         </div>
                         
                         {(status === 'analyzing' || status === 'uploading') && (
