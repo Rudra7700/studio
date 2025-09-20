@@ -11,6 +11,7 @@ import { Upload, X, Bot, Loader2, Sparkles, TestTube2 } from 'lucide-react';
 import type { Field } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { getTreatmentPlan } from '@/app/actions';
+import { mockSensorData } from '@/lib/mock-data';
 
 type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete';
 type HealthScore = 'Healthy' | 'Mild' | 'Severe' | 'Unknown';
@@ -58,7 +59,11 @@ export function DiseaseDetection({ field }: { field: Field }) {
         if(diagnosis === 'None' || diagnosis === 'Unknown') return;
         
         startTransition(async () => {
-            const result = await getTreatmentPlan(diagnosis);
+            const result = await getTreatmentPlan({
+                diseaseDetected: diagnosis,
+                cropStage: 'Flowering', // Example value
+                weatherConditions: `Temperature: ${mockSensorData.temperature.toFixed(1)}°C, Humidity: ${mockSensorData.humidity}%`,
+            });
 
             if(result.success && result.data) {
                 setRecommendation(result.data.treatmentRecommendations);
