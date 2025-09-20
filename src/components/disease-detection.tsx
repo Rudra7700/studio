@@ -1,5 +1,5 @@
 'use client';
-import { useState, useTransition, ChangeEvent } from 'react';
+import { useState, useTransition, ChangeEvent, useRef } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,142 +7,192 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Upload, X, Bot, Loader2, Sparkles, TestTube2 } from 'lucide-react';
+import { Upload, X, Loader2, Sparkles, TestTube2, AlertTriangle } from 'lucide-react';
 import type { Field } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { getTreatmentPlan } from '@/app/actions';
-import { mockSensorData } from '@/lib/mock-data';
+import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 
-type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete';
-type HealthScore = 'Healthy' | 'Mild' | 'Severe' | 'Unknown';
+type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
 
-const healthInfo: Record<HealthScore, { color: string; score: number; description: string, disease: string }> = {
-    Healthy: { color: 'bg-green-500', score: 95, description: 'No significant disease detected.', disease: 'None' },
-    Mild: { color: 'bg-yellow-500', score: 65, description: 'Minor symptoms of Leaf Rust detected.', disease: 'Leaf Rust' },
-    Severe: { color: 'bg-red-500', score: 25, description: 'Advanced stage of Powdery Mildew detected.', disease: 'Powdery Mildew' },
-    Unknown: { color: 'bg-gray-500', score: 0, description: 'Could not determine health status.', disease: 'Unknown' },
-};
+interface DetectionResult {
+    detectionId: string;
+    detection: {
+        finalHealthDisplay: string;
+        infectionLevel: 'None' | 'Preventive' | 'Targeted' | 'Intensive';
+        infected_area_pct: number;
+        presence_confidence: number;
+        reviewRequired: boolean;
+        health_score: number;
+    };
+    sprayerPayload?: any;
+}
 
 export function DiseaseDetection({ field }: { field: Field }) {
     const [image, setImage] = useState<string | null>(null);
     const [status, setStatus] = useState<DetectionStatus>('idle');
-    const [health, setHealth] = useState<HealthScore>('Unknown');
-    const [recommendation, setRecommendation] = useState<string | null>(null);
+    const [result, setResult] = useState<DetectionResult | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const reader = new FileReader();
+            
             reader.onloadstart = () => {
                 setStatus('uploading');
-                setHealth('Unknown');
-                setRecommendation(null);
+                resetState();
             };
+
             reader.onloadend = () => {
-                setImage(reader.result as string);
+                const dataUri = reader.result as string;
+                setImage(dataUri);
                 setStatus('analyzing');
-                // Simulate analysis
-                setTimeout(() => {
-                    const scores: HealthScore[] = ['Healthy', 'Mild', 'Severe'];
-                    const result = scores[Math.floor(Math.random() * scores.length)];
-                    setHealth(result);
-                    setStatus('complete');
-                }, 2000);
+                
+                startTransition(async () => {
+                    try {
+                        // This is a mock implementation that generates a random result.
+                        // In a real scenario, you'd send this to a model endpoint.
+                        const mockPresenceConfidence = 0.65 + Math.random() * 0.3; // 0.65 - 0.95
+                        const mockInfectedArea = Math.random() * 40; // 0 - 40%
+                        
+                        const payload = {
+                            metadata: {
+                                deviceId: 'frontend-uploader',
+                                timestamp: new Date().toISOString(),
+                                cropType: field.cropType
+                            },
+                            // The backend function expects these raw values from a model.
+                            // The frontend simulates them for now.
+                            presence_confidence: mockPresenceConfidence,
+                            infected_area_pct: mockInfectedArea,
+                            severity_confidence: mockPresenceConfidence - 0.1, // slightly lower
+                            health_score: 100 - (mockInfectedArea * 1.5),
+                        };
+
+                        const response = await fetch('/api/detect', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload),
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || `Request failed with status ${response.status}`);
+                        }
+
+                        const data: DetectionResult = await response.json();
+                        setResult(data);
+                        setStatus('complete');
+                    } catch (err: any) {
+                        console.error("Detection error:", err);
+                        setError(err.message || 'An unknown error occurred during analysis.');
+                        setStatus('error');
+                    }
+                });
             };
             reader.readAsDataURL(file);
         }
     };
-
-    const handleGetRecommendation = () => {
-        const diagnosis = healthInfo[health].disease;
-        if(diagnosis === 'None' || diagnosis === 'Unknown') return;
-        
-        startTransition(async () => {
-            const result = await getTreatmentPlan({
-                diseaseDetected: diagnosis,
-                cropStage: 'Flowering', // Example value
-                weatherConditions: `Temperature: ${mockSensorData.temperature.toFixed(1)}°C, Humidity: ${mockSensorData.humidity}%`,
-            });
-
-            if(result.success && result.data) {
-                setRecommendation(result.data.treatmentRecommendations);
-            } else {
-                setRecommendation(result.error || "Failed to retrieve recommendations. Please check server logs and try again.");
-            }
-        });
-    }
-
-    const reset = () => {
+    
+    const resetState = () => {
         setImage(null);
         setStatus('idle');
-        setHealth('Unknown');
-        setRecommendation(null);
+        setResult(null);
+        setError(null);
+        if(fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
+
+    const getHealthInfo = () => {
+        if (!result) return { color: 'bg-gray-500', score: 0 };
+        const score = result.detection.health_score;
+        if (score > 85) return { color: 'bg-green-500', score };
+        if (score > 50) return { color: 'bg-yellow-500', score };
+        return { color: 'bg-red-500', score };
     };
 
+    const healthInfo = getHealthInfo();
+
+
     return (
-        <Card>
+        <Card className="flex flex-col">
             <CardHeader>
                 <CardTitle>AI Disease Detection</CardTitle>
                 <CardDescription>Upload a crop image to analyze its health.</CardDescription>
             </CardHeader>
-            <CardContent>
-                {status === 'idle' && (
+            <CardContent className="flex-grow">
+                {!image && (
                     <div className="flex items-center justify-center w-full">
                         <Label htmlFor="crop-image" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-card-foreground/5">
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
                                 <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (MAX. 5MB)</p>
+                                <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (MAX. 10MB)</p>
                             </div>
-                            <Input id="crop-image" type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
+                            <Input ref={fileInputRef} id="crop-image" type="file" className="hidden" onChange={handleImageChange} accept="image/*" disabled={isPending} />
                         </Label>
                     </div>
                 )}
                 
-                {(status === 'uploading' || status === 'analyzing' || status === 'complete') && image && (
+                {image && (
                      <div className="space-y-4">
                         <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                            <Image src={image} alt="Uploaded crop" layout="fill" objectFit="cover" />
-                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={reset}><X className="h-4 w-4" /></Button>
+                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={resetState} disabled={isPending}><X className="h-4 w-4" /></Button>
                         </div>
                         
-                        {status === 'analyzing' && <p className="text-sm text-center flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin"/>Analyzing image...</p>}
+                        {(status === 'analyzing' || status === 'uploading') && (
+                            <div className="text-sm text-center flex items-center justify-center gap-2">
+                                <Loader2 className="w-4 h-4 animate-spin"/>
+                                {status === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}
+                            </div>
+                        )}
                         
-                        {status === 'complete' && (
+                        {status === 'error' && error && (
+                             <Alert variant="destructive">
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertTitle>Analysis Failed</AlertTitle>
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
+
+                        {status === 'complete' && result && (
                              <div className="p-4 bg-card-foreground/5 rounded-lg space-y-4">
                                 <div className="text-sm font-medium">Analysis Complete</div>
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-sm items-center">
                                         <span className="font-semibold">Health Score</span>
-                                        <Badge variant="outline" className={cn(healthInfo[health].color, "text-white")}>{healthInfo[health].score}/100</Badge>
+                                        <Badge variant="outline">{result.detection.finalHealthDisplay}</Badge>
                                     </div>
-                                    <Progress value={healthInfo[health].score} className={cn('h-2', healthInfo[health].color)} />
+                                    {!result.detection.finalHealthDisplay.includes('Uncertain') && (
+                                        <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
+                                    )}
                                 </div>
-                                <p className="text-sm text-muted-foreground"><strong>Diagnosis:</strong> {healthInfo[health].description}</p>
-                                
-                                {recommendation && (
-                                     <Card className="bg-background">
-                                        <CardHeader>
-                                            <CardTitle className="text-base flex items-center gap-2">
-                                                <TestTube2 className="w-5 h-5 text-primary"/> AI Treatment Plan
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm whitespace-pre-wrap font-mono">{recommendation}</p>
-                                        </CardContent>
-                                    </Card>
+                                <p className="text-sm text-muted-foreground">
+                                    <strong>Infection Level:</strong> {result.detection.infectionLevel}
+                                </p>
+                                {result.detection.reviewRequired && (
+                                    <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/50">
+                                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                                        <AlertTitle className="text-yellow-700">Manual Review Recommended</AlertTitle>
+                                        <AlertDescription className="text-yellow-600">
+                                            AI confidence is moderate. An expert should review this scan.
+                                        </AlertDescription>
+                                    </Alert>
                                 )}
                              </div>
                         )}
                      </div>
                 )}
             </CardContent>
-            {status === 'complete' && health !== 'Healthy' && health !== 'Unknown' && (
+            {status === 'complete' && result && result.detection.infectionLevel !== 'None' && (
                  <CardFooter>
-                    <Button className="w-full" onClick={handleGetRecommendation} disabled={isPending}>
-                        {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                        {isPending ? 'Generating...' : 'Get AI Recommendation'}
+                    <Button className="w-full" disabled={isPending}>
+                        <TestTube2 className="mr-2 h-4 w-4" />
+                        View Recommended Treatment
                     </Button>
                 </CardFooter>
             )}
