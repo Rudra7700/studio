@@ -15,16 +15,18 @@ import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
 
 interface DetectionResult {
-    detectionId: string;
-    detection: {
-        finalHealthDisplay: string;
-        infectionLevel: 'None' | 'Preventive' | 'Targeted' | 'Intensive';
-        infected_area_pct: number;
-        presence_confidence: number;
-        reviewRequired: boolean;
-        health_score: number;
-    };
-    sprayerPayload?: any;
+  detectionId: string;
+  detection: {
+    finalHealthDisplay: string;
+    infectionLevel: 'None' | 'Preventive' | 'Targeted' | 'Intensive';
+    infected_area_pct: number;
+    presence_confidence: number;
+    reviewRequired: boolean;
+    health_score: number;
+  };
+  error?: string;
+  message?: string;
+  sprayerPayload?: any;
 }
 
 export function DiseaseDetection({ field }: { field: Field }) {
@@ -62,7 +64,6 @@ export function DiseaseDetection({ field }: { field: Field }) {
                                 cropType: field.cropType,
                                 gps: field.gpsCoordinates,
                             },
-                            image: dataUri, // Send the image data
                             presence_confidence: mockPresenceConfidence,
                             infected_area_pct: mockInfectedArea,
                             severity_confidence: mockPresenceConfidence - 0.1,
