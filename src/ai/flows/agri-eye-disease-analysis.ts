@@ -95,30 +95,29 @@ const agriEyeDiseaseAnalysisFlow = ai.defineFlow(
     // **MODEL INTEGRATION POINT**
     //
     // This is where the call to the actual computer vision model would be made.
-    // The model would be running on an edge device (like an NVIDIA Jetson) or a cloud endpoint.
     // The `input.imageDataUri` would be passed to the model, and the model's JSON output
     // would be returned from this flow.
     //
     // For demonstration purposes, we are returning a hardcoded, mock JSON object
-    // that conforms to the specified output schema.
+    // that simulates the detection of powdery mildew as per the specified requirements.
 
     console.log(`Simulating Agri-Eye analysis for image: ${input.imageDataUri.substring(0, 50)}...`);
 
-    // Mock response simulating a moderately infected leaf based on the new spec
+    // Mock response simulating a severe case of powdery mildew.
     return {
       health_status: "diseased",
-      confidence: 0.97,
+      confidence: 0.98,
       disease_type: "powdery_mildew",
-      disease_confidence: 0.94,
-      infection_severity: 38.5,
-      affected_area_pixels: 19280,
+      disease_confidence: 0.95,
+      infection_severity: 45.0,
+      affected_area_pixels: 22535,
       total_leaf_pixels: 50078, // 224 * 224
-      infection_level: "Level 2: Moderate",
-      recommended_action: "targeted_treatment",
-      treatment_intensity: "medium",
+      infection_level: "Level 3: Severe",
+      recommended_action: "immediate_treatment_required",
+      treatment_intensity: "high",
       coordinates: [
-        [110, 150, 180, 240], 
-        [200, 280, 250, 330]
+        [50, 60, 150, 180], 
+        [180, 200, 220, 250]
       ]
     };
   }
