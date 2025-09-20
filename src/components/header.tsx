@@ -39,6 +39,7 @@ import { Logo } from './logo';
 import { mockFarmers } from '@/lib/mock-data';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { VoiceInputModal } from './voice-input-modal';
 
 export function Header() {
   const pathname = usePathname();
@@ -67,14 +68,11 @@ export function Header() {
 
   const handleMicClick = () => {
       setIsListening(prev => !prev);
-      toast({
-          title: isListening ? "Voice command off" : "Voice command on",
-          description: isListening ? "Stopped listening." : "Listening for commands...",
-      });
   }
 
 
   return (
+    <>
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
         <SheetTrigger asChild>
@@ -187,5 +185,7 @@ export function Header() {
       </DropdownMenu>
       </div>
     </header>
+    <VoiceInputModal show={isListening} onClose={() => setIsListening(false)} />
+    </>
   );
 }
