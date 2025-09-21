@@ -14,10 +14,7 @@ export const searchWeb = ai.defineTool(
     outputSchema: z.any(),
   },
   async input => {
-    const googleAITool = googleAI.tool('searchWeb', {
-      body: {query: input.query},
-    });
-
-    return googleAITool.output;
+    // Correctly call the built-in searchWeb tool
+    return await googleAI.searchWeb(input);
   }
 );
