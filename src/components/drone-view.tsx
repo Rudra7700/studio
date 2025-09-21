@@ -13,7 +13,7 @@ import type { TelemetryData } from '@/lib/types';
 
 type MissionStatus = 'idle' | 'starting' | 'in-progress' | 'complete';
 
-const MISSION_DURATION_MS = 30000; // 30 seconds
+const MISSION_DURATION_MS = 20000; // 20 seconds
 
 export function DroneView() {
     const [missionStatus, setMissionStatus] = useState<MissionStatus>('idle');
@@ -126,7 +126,7 @@ export function DroneView() {
 
             <div className="relative aspect-video w-full bg-slate-800 rounded-b-lg overflow-hidden flex items-center justify-center">
                  <Image 
-                    src="https://picsum.photos/seed/croprows/1280/720"
+                    src="https://images.unsplash.com/photo-1625837406798-9b16c9fa9c2a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmaWVsZHN8ZW58MHx8fHwxNzU4NDczMDIyfDA&ixlib=rb-4.1.0&q=80&w=1080"
                     alt="Drone flying over a field"
                     fill
                     objectFit="cover"
