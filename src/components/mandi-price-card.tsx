@@ -3,7 +3,7 @@
 
 import type { MandiPriceCardData } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { MapPin, ArrowUp, ArrowDown, ShoppingCart, Image as ImageIcon } from "lucide-react";
+import { MapPin, ArrowUp, ArrowDown, Image as ImageIcon, CircleDollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Image from "next/image";
@@ -61,9 +61,9 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
                         <p className="text-xs font-medium">({isPositive ? '+' : ''}{data.percentChange}%)</p>
                     </div>
                 </div>
-                 <Button variant="secondary" className="w-full bg-card/80 group-hover:bg-card transition-colors mt-3">
-                    <ShoppingCart className="w-4 h-4 mr-2"/>
-                    List for Sale
+                 <Button variant="default" className="w-full mt-3">
+                    <CircleDollarSign className="w-4 h-4 mr-2"/>
+                    Sell Crop
                 </Button>
             </CardContent>
         </Card>
