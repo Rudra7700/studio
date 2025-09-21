@@ -45,7 +45,7 @@ export const mockFields: Field[] = [
     gpsCoordinates: { lat: 28.6100, lng: 77.2050 },
     boundary: [],
     healthStatus: 'Mild',
-    imageUrl: 'https://images.unsplash.com/photo-1595976281013-8024ecc02575?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8d2hlYXQlMjBmaWVsZHxlbnwwfHx8fDE3NTg0NjY3MDd8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageUrl: 'https://images.unsplash.com/photo-1595976281013-8024ecc02575?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8d2hlYXQlMjBmaWVsZHxlbnwwfHx8fDE3NTg0NjY3MDd8MA&ixlib-rb-4.1.0&q=80&w=1080',
     imageHint: 'wheat field',
   },
   {
@@ -164,14 +164,14 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(2150, 0.1, 'Wheat'), imageUrl: 'https://images.unsplash.com/photo-1437252611977-07f74518abd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3aGVhdHxlbnwwfHx8fDE3NTg0NjMyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'wheat' },
       { ...createMockPrice(1980, 0.08, 'Rice'), imageUrl: 'https://images.unsplash.com/photo-1635562985686-4f8bb9c0d3bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaWNlfGVufDB8fHx8MTc1ODQ2MzgwMnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'rice' },
       { ...createMockPrice(2050, 0.12, 'Maize'), imageUrl: 'https://images.unsplash.com/photo-1599231362334-9259f6103639?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYWl6ZSUyMGZpZWxkfGVufDB8fHx8MTc1ODcwOTU1Nnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'maize field' },
-      { ...createMockPrice(2800, 0.15, 'Jowar'), imageUrl: 'https://images.unsplash.com/photo-1628122393379-790d9a565893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzb3JnaHVtJTIwZmllbGR8ZW58MHx8fHwxNzU4NzA5NjM0fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'sorghum field' },
-      { ...createMockPrice(2600, 0.18, 'Bajra'), imageUrl: 'https://images.unsplash.com/photo-1620706290132-7c9924045548?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZWFybCUyMG1pbGxldHxlbnwwfHx8fDE3NTg2NTA1MTB8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pearl millet' },
+      { ...createMockPrice(2800, 0.15, 'Jowar'), imageUrl: 'https://images.unsplash.com/photo-1628122393379-790d9a565893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzb3JnaHVtJTIwZmllbGR8ZW58MHx8fHwxNzU4NzA5NjM0fDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'sorghum field' },
+      { ...createMockPrice(2600, 0.18, 'Bajra'), imageUrl: 'https://images.unsplash.com/photo-1620706290132-7c9924045548?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZWFybCUyMG1pbGxldHxlbnwwfHx8fDE3NTg2NTA1MTB8MA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'pearl millet' },
       { ...createMockPrice(3200, 0.2, 'Ragi'), imageUrl: 'https://images.unsplash.com/photo-1653580524155-77b19c176b88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxSYWdpfGVufDB8fHx8MTc1ODQ3MDEyOXww&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'finger millet'},
-      { ...createMockPrice(1800, 0.1, 'Barley'), imageUrl: 'https://images.unsplash.com/photo-1614539316142-83569a9f7331?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxiYXJsZXklMjBmaWVsZHxlbnwwfHx8fDE3NTg3MDk3NTV8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'barley field' },
+      { ...createMockPrice(1800, 0.1, 'Barley'), imageUrl: 'https://images.unsplash.com/photo-1614539316142-83569a9f7331?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxiYXJsZXklMjBmaWVsZHxlbnwwfHx8fDE3NTg3MDk3NTV8MA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'barley field' },
     ],
     Pulses: [
       { ...createMockPrice(4800, 0.2, 'Gram'), imageUrl: 'https://images.unsplash.com/photo-1598114992523-2a54b6d7a465?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjaGlja3BlYXN8ZW58MHx8fHwxNzU4NzA5ODM2fDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'chickpeas' },
-      { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1690023852149-0c69ac74734f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHwlMjhQZWElMjl8ZW58MHx8fHwxNzU4NDY1NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
+      { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1690023852149-0c69ac74734f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHwlMjhQZWElMjl8ZW58MHx8fHwxNzU4NDY1NjU1fDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
       { ...createMockPrice(8500, 0.3, 'Moong (Mung Bean)'), imageUrl: 'https://images.unsplash.com/photo-1694679671688-3d9bb5e77f37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxNb29uZyUyMHxlbnwwfHx8fDE3NTg0NjU4NTF8MA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'mung bean' },
       { ...createMockPrice(8200, 0.28, 'Urad (Black Gram)'), imageUrl: 'https://images.unsplash.com/photo-1563117063-ad38230557bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCbGFjayUyMEdyYW18ZW58MHx8fHwxNzU4NDY1NzY2fDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'black gram' },
       { ...createMockPrice(6500, 0.22, 'Lentil'), imageUrl: 'https://images.unsplash.com/photo-1582379963239-95292a454cfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZW50aWx8ZW58MHx8fHwxNzU4NTU1MzYwfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'lentils'},
@@ -187,7 +187,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(6400, 0.28, 'Castor'), imageUrl: 'https://images.unsplash.com/photo-1627541242337-97592a404c06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYXN0b3IlMjBiZWFufGVufDB8fHx8MTc1ODcxMDI0M3ww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'castor bean' },
     ],
     'Cash Crops': [
-      {...createMockPrice(5650, 0.2, 'Cotton'), imageUrl: 'https://images.unsplash.com/photo-1633873972250-e69cd8b5e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb3R0b258ZW58MHx8fHwxNzU4NDY4ODcxfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cotton'},
+      {...createMockPrice(5650, 0.2, 'Cotton'), imageUrl: 'https://images.unsplash.com/photo-1633873972250-e69cd8b5e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb3R0b258ZW58MHx8fHwxNzU4NDY4ODcxfDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'cotton'},
       {...createMockPrice(310, 0.1, 'Sugarcane'), imageUrl: 'https://images.unsplash.com/photo-1730488636376-3bbb36aa5eb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdWdhcmNhbmV8ZW58MHx8fHwxNzU4NDY5MTI3fDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'sugarcane field'},
       { ...createMockPrice(7500, 0.15, 'Coffee'), imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2ZmZWUlMjBiZWFuc3xlbnwwfHx8fDE3NTg3MTAzMTN8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'coffee beans' },
       { ...createMockPrice(140, 0.12, 'Tea'), imageUrl: 'https://images.unsplash.com/photo-1597318181315-fe242c8834a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZWElMjBwbGFudGF0aW9ufGVufDB8fHx8MTc1ODcxMDM1Mnww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'tea plantation' },
@@ -198,7 +198,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(2500, 0.4, 'Tomato'), imageUrl: 'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUb21hdG98ZW58MHx8fHwxNzU4NDY0MDM3fDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'tomato' },
       { ...createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'), imageUrl: 'https://images.unsplash.com/photo-1605197378540-10ebaf6999e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCcmluamFsJTIwJTI4RWdncGxhbnQlMjl8ZW58MHx8fHwxNzU4NDY0MDU1fDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'brinjal' },
       { ...createMockPrice(4000, 0.5, 'Chili'), imageUrl: 'https://images.unsplash.com/photo-1568661272228-22de33148f43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlsaSUyMHBlcHBlcnN8ZW58MHx8fHwxNzU4NTU0MzUxfDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'chili peppers' },
-      { ...createMockPrice(2000, 0.35, 'Potato'), imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3RhdG98ZW58MHx8fHwxNzU4NTU0MTgxfDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'potatoes' },
+      { ...createMockPrice(2000, 0.35, 'Potato'), imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3RhdG98ZW58MHx8fHwxNzU4NTU0MTgxfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'potatoes' },
       { ...createMockPrice(1800, 0.4, 'Onion'), imageUrl: 'https://images.unsplash.com/photo-1587049352851-d8a835c97cb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvbmlvbnxlbnwwfHx8fDE3NTg3MTA0OTZ8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'onions' },
       { ...createMockPrice(1500, 0.5, 'Cabbage'), imageUrl: 'https://images.unsplash.com/photo-1569186634303-3058c475d401?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYWJiYWdlfGVufDB8fHx8MTc1ODcxMDUzOXww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cabbage' },
       { ...createMockPrice(2800, 0.55, 'Cauliflower'), imageUrl: 'https://images.unsplash.com/photo-1602163923086-455b597c5513?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYXVsaWZsb3dlcnxlbnwwfHx8fDE3NTg3MTA1Nzh8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cauliflower' },
@@ -564,5 +564,6 @@ export const mockTransactions: Transaction[] = [
     
 
     
+
 
 
