@@ -11,6 +11,7 @@ import {
   BarChart3,
   ShoppingBasket,
   Tractor,
+  Trophy,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +23,7 @@ const navItems = [
   { href: '/dashboard/treatments', label: 'Treatments', icon: TestTube2 },
   { href: '/dashboard/market', label: 'Mandi Prices', icon: BarChart3 },
   { href: '/dashboard/pesticides', label: 'Buy Pesticides', icon: ShoppingBasket },
+  { href: '/dashboard/challenges', label: 'Challenges', icon: Trophy },
 ];
 
 const adminNavItems = [

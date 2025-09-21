@@ -113,3 +113,26 @@ export interface TelemetryData {
     connection: 'Strong' | 'Weak' | 'Connected';
     gps: string;
 }
+
+export type Challenge = {
+  id: string;
+  title: string;
+  description: string;
+  points: number;
+  type: 'daily' | 'weekly' | 'seasonal';
+  isCompleted: boolean;
+};
+
+export type Badge = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string; // Lucide icon name
+  isUnlocked: boolean;
+};
+
+export type LeaderboardEntry = {
+  rank: number;
+  farmerId: string;
+  points: number;
+};
