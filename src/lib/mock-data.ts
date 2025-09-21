@@ -187,7 +187,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
     ],
     'Cash Crops': [
       {...createMockPrice(5650, 0.2, 'Cotton'), imageUrl: 'https://images.unsplash.com/photo-1633873972250-e69cd8b5e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb3R0b258ZW58MHx8fHwxNzU4NDY4ODcxfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'cotton'},
-      createMockPrice(310, 0.1, 'Sugarcane'),
+      {...createMockPrice(310, 0.1, 'Sugarcane'), imageUrl: 'https://images.unsplash.com/photo-1620252113522-54a616815d2a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdWdhcmNhbmUlMjBmaWVsZHxlbnwwfHx8fDE3NTg2NDYxNTB8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'sugarcane field'},
       createMockPrice(7500, 0.15, 'Coffee'),
       createMockPrice(140, 0.12, 'Tea'),
       createMockPrice(2500, 0.18, 'Jute'),
