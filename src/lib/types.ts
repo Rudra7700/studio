@@ -1,4 +1,5 @@
 
+
 export type Farmer = {
   id: string;
   name: string;
@@ -103,3 +104,12 @@ export type Inventory = {
     quantity: number;
     unit: string;
 };
+
+export interface TelemetryData {
+    altitude: number;
+    speed: number;
+    battery: number;
+    tankLevel: number;
+    connection: 'Strong' | 'Weak' | 'Connected';
+    gps: string;
+}

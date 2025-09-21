@@ -1,26 +1,16 @@
 
 'use client';
 import { Progress } from "./ui/progress";
-import { Camera, Map, Timer } from "lucide-react";
-import { format } from "date-fns";
-
-const MISSION_DURATION_S = 30;
+import { Camera, Gauge, Battery } from "lucide-react";
 
 interface MissionProgressProps {
     progress: number;
     photosTaken: number;
-    areaCovered: number;
+    speed: number;
+    battery: number;
 }
 
-export function MissionProgress({ progress, photosTaken, areaCovered }: MissionProgressProps) {
-    const elapsedTime = (progress / 100) * MISSION_DURATION_S;
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    };
-
+export function MissionProgress({ progress, photosTaken, speed, battery }: MissionProgressProps) {
     return (
         <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 text-white space-y-3">
             <div className="flex justify-between items-center text-sm">
@@ -30,14 +20,14 @@ export function MissionProgress({ progress, photosTaken, areaCovered }: MissionP
             <Progress value={progress} className="h-2"/>
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-white/10 p-2 rounded-md">
-                    <Timer className="mx-auto h-4 w-4 mb-1 text-primary"/>
-                    <p className="font-semibold">{formatTime(elapsedTime)}</p>
-                    <p className="text-muted-foreground">Elapsed Time</p>
+                    <Battery className="mx-auto h-4 w-4 mb-1 text-primary"/>
+                    <p className="font-semibold">{battery.toFixed(1)}%</p>
+                    <p className="text-muted-foreground">Battery</p>
                 </div>
                 <div className="bg-white/10 p-2 rounded-md">
-                    <Map className="mx-auto h-4 w-4 mb-1 text-primary"/>
-                    <p className="font-semibold">{areaCovered} ha</p>
-                    <p className="text-muted-foreground">Area Scanned</p>
+                    <Gauge className="mx-auto h-4 w-4 mb-1 text-primary"/>
+                    <p className="font-semibold">{speed.toFixed(1)} km/h</p>
+                    <p className="text-muted-foreground">Speed</p>
                 </div>
                  <div className="bg-white/10 p-2 rounded-md">
                     <Camera className="mx-auto h-4 w-4 mb-1 text-primary"/>

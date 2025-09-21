@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Camera, CameraOff, Loader2, Play, AlertTriangle, Video, Power } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { DroneTelemetry, type TelemetryData } from './drone-telemetry';
 import { MissionProgress } from './mission-progress';
 import { cn } from '@/lib/utils';
+import type { TelemetryData } from '@/lib/types';
+
 
 type MissionStatus = 'idle' | 'starting' | 'in-progress' | 'complete';
 
@@ -158,12 +159,12 @@ export function DroneView() {
                 
                 {(missionStatus === 'in-progress' || missionStatus === 'complete') && (
                     <>
-                        <DroneTelemetry data={telemetry} />
                         <div className="absolute bottom-4 left-4 right-4 z-20">
                             <MissionProgress 
                                 progress={progress} 
                                 photosTaken={Math.floor((progress/100) * 120)}
-                                areaCovered={parseFloat(((progress/100) * 2.5).toFixed(2))}
+                                speed={telemetry.speed}
+                                battery={telemetry.battery}
                             />
                         </div>
                     </>
