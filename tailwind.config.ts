@@ -95,17 +95,23 @@ export default {
             height: '0',
           },
         },
-        'pan-and-zoom': {
-            '0%, 100%': { transform: 'scale(1.1) translate(0, 0)' },
-            '25%': { transform: 'scale(1.3) translate(10%, -5%)' },
-            '50%': { transform: 'scale(1.1) translate(-5%, 10%)' },
-            '75%': { transform: 'scale(1.4) translate(5%, 5%)' },
+        'drone-stunts': {
+          '0%': { transform: 'scale(1.2) translate(0, 0) rotate(0deg)' },
+          '15%': { transform: 'scale(1.5) translate(10%, -5%) rotate(2deg)' }, // Fast forward down a row
+          '25%': { transform: 'scale(1.5) translate(-10%, 0) rotate(-2deg)' }, // Sharp bank turn
+          '35%': { transform: 'scale(1.3) translate(0, 10%) rotate(0deg)' }, // Swoop up
+          '45%': { transform: 'scale(1.6) translate(0, -10%) rotate(0deg)' }, // Swoop down low
+          '50%': { transform: 'scale(1.6) translate(0, -10%) rotate(0deg)' }, // Hover
+          '60%': { transform: 'scale(1.6) translate(5%, -10%) rotate(0deg)' }, // Strafe right
+          '70%': { transform: 'scale(1.6) translate(-5%, -10%) rotate(0deg)' }, // Strafe left
+          '85%': { transform: 'scale(1.4) translate(10%, 5%) rotate(1deg)' }, // Another turn
+          '100%': { transform: 'scale(1.2) translate(0, 0) rotate(0deg)' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pan-and-zoom': 'pan-and-zoom 10s ease-in-out infinite',
+        'drone-stunts': 'drone-stunts 20s ease-in-out infinite',
       },
     },
   },

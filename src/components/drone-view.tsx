@@ -125,13 +125,13 @@ export function DroneView() {
 
             <div className="relative aspect-video w-full bg-slate-800 rounded-b-lg overflow-hidden flex items-center justify-center">
                  <Image 
-                    src="https://picsum.photos/seed/dronefeed/1280/720"
+                    src="https://picsum.photos/seed/croprows/1280/720"
                     alt="Drone flying over a field"
                     fill
                     objectFit="cover"
                     className={cn(
                         "opacity-70 transition-transform duration-[30s] ease-in-out",
-                        missionStatus === 'in-progress' && "animate-pan-and-zoom"
+                        missionStatus === 'in-progress' && "animate-drone-stunts"
                     )}
                     data-ai-hint="drone aerial view farm"
                  />
