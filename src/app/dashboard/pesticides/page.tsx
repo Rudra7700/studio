@@ -1,3 +1,4 @@
+
 'use client';
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import type { Pesticide } from '@/lib/types';
 import { ShoppingCart, Minus, Plus, Info, CheckCircle, AlertTriangle, X } from 'lucide-react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const typeColor: Record<Pesticide['type'], string> = {
     Fungicide: "bg-blue-100 text-blue-800",
