@@ -193,8 +193,8 @@ export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
     createMockPrice(4500, 0.22, 'Tobacco'),
   ],
   Vegetables: [
-    createMockPrice(2500, 0.4, 'Tomato'),
-    createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'),
+    { ...createMockPrice(2500, 0.4, 'Tomato'), imageUrl: 'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUb21hdG98ZW58MHx8fHwxNzU4NDY0MDM3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'tomato' },
+    { ...createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'), imageUrl: 'https://images.unsplash.com/photo-1605197378540-10ebaf6999e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCcmluamFsJTIwJTI4RWdncGxhbnQlMjl8ZW58MHx8fHwxNzU4NDY0MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'brinjal' },
     createMockPrice(4000, 0.5, 'Chili'),
     createMockPrice(2000, 0.35, 'Potato'),
     createMockPrice(1800, 0.4, 'Onion'),
@@ -335,3 +335,4 @@ export const mockPesticides: Pesticide[] = [
     
 
     
+
