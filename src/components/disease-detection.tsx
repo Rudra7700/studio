@@ -11,6 +11,8 @@ import { Upload, X, Loader2, Sparkles, TestTube2, AlertTriangle } from 'lucide-r
 import type { Field } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { TreatmentRecommendation, TreatmentRecommendationProps } from './treatment-recommendation';
 
 type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
 
@@ -23,15 +25,15 @@ interface DetectionResult {
     presence_confidence: number;
     reviewRequired: boolean;
     health_score: number;
+    disease: string;
   };
 }
 
-// Client-side implementation of the backend logic
 function finalizeDetection(detection: any): any {
   const pc = Number(detection.presence_confidence || 0);
   const sc = Number(detection.severity_confidence || pc);
   const area = Number(detection.infected_area_pct || 0);
-  let hs = Number(detection.health_score ?? (100 - area)); // fallback
+  let hs = Number(detection.health_score ?? (100 - area));
 
   if (hs > 85 && area > 5) {
     detection.reviewRequired = true;
@@ -65,6 +67,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
     const [result, setResult] = useState<DetectionResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
+    const [showTreatmentModal, setShowTreatmentModal] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -83,11 +86,10 @@ export function DiseaseDetection({ field }: { field: Field }) {
                 setStatus('analyzing');
                 
                 startTransition(() => {
-                    // Simulate a short delay for analysis
                     setTimeout(() => {
                         try {
-                            const mockPresenceConfidence = 0.65 + Math.random() * 0.3; // 0.65 - 0.95
-                            const mockInfectedArea = Math.random() * 40; // 0 - 40%
+                            const mockPresenceConfidence = 0.65 + Math.random() * 0.3;
+                            const mockInfectedArea = Math.random() * 40;
                             const infectionLevel =
                                 mockPresenceConfidence < 0.6 ? "None" :
                                 mockInfectedArea < 5 ? "Preventive" :
@@ -100,6 +102,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
                                 presence_confidence: Number(mockPresenceConfidence),
                                 severity_confidence: Number(mockPresenceConfidence - 0.1),
                                 health_score: 100 - (Number(mockInfectedArea) * 1.5),
+                                disease: field.cropType === 'Corn' ? 'Northern Corn Leaf Blight' : field.cropType === 'Wheat' ? 'Wheat Rust' : 'Powdery Mildew'
                             };
 
                             const finalDoc = finalizeDetection(doc);
@@ -142,87 +145,111 @@ export function DiseaseDetection({ field }: { field: Field }) {
     };
 
     const healthInfo = getHealthInfo();
+    
+    const treatmentProps: TreatmentRecommendationProps | null = result ? {
+        diseaseDetected: result.detection.disease,
+        cropStage: "Vegetative", // Mock data
+        weatherConditions: "28°C, 75% Humidity", // Mock data
+    } : null;
 
 
     return (
-        <Card className="flex flex-col">
-            <CardHeader>
-                <CardTitle>AI Disease Detection</CardTitle>
-                <CardDescription>Upload a crop image to analyze its health.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-                {!image && (
-                    <div className="flex items-center justify-center w-full">
-                        <Label htmlFor="crop-image" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-card-foreground/5">
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
-                                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (MAX. 10MB)</p>
-                            </div>
-                            <Input ref={fileInputRef} id="crop-image" type="file" className="hidden" onChange={handleImageChange} accept="image/*" disabled={isPending} />
-                        </Label>
-                    </div>
-                )}
-                
-                {image && (
-                     <div className="space-y-4">
-                        <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-                           <Image src={image} alt="Uploaded crop" layout="fill" objectFit="cover" />
-                           <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={() => resetState(true)} disabled={isPending}><X className="h-4 w-4" /></Button>
+        <>
+            <Card className="flex flex-col">
+                <CardHeader>
+                    <CardTitle>AI Disease Detection</CardTitle>
+                    <CardDescription>Upload a crop image to analyze its health.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                    {!image && (
+                        <div className="flex items-center justify-center w-full">
+                            <Label htmlFor="crop-image" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-card-foreground/5">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
+                                    <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                    <p className="text-xs text-muted-foreground">PNG, JPG or WEBP (MAX. 10MB)</p>
+                                </div>
+                                <Input ref={fileInputRef} id="crop-image" type="file" className="hidden" onChange={handleImageChange} accept="image/*" disabled={isPending} />
+                            </Label>
                         </div>
-                        
-                        {(status === 'analyzing' || status === 'uploading') && (
-                            <div className="text-sm text-center flex items-center justify-center gap-2">
-                                <Loader2 className="w-4 h-4 animate-spin"/>
-                                {status === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}
+                    )}
+                    
+                    {image && (
+                        <div className="space-y-4">
+                            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                            <Image src={image} alt="Uploaded crop" layout="fill" objectFit="cover" />
+                            <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={() => resetState(true)} disabled={isPending}><X className="h-4 w-4" /></Button>
                             </div>
-                        )}
-                        
-                        {status === 'error' && error && (
-                             <Alert variant="destructive">
-                                <AlertTriangle className="h-4 w-4" />
-                                <AlertTitle>Analysis Failed</AlertTitle>
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
-                        )}
+                            
+                            {(status === 'analyzing' || status === 'uploading') && (
+                                <div className="text-sm text-center flex items-center justify-center gap-2">
+                                    <Loader2 className="w-4 h-4 animate-spin"/>
+                                    {status === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}
+                                </div>
+                            )}
+                            
+                            {status === 'error' && error && (
+                                <Alert variant="destructive">
+                                    <AlertTriangle className="h-4 w-4" />
+                                    <AlertTitle>Analysis Failed</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            )}
 
-                        {status === 'complete' && result && (
-                             <div className="p-4 bg-card-foreground/5 rounded-lg space-y-4">
-                                <div className="text-sm font-medium">Analysis Complete</div>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-sm items-center">
-                                        <span className="font-semibold">Health Score</span>
-                                        <Badge variant="outline">{result.detection.finalHealthDisplay}</Badge>
+                            {status === 'complete' && result && (
+                                <div className="p-4 bg-card-foreground/5 rounded-lg space-y-4">
+                                    <div className="text-sm font-medium">Analysis Complete</div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-sm items-center">
+                                            <span className="font-semibold">Health Score</span>
+                                            <Badge variant="outline">{result.detection.finalHealthDisplay}</Badge>
+                                        </div>
+                                        {!result.detection.finalHealthDisplay.includes('Uncertain') && (
+                                            <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
+                                        )}
                                     </div>
-                                    {!result.detection.finalHealthDisplay.includes('Uncertain') && (
-                                        <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
+                                    <p className="text-sm text-muted-foreground">
+                                        <strong>Detected Issue:</strong> {result.detection.disease}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                        <strong>Infection Level:</strong> {result.detection.infectionLevel}
+                                    </p>
+                                    {result.detection.reviewRequired && (
+                                        <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/50">
+                                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                                            <AlertTitle className="text-yellow-700">Manual Review Recommended</AlertTitle>
+                                            <AlertDescription className="text-yellow-600">
+                                                AI confidence is moderate. An expert should review this scan.
+                                            </AlertDescription>
+                                        </Alert>
                                     )}
                                 </div>
-                                <p className="text-sm text-muted-foreground">
-                                    <strong>Infection Level:</strong> {result.detection.infectionLevel}
-                                </p>
-                                {result.detection.reviewRequired && (
-                                    <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/50">
-                                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                                        <AlertTitle className="text-yellow-700">Manual Review Recommended</AlertTitle>
-                                        <AlertDescription className="text-yellow-600">
-                                            AI confidence is moderate. An expert should review this scan.
-                                        </AlertDescription>
-                                    </Alert>
-                                )}
-                             </div>
-                        )}
-                     </div>
+                            )}
+                        </div>
+                    )}
+                </CardContent>
+                {status === 'complete' && result && result.detection.infectionLevel !== 'None' && (
+                    <CardFooter>
+                        <Button className="w-full" disabled={isPending} onClick={() => setShowTreatmentModal(true)}>
+                            <TestTube2 className="mr-2 h-4 w-4" />
+                            View Recommended Treatment
+                        </Button>
+                    </CardFooter>
                 )}
-            </CardContent>
-            {status === 'complete' && result && result.detection.infectionLevel !== 'None' && (
-                 <CardFooter>
-                    <Button className="w-full" disabled={isPending}>
-                        <TestTube2 className="mr-2 h-4 w-4" />
-                        View Recommended Treatment
-                    </Button>
-                </CardFooter>
+            </Card>
+            {showTreatmentModal && treatmentProps && (
+                 <Dialog open={showTreatmentModal} onOpenChange={setShowTreatmentModal}>
+                    <DialogContent className="max-w-3xl">
+                        <DialogHeader>
+                            <DialogTitle>AI Treatment Recommendation</DialogTitle>
+                            <DialogDescription>
+                                AI-generated treatment plan for {treatmentProps.diseaseDetected} in {field.name}.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <TreatmentRecommendation {...treatmentProps} />
+                    </DialogContent>
+                </Dialog>
             )}
-        </Card>
+        </>
     );
 }
