@@ -13,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetDescription } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Link from 'next/link';
 
 const typeColor: Record<Pesticide['type'], string> = {
     Fungicide: "bg-blue-100 text-blue-800",
@@ -54,6 +55,8 @@ export default function PesticidesPage() {
     }).filter(Boolean);
 
     const totalPrice = cartDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    const cartQueryString = encodeURIComponent(JSON.stringify(cart));
 
     return (
         <div className="space-y-4">
@@ -108,7 +111,9 @@ export default function PesticidesPage() {
                                         <span>Total</span>
                                         <span>₹{totalPrice.toLocaleString('en-IN')}</span>
                                     </div>
-                                    <Button className="w-full" size="lg">Proceed to Checkout</Button>
+                                    <Button className="w-full" size="lg" asChild>
+                                      <Link href={`/dashboard/checkout?cart=${cartQueryString}`}>Proceed to Checkout</Link>
+                                    </Button>
                                  </div>
                             </SheetFooter>
                         )}
@@ -121,7 +126,7 @@ export default function PesticidesPage() {
                     <Card key={pesticide.id} className="flex flex-col">
                         <CardHeader>
                             <div className="relative aspect-square w-full mb-4">
-                                <Image src={pesticide.imageUrl} alt={pesticide.name} layout="fill" objectFit="contain" />
+                                <Image src={pesticide.imageUrl} alt={pesticide.name} fill objectFit="contain" />
                             </div>
                             <CardTitle className="text-lg leading-tight">{pesticide.name}</CardTitle>
                             <Badge variant="outline" className={typeColor[pesticide.type]}>{pesticide.type}</Badge>
