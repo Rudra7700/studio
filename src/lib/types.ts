@@ -1,3 +1,4 @@
+
 export type Farmer = {
   id: string;
   name: string;
@@ -87,3 +88,13 @@ export type Pesticide = {
     };
     safetyNotes: string[];
 }
+
+export type Notification = {
+    id: string;
+    type: 'mandiPrice' | 'pesticide' | 'field' | 'general';
+    title: string;
+    description: string;
+    timestamp: string;
+    icon: React.ReactNode;
+    read: boolean;
+};

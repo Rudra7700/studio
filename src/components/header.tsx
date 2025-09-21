@@ -1,3 +1,4 @@
+
 'use client';
 import * as React from 'react';
 import {
@@ -7,7 +8,8 @@ import {
   Globe,
   Mic,
   Wifi,
-  WifiOff
+  WifiOff,
+  Check,
 } from 'lucide-react';
 
 import {
@@ -27,7 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
-  DropdownMenuRadioItem
+  DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -36,10 +38,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { DashboardNav } from './dashboard-nav';
 import { Logo } from './logo';
-import { mockFarmers } from '@/lib/mock-data';
+import { mockFarmers, mockNotifications } from '@/lib/mock-data';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { VoiceInputModal } from './voice-input-modal';
+import type { Notification } from '@/lib/types';
 
 export function Header() {
   const pathname = usePathname();
@@ -49,6 +52,9 @@ export function Header() {
   const [language, setLanguage] = React.useState('en');
   const [isListening, setIsListening] = React.useState(false);
   const [isOnline, setIsOnline] = React.useState(true);
+  const [notifications, setNotifications] = React.useState<Notification[]>(mockNotifications);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   React.useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -70,6 +76,13 @@ export function Header() {
       setIsListening(prev => !prev);
   }
 
+  const markAsRead = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  };
+  
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({...n, read: true})));
+  }
 
   return (
     <>
@@ -143,14 +156,43 @@ export function Header() {
             </DropdownMenuContent>
         </DropdownMenu>
 
-       <Button variant="outline" size="icon" className={cn("shrink-0 relative", isListening && "bg-primary/20")}>
-        <Bell className="h-5 w-5" />
-        <span className="absolute top-0 right-0 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-        </span>
-        <span className="sr-only">Toggle notifications</span>
-      </Button>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="shrink-0 relative">
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                        <span className="absolute top-0 right-0 flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                    )}
+                    <span className="sr-only">Toggle notifications</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[350px]">
+                <DropdownMenuLabel className="flex items-center justify-between">
+                    Notifications
+                    <Button variant="ghost" size="sm" onClick={markAllAsRead} disabled={unreadCount === 0}>
+                        <Check className="mr-2 h-4 w-4"/>
+                        Mark all as read
+                    </Button>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-80 overflow-y-auto">
+                    {notifications.length === 0 && <p className="text-sm text-muted-foreground p-4 text-center">No new notifications.</p>}
+                    {notifications.map(n => (
+                         <DropdownMenuItem key={n.id} className={cn("gap-3 items-start", !n.read && "bg-primary/5")} onSelect={(e) => {e.preventDefault(); markAsRead(n.id)}}>
+                            <div className="mt-1">{n.icon}</div>
+                            <div className="flex-1">
+                                <p className="font-semibold text-sm">{n.title}</p>
+                                <p className="text-xs text-muted-foreground">{n.description}</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">{n.timestamp}</p>
+                            </div>
+                        </DropdownMenuItem>
+                    ))}
+                </div>
+            </DropdownMenuContent>
+        </DropdownMenu>
 
        <Button variant="outline" size="icon" className={cn("shrink-0", isListening && "bg-destructive/20 ring-2 ring-destructive")} onClick={handleMicClick}>
         <Mic className="h-5 w-5" />

@@ -1,6 +1,7 @@
 
-import type { Farmer, Field, Drone, Treatment, SensorData, MandiPrice, Pesticide, MandiPriceCardData } from './types';
-import { subDays, format } from 'date-fns';
+import type { Farmer, Field, Drone, Treatment, SensorData, MandiPrice, Pesticide, MandiPriceCardData, Notification } from './types';
+import { subDays, format, subMinutes, subHours } from 'date-fns';
+import { BarChart3, Bug, Scan, ShoppingCart, TestTube2 } from 'lucide-react';
 
 export const mockFarmers: Farmer[] = [
   {
@@ -334,6 +335,53 @@ export const mockPesticides: Pesticide[] = [
     }
 ];
 
+export const mockNotifications: Notification[] = [
+    {
+        id: 'notif-1',
+        type: 'mandiPrice',
+        title: 'New Mandi Price for Wheat',
+        description: 'Wheat prices have increased by 3% in the Delhi Mandi. Current price: ₹2150/quintal.',
+        timestamp: `${format(subMinutes(new Date(), 5), 'h:mm a')}`,
+        icon: <BarChart3 className="w-5 h-5 text-green-500" />,
+        read: false,
+    },
+    {
+        id: 'notif-2',
+        type: 'pesticide',
+        title: 'Pesticide Stock Low',
+        description: 'Your stock of Propiconazole 25% EC is running low. Consider reordering.',
+        timestamp: `${format(subMinutes(new Date(), 22), 'h:mm a')}`,
+        icon: <ShoppingCart className="w-5 h-5 text-yellow-500" />,
+        read: false,
+    },
+    {
+        id: 'notif-3',
+        type: 'field',
+        title: 'Scan Complete: West Wheat Patch',
+        description: 'AI analysis detected early signs of Wheat Rust. A treatment plan is recommended.',
+        timestamp: `${format(subHours(new Date(), 1), 'h:mm a')}`,
+        icon: <Scan className="w-5 h-5 text-blue-500" />,
+        read: true,
+    },
+    {
+        id: 'notif-4',
+        type: 'field',
+        title: 'Treatment Executed',
+        description: 'Fungicide application for Rice Blast on Central Rice Paddy has been successfully completed.',
+        timestamp: `${format(subHours(new Date(), 3), 'h:mm a')}`,
+        icon: <TestTube2 className="w-5 h-5 text-purple-500" />,
+        read: true,
+    },
+    {
+        id: 'notif-5',
+        type: 'general',
+        title: 'Pest Alert: Locust Swarm',
+        description: 'A locust swarm has been reported 50km from your area. Monitor fields closely.',
+        timestamp: `${format(subHours(new Date(), 8), 'PP')}`,
+        icon: <Bug className="w-5 h-5 text-red-500" />,
+        read: true,
+    }
+];
     
 
     
