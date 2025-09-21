@@ -69,3 +69,4 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
         </Card>
     );
 }
+
