@@ -204,7 +204,7 @@ export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
     createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'),
   ],
   Fruits: [
-    createMockPrice(150, 0.3, 'Banana'),
+    { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
     createMockPrice(12000, 0.5, 'Dragon Fruit'),
     createMockPrice(25000, 0.6, 'Avocado'),
   ],
@@ -331,5 +331,7 @@ export const mockPesticides: Pesticide[] = [
         safetyNotes: ['Follow the recommended dosage strictly to avoid adverse effects on crop growth.', 'Store in a cool, dry place.'],
     }
 ];
+
+    
 
     
