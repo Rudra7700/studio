@@ -8,6 +8,7 @@ import { Camera, CameraOff, Loader2, Play, AlertTriangle, Video, Power } from 'l
 import { useToast } from '@/hooks/use-toast';
 import { DroneTelemetry, type TelemetryData } from './drone-telemetry';
 import { MissionProgress } from './mission-progress';
+import { cn } from '@/lib/utils';
 
 type MissionStatus = 'idle' | 'starting' | 'in-progress' | 'complete';
 
@@ -128,7 +129,10 @@ export function DroneView() {
                     alt="Drone flying over a field"
                     fill
                     objectFit="cover"
-                    className="opacity-70"
+                    className={cn(
+                        "opacity-70 transition-transform duration-[30s] ease-in-out",
+                        missionStatus === 'in-progress' && "animate-pan-and-zoom"
+                    )}
                     data-ai-hint="drone aerial view farm"
                  />
 
