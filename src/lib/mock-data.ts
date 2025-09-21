@@ -205,7 +205,7 @@ export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
   ],
   Fruits: [
     { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
-    createMockPrice(12000, 0.5, 'Dragon Fruit'),
+    { ...createMockPrice(12000, 0.5, 'Dragon Fruit'), imageUrl: 'https://images.unsplash.com/photo-1623030235422-07f96401f5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmFnb24lMjBGcnVpdHxlbnwwfHx8fDE3NTg0NjM5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'dragon-fruit'},
     createMockPrice(25000, 0.6, 'Avocado'),
   ],
   Spices: [
