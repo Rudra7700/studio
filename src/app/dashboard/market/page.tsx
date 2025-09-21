@@ -26,31 +26,34 @@ export default function MarketPage() {
     useEffect(() => {
         if (loading) return;
 
-        Object.keys(prices).forEach(category => {
-            prices[category].forEach((priceData, index) => {
-                // Only generate images for picsum placeholders
-                if (priceData.imageUrl.includes('picsum.photos')) {
-                    getCropImage({ cropName: priceData.name })
-                        .then(result => {
-                            if (result.success && result.data) {
-                                setPrices(prevPrices => {
-                                    const newPrices = { ...prevPrices };
-                                    if (newPrices[category]) {
-                                        const items = [...newPrices[category]];
-                                        items[index] = { ...items[index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${priceData.name}`};
-                                        newPrices[category] = items;
-                                        return newPrices;
-                                    }
-                                    return prevPrices;
-                                });
-                            }
-                        })
-                        .catch(err => console.error(`Failed to generate image for ${priceData.name}`, err));
+        const updateOrGenerateImages = async () => {
+            const allCrops = Object.entries(prices).flatMap(([category, crops]) => 
+                crops.map((crop, index) => ({ ...crop, category, index }))
+            );
+
+            const cropsToGenerate = allCrops.filter(crop => crop.imageUrl.includes('picsum.photos'));
+
+            for (const crop of cropsToGenerate) {
+                try {
+                    const result = await getCropImage({ cropName: crop.name });
+                    if (result.success && result.data) {
+                        setPrices(prevPrices => {
+                            const newPrices = { ...prevPrices };
+                            const items = [...newPrices[crop.category]];
+                            items[crop.index] = { ...items[crop.index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${crop.name}` };
+                            newPrices[crop.category] = items;
+                            return newPrices;
+                        });
+                    }
+                } catch (err) {
+                    console.error(`Failed to generate image for ${crop.name}`, err);
                 }
-            });
-        });
+            }
+        };
+
+        updateOrGenerateImages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading, prices]);
+    }, [loading]);
 
 
     return (
