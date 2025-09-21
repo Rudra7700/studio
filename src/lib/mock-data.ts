@@ -140,75 +140,78 @@ export const mockMandiPrices: MandiPrice = {
     priceAnalysis: "The market for wheat is currently stable with a slight upward trend over the past week. Prices in nearby mandis are competitive. Good demand is expected to continue.",
 };
 
-const createMockPrice = (base: number, volatility: number): MandiPriceCardData => {
+const createMockPrice = (base: number, volatility: number, cropName: string): MandiPriceCardData => {
   const price = base + Math.random() * base * 0.1 - base * 0.05;
   const change = (Math.random() - 0.4) * base * volatility;
   const percentChange = (change / price) * 100;
+  const imageHint = cropName.toLowerCase().replace(/ \([^)]*\)/, '').replace(' ', '-');
   return {
-    name: '', // Will be overridden
+    name: cropName,
     mandi: ['Delhi', 'Punjab', 'Gujarat', 'UP', 'MP', 'Haryana'][Math.floor(Math.random() * 6)] + ' Mandi',
     price: Math.round(price / 10) * 10,
     change: Math.round(change),
     percentChange: parseFloat(percentChange.toFixed(1)),
+    imageUrl: `https://picsum.photos/seed/${imageHint}/400/300`,
+    imageHint: imageHint,
   };
 };
 
 export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
   Cereals: [
-    { ...createMockPrice(2150, 0.1), name: 'Wheat' },
-    { ...createMockPrice(1980, 0.08), name: 'Rice' },
-    { ...createMockPrice(2050, 0.12), name: 'Maize' },
-    { ...createMockPrice(2800, 0.15), name: 'Jowar' },
-    { ...createMockPrice(2600, 0.18), name: 'Bajra' },
-    { ...createMockPrice(3200, 0.2), name: 'Ragi' },
-    { ...createMockPrice(1800, 0.1), name: 'Barley' },
+    createMockPrice(2150, 0.1, 'Wheat'),
+    createMockPrice(1980, 0.08, 'Rice'),
+    createMockPrice(2050, 0.12, 'Maize'),
+    createMockPrice(2800, 0.15, 'Jowar'),
+    createMockPrice(2600, 0.18, 'Bajra'),
+    createMockPrice(3200, 0.2, 'Ragi'),
+    createMockPrice(1800, 0.1, 'Barley'),
   ],
   Pulses: [
-    { ...createMockPrice(4800, 0.2), name: 'Gram' },
-    { ...createMockPrice(9500, 0.25), name: 'Tur (Pigeon Pea)' },
-    { ...createMockPrice(8500, 0.3), name: 'Moong (Mung Bean)' },
-    { ...createMockPrice(8200, 0.28), name: 'Urad (Black Gram)' },
-    { ...createMockPrice(6500, 0.22), name: 'Lentil' },
+    createMockPrice(4800, 0.2, 'Gram'),
+    createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'),
+    createMockPrice(8500, 0.3, 'Moong (Mung Bean)'),
+    createMockPrice(8200, 0.28, 'Urad (Black Gram)'),
+    createMockPrice(6500, 0.22, 'Lentil'),
   ],
   Oilseeds: [
-    { ...createMockPrice(5500, 0.18), name: 'Groundnut' },
-    { ...createMockPrice(4500, 0.2), name: 'Soybean' },
-    { ...createMockPrice(5200, 0.25), name: 'Rapeseed-Mustard' },
-    { ...createMockPrice(7500, 0.3), name: 'Sesamum (Sesame)' },
-    { ...createMockPrice(5800, 0.22), name: 'Sunflower' },
-    { ...createMockPrice(6200, 0.25), name: 'Safflower' },
-    { ...createMockPrice(6000, 0.2), name: 'Nigerseed' },
-    { ...createMockPrice(6400, 0.28), name: 'Castor' },
+    createMockPrice(5500, 0.18, 'Groundnut'),
+    createMockPrice(4500, 0.2, 'Soybean'),
+    createMockPrice(5200, 0.25, 'Rapeseed-Mustard'),
+    createMockPrice(7500, 0.3, 'Sesamum (Sesame)'),
+    createMockPrice(5800, 0.22, 'Sunflower'),
+    createMockPrice(6200, 0.25, 'Safflower'),
+    createMockPrice(6000, 0.2, 'Nigerseed'),
+    createMockPrice(6400, 0.28, 'Castor'),
   ],
   'Cash Crops': [
-    { ...createMockPrice(5650, 0.2), name: 'Cotton' },
-    { ...createMockPrice(310, 0.1), name: 'Sugarcane' },
-    { ...createMockPrice(7500, 0.15), name: 'Coffee' },
-    { ...createMockPrice(140, 0.12), name: 'Tea' },
-    { ...createMockPrice(2500, 0.18), name: 'Jute' },
-    { ...createMockPrice(4500, 0.22), name: 'Tobacco' },
+    createMockPrice(5650, 0.2, 'Cotton'),
+    createMockPrice(310, 0.1, 'Sugarcane'),
+    createMockPrice(7500, 0.15, 'Coffee'),
+    createMockPrice(140, 0.12, 'Tea'),
+    createMockPrice(2500, 0.18, 'Jute'),
+    createMockPrice(4500, 0.22, 'Tobacco'),
   ],
   Vegetables: [
-    { ...createMockPrice(2500, 0.4), name: 'Tomato' },
-    { ...createMockPrice(2200, 0.45), name: 'Brinjal (Eggplant)' },
-    { ...createMockPrice(4000, 0.5), name: 'Chili' },
-    { ...createMockPrice(2000, 0.35), name: 'Potato' },
-    { ...createMockPrice(1800, 0.4), name: 'Onion' },
-    { ...createMockPrice(1500, 0.5), name: 'Cabbage' },
-    { ...createMockPrice(2800, 0.55), name: 'Cauliflower' },
-    { ...createMockPrice(3500, 0.6), name: 'Bitter Gourd' },
-    { ...createMockPrice(4500, 0.6), name: 'Okra (Lady\'s Finger)' },
+    createMockPrice(2500, 0.4, 'Tomato'),
+    createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'),
+    createMockPrice(4000, 0.5, 'Chili'),
+    createMockPrice(2000, 0.35, 'Potato'),
+    createMockPrice(1800, 0.4, 'Onion'),
+    createMockPrice(1500, 0.5, 'Cabbage'),
+    createMockPrice(2800, 0.55, 'Cauliflower'),
+    createMockPrice(3500, 0.6, 'Bitter Gourd'),
+    createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'),
   ],
   Fruits: [
-    { ...createMockPrice(150, 0.3), name: 'Banana' },
-    { ...createMockPrice(12000, 0.5), name: 'Dragon Fruit' },
-    { ...createMockPrice(25000, 0.6), name: 'Avocado' },
+    createMockPrice(150, 0.3, 'Banana'),
+    createMockPrice(12000, 0.5, 'Dragon Fruit'),
+    createMockPrice(25000, 0.6, 'Avocado'),
   ],
   Spices: [
-    { ...createMockPrice(8000, 0.25), name: 'Turmeric' },
-    { ...createMockPrice(25000, 0.3), name: 'Cumin' },
-    { ...createMockPrice(7000, 0.28), name: 'Coriander' },
-    { ...createMockPrice(200000, 0.4), name: 'Saffron' },
+    createMockPrice(8000, 0.25, 'Turmeric'),
+    createMockPrice(25000, 0.3, 'Cumin'),
+    createMockPrice(7000, 0.28, 'Coriander'),
+    createMockPrice(200000, 0.4, 'Saffron'),
   ]
 };
 

@@ -68,6 +68,8 @@ export type MandiPriceCardData = {
   price: number;
   change: number;
   percentChange: number;
+  imageUrl: string;
+  imageHint: string;
 };
 
 

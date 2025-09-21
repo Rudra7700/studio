@@ -1,10 +1,12 @@
+
 'use client';
 
 import type { MandiPriceCardData } from "@/lib/types";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent, CardHeader } from "./ui/card";
 import { MapPin, ArrowUp, ArrowDown, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 interface MandiPriceCardProps {
     data: MandiPriceCardData;
@@ -14,8 +16,20 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
     const isPositive = data.change >= 0;
 
     return (
-        <Card className="bg-primary/5 hover:bg-primary/10 transition-colors group">
-            <CardContent className="p-4 space-y-3">
+        <Card className="bg-primary/5 hover:bg-primary/10 transition-colors group flex flex-col">
+            <CardHeader className="p-0">
+                 <div className="relative aspect-video w-full">
+                    <Image 
+                        src={data.imageUrl} 
+                        alt={data.name} 
+                        fill 
+                        objectFit="cover" 
+                        className="rounded-t-lg"
+                        data-ai-hint={data.imageHint}
+                    />
+                </div>
+            </CardHeader>
+            <CardContent className="p-4 space-y-3 flex-grow flex flex-col">
                 <div className="flex justify-between items-start">
                     <h3 className="text-lg font-bold text-foreground">{data.name}</h3>
                     <div className="text-xs inline-flex items-center gap-1.5 bg-card px-2 py-1 rounded-full text-muted-foreground">
@@ -24,7 +38,7 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
                     </div>
                 </div>
 
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-end flex-grow">
                     <div>
                         <p className="text-3xl font-bold text-primary">₹{data.price.toLocaleString('en-IN')}</p>
                         <p className="text-sm text-muted-foreground">per quintal</p>
@@ -37,7 +51,7 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
                         <p className="text-xs font-medium">({isPositive ? '+' : ''}{data.percentChange}%)</p>
                     </div>
                 </div>
-                 <Button variant="secondary" className="w-full bg-card/80 group-hover:bg-card transition-colors">
+                 <Button variant="secondary" className="w-full bg-card/80 group-hover:bg-card transition-colors mt-3">
                     <ShoppingCart className="w-4 h-4 mr-2"/>
                     List for Sale
                 </Button>
