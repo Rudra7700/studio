@@ -1,3 +1,4 @@
+
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -16,7 +17,7 @@ const chartData = [
   { month: 'Mar', savings: 47000 },
   { month: 'Apr', savings: 52000 },
   { month: 'May', savings: 65000 },
-  { month 'Jun', savings: 78000 },
+  { month: 'Jun', savings: 78000 },
 ];
 
 const chartConfig = {
