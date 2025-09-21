@@ -9,7 +9,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {searchWeb} from '@genkit-ai/googleai';
 
 const ShowMandiPriceInputSchema = z.object({
   crop: z.string().describe('The name of the crop.'),
@@ -41,7 +40,7 @@ const prompt = ai.definePrompt({
   name: 'showMandiPricePrompt',
   input: {schema: ShowMandiPriceInputSchema},
   output: {schema: ShowMandiPriceOutputSchema},
-  tools: [searchWeb],
+  tools: ['googleai/searchWeb'],
   prompt: `You are a commodity market expert. A farmer needs to know the real-time mandi price for their crop.
 
   Crop: {{{crop}}}
