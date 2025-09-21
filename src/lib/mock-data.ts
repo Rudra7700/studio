@@ -196,7 +196,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
     Vegetables: [
       { ...createMockPrice(2500, 0.4, 'Tomato'), imageUrl: 'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUb21hdG98ZW58MHx8fHwxNzU4NDY0MDM3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'tomato' },
       { ...createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'), imageUrl: 'https://images.unsplash.com/photo-1605197378540-10ebaf6999e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCcmluamFsJTIwJTI4RWdncGxhbnQlMjl8ZW58MHx8fHwxNzU4NDY0MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'brinjal' },
-      createMockPrice(4000, 0.5, 'Chili'),
+      { ...createMockPrice(4000, 0.5, 'Chili'), imageUrl: 'https://images.unsplash.com/photo-1568661272228-22de33148f43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlsaSUyMHBlcHBlcnN8ZW58MHx8fHwxNzU4NTU0MzUxfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'chili peppers' },
       { ...createMockPrice(2000, 0.35, 'Potato'), imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3RhdG98ZW58MHx8fHwxNzU4NTU0MTgxfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'potatoes' },
       createMockPrice(1800, 0.4, 'Onion'),
       createMockPrice(1500, 0.5, 'Cabbage'),
@@ -337,6 +337,7 @@ export const mockPesticides: Pesticide[] = [
     
 
     
+
 
 
 
