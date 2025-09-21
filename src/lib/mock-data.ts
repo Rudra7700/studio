@@ -55,7 +55,7 @@ export const mockFields: Field[] = [
     gpsCoordinates: { lat: 28.5900, lng: 77.2150 },
     boundary: [],
     healthStatus: 'Severe',
-    imageUrl: 'https://picsum.photos/seed/field3/800/600',
+    imageUrl: 'https://images.unsplash.com/photo-1665030996763-ac0d56a956f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8cmljZSUyMHBhZGR5fGVufDB8fHx8MTc1ODQ2NjkxNHww&ixlib=rb-4.1.0&q=80&w=1080',
     imageHint: 'rice paddy',
   },
 ];
