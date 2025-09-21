@@ -36,7 +36,7 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
     const form = useForm<z.infer<typeof saleSchema>>({
         resolver: zodResolver(saleSchema),
         defaultValues: {
-            quantity: undefined,
+            quantity: '' as any, // Initialize with empty string to avoid uncontrolled component error
             price: crop.price,
             buyerName: '',
             buyerPhone: '',
@@ -96,7 +96,8 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
                                                 type="number" 
                                                 placeholder="e.g., 50" 
                                                 {...field}
-                                                onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+                                                value={field.value === null ? '' : field.value}
+                                                onChange={e => field.onChange(e.target.value === '' ? '' : parseFloat(e.target.value))}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -113,7 +114,8 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
                                              <Input 
                                                 type="number" 
                                                 {...field}
-                                                onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
+                                                value={field.value === null ? '' : field.value}
+                                                onChange={e => field.onChange(e.target.value === '' ? '' : parseFloat(e.target.value))}
                                             />
                                         </FormControl>
                                         <FormMessage />
