@@ -165,7 +165,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       createMockPrice(2050, 0.12, 'Maize'),
       createMockPrice(2800, 0.15, 'Jowar'),
       createMockPrice(2600, 0.18, 'Bajra'),
-      createMockPrice(3200, 0.2, 'Ragi'),
+      { ...createMockPrice(3200, 0.2, 'Ragi'), imageUrl: 'https://images.unsplash.com/photo-1620202283836-8539958742d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyYWdpJTIwZmbsZWV0fGVufDB8fHx8MTc1ODY0Njg5M3ww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'finger millet'},
       createMockPrice(1800, 0.1, 'Barley'),
     ],
     Pulses: [
@@ -173,7 +173,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1690023852149-0c69ac74734f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHwlMjhQZWElMjl8ZW58MHx8fHwxNzU4NDY1NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
       { ...createMockPrice(8500, 0.3, 'Moong (Mung Bean)'), imageUrl: 'https://images.unsplash.com/photo-1694679671688-3d9bb5e77f37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxNb29uZyUyMHxlbnwwfHx8fDE3NTg0NjU4NTF8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'mung bean' },
       { ...createMockPrice(8200, 0.28, 'Urad (Black Gram)'), imageUrl: 'https://images.unsplash.com/photo-1563117063-ad38230557bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCbGFjayUyMEdyYW18ZW58MHx8fHwxNzU4NDY1NzY2fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'black gram' },
-      { ...createMockPrice(6500, 0.22, 'Lentil'), imageUrl: 'https://images.unsplash.com/photo-1582379963239-95292a454cfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZW50aWx8ZW58MHx8fHwxNzU4NTU1MzYwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'lentils'},
+      { ...createMockPrice(6500, 0.22, 'Lentil'), imageUrl: 'https://images.unsplash.com/photo-1582379963239-95292a454cfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZW50aWx8ZW58MHx8fHwxNzU4NTU1MzYwfDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'lentils'},
     ],
     Oilseeds: [
       createMockPrice(5500, 0.18, 'Groundnut'),
@@ -205,8 +205,8 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'),
     ],
     Fruits: [
-      { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
-      { ...createMockPrice(12000, 0.5, 'Dragon Fruit'), imageUrl: 'https://images.unsplash.com/photo-1623030235422-07f96401f5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmFnb24lMjBGcnVpdHxlbnwwfHx8fDE3NTg0NjM5NTF8MA&ixlib-rb-4.1.0&q=80&w=1080', imageHint: 'dragon-fruit'},
+      { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
+      { ...createMockPrice(12000, 0.5, 'Dragon Fruit'), imageUrl: 'https://images.unsplash.com/photo-1623030235422-07f96401f5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmFnb24lMjBGcnVpdHxlbnwwfHx8fDE3NTg0NjM5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'dragon-fruit'},
       { ...createMockPrice(25000, 0.6, 'Avocado'), imageUrl: 'https://cdn.britannica.com/72/170772-050-D52BF8C2/Avocado-fruits.jpg', imageHint: 'avocado' },
     ],
     Spices: [
