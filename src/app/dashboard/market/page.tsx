@@ -4,8 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { generateMockLiveMandiPrices } from '@/lib/mock-data';
 import type { MandiPriceCardData } from '@/lib/types';
 import { MandiPriceCard } from '@/components/mandi-price-card';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Sparkles } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getCropImage } from '@/app/actions';
 
 export default function MarketPage() {
     const [prices, setPrices] = useState<Record<string, MandiPriceCardData[]>>({});
@@ -22,12 +23,42 @@ export default function MarketPage() {
         setLoading(false);
     }, []);
 
+    useEffect(() => {
+        if (loading) return;
+
+        Object.keys(prices).forEach(category => {
+            prices[category].forEach((priceData, index) => {
+                // Only generate images for picsum placeholders
+                if (priceData.imageUrl.includes('picsum.photos')) {
+                    getCropImage({ cropName: priceData.name })
+                        .then(result => {
+                            if (result.success && result.data) {
+                                setPrices(prevPrices => {
+                                    const newPrices = { ...prevPrices };
+                                    const items = [...newPrices[category]];
+                                    items[index] = { ...items[index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${priceData.name}`};
+                                    newPrices[category] = items;
+                                    return newPrices;
+                                });
+                            }
+                        })
+                        .catch(err => console.error(`Failed to generate image for ${priceData.name}`, err));
+                }
+            });
+        });
+    }, [loading]);
+
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <TrendingUp className="h-7 w-7 text-green-600"/>
                     <h1 className="text-2xl font-bold font-headline">Live Mandi Prices</h1>
+                </div>
+                 <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-card border">
+                    <Sparkles className="h-4 w-4 text-accent" />
+                    <span>AI-generated images</span>
                 </div>
             </div>
             
@@ -36,8 +67,8 @@ export default function MarketPage() {
                     <Skeleton className="h-10 w-1/2 mb-4" />
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {[...Array(8)].map((_, i) => (
-                             <div key={i} className="space-y-2">
-                                <Skeleton className="h-40 w-full" />
+                             <div key={i} className="space-y-2 rounded-lg border bg-card p-4">
+                                <Skeleton className="h-32 w-full" />
                                 <Skeleton className="h-6 w-3/4" />
                                 <Skeleton className="h-8 w-1/2" />
                             </div>

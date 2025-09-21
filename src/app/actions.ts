@@ -10,6 +10,7 @@ import {
   getTreatmentRecommendations,
   GetTreatmentRecommendationsInput,
 } from '@/ai/flows/get-treatment-recommendations';
+import { generateCropImage, GenerateCropImageInput } from '@/ai/flows/generate-crop-image';
 
 
 export async function generateCropReport(fieldId: string) {
@@ -102,4 +103,14 @@ export async function sendToAssistant(prompt: string) {
     console.error('Error calling AI assistant:', error);
     return { success: false, error: 'Failed to get assistant response.' };
   }
+}
+
+export async function getCropImage(input: GenerateCropImageInput) {
+    try {
+        const result = await generateCropImage(input);
+        return { success: true, data: result };
+    } catch (error) {
+        console.error('Error generating crop image:', error);
+        return { success: false, error: 'Failed to generate crop image.' };
+    }
 }

@@ -3,10 +3,11 @@
 
 import type { MandiPriceCardData } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { MapPin, ArrowUp, ArrowDown, ShoppingCart } from "lucide-react";
+import { MapPin, ArrowUp, ArrowDown, ShoppingCart, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Image from "next/image";
+import { Skeleton } from "./ui/skeleton";
 
 interface MandiPriceCardProps {
     data: MandiPriceCardData;
@@ -14,19 +15,28 @@ interface MandiPriceCardProps {
 
 export function MandiPriceCard({ data }: MandiPriceCardProps) {
     const isPositive = data.change >= 0;
+    const isPlaceholder = data.imageUrl.includes('picsum.photos');
 
     return (
         <Card className="bg-primary/5 hover:bg-primary/10 transition-colors group flex flex-col">
             <CardHeader className="p-0">
                  <div className="relative aspect-video w-full">
-                    <Image 
-                        src={data.imageUrl} 
-                        alt={data.name} 
-                        fill 
-                        objectFit="cover" 
-                        className="rounded-t-lg"
-                        data-ai-hint={data.imageHint}
-                    />
+                    {isPlaceholder ? (
+                        <div className="w-full h-full bg-muted flex flex-col items-center justify-center gap-2 text-muted-foreground rounded-t-lg">
+                           <ImageIcon className="w-8 h-8" />
+                           <p className="text-xs">Generating image...</p>
+                        </div>
+                    ) : (
+                       <Image 
+                            src={data.imageUrl} 
+                            alt={data.name} 
+                            fill 
+                            objectFit="cover" 
+                            className="rounded-t-lg"
+                            data-ai-hint={data.imageHint}
+                            unoptimized={data.imageUrl.startsWith('data:image')}
+                        />
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="p-4 space-y-3 flex-grow flex flex-col">
