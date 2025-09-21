@@ -160,7 +160,7 @@ export default function PesticidesPage() {
                     <DialogContent className="sm:max-w-[600px]">
                         <DialogHeader>
                             <DialogTitle className="text-2xl">{selectedPesticide.name}</DialogTitle>
-                            <DialogDescription>
+                            <DialogDescription as="div">
                                  <Badge variant="outline" className={typeColor[selectedPesticide.type]}>{selectedPesticide.type}</Badge>
                             </DialogDescription>
                         </DialogHeader>
