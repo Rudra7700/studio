@@ -170,7 +170,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
     ],
     Pulses: [
       createMockPrice(4800, 0.2, 'Gram'),
-      { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1595453594346-a6254a6962f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdlb24lMjBwZWF8ZW58MHx8fHwxNzU4NTUxMzI3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
+      { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1690023852149-0c69ac74734f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHwlMjhQZWElMjl8ZW58MHx8fHwxNzU4NDY1NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
       { ...createMockPrice(8500, 0.3, 'Moong (Mung Bean)'), imageUrl: 'https://images.unsplash.com/photo-1600791439423-3b7c08502d60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtdW5nJTIwYmVhbnxlbnwwfHx8fDE3NTg1NTYwNTB8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'mung bean' },
       { ...createMockPrice(8200, 0.28, 'Urad (Black Gram)'), imageUrl: 'https://images.unsplash.com/photo-1603623696548-32f7bdd02844?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxibGFjayUyMGdyYW0lMjBiZWFuc3xlbnwwfHx8fDE3NTg1NTU5OTB8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'black gram' },
       { ...createMockPrice(6500, 0.22, 'Lentil'), imageUrl: 'https://images.unsplash.com/photo-1582379963239-95292a454cfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZW50aWx8ZW58MHx8fHwxNzU4NTU1MzYwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'lentils'},
@@ -346,3 +346,6 @@ export const mockPesticides: Pesticide[] = [
 
 
 
+
+
+    
