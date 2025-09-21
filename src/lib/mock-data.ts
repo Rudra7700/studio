@@ -7,14 +7,14 @@ export const mockFarmers: Farmer[] = [
     id: 'farmer-1',
     name: 'Rajesh Kumar',
     email: 'rajesh.k@example.com',
-    avatarUrl: 'https://picsum.photos/seed/farmer1/100/100',
+    avatarUrl: 'https://images.unsplash.com/photo-1620921237502-505d02d1a337?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBmYXJtZXJ8ZW58MHx8fHwxNzU4NTU4MzM3fDA&ixlib=rb-4.1.0&q=80&w=1080',
     fields: ['field-1', 'field-2'],
   },
   {
     id: 'farmer-2',
     name: 'Anjali Sharma',
     email: 'anjali.s@example.com',
-    avatarUrl: 'https://picsum.photos/seed/farmer2/100/100',
+    avatarUrl: 'https://images.unsplash.com/photo-1617852629427-043357519965?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmYXJtZXIlMjB3b21hbnxlbnwwfHx8fDE3NTg1NTgzODh8MA&ixlib=rb-4.1.0&q=80&w=1080',
     fields: ['field-3'],
   },
 ];
