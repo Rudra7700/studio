@@ -1,3 +1,4 @@
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -8,7 +9,8 @@ import {
   Settings,
   Users,
   BarChart3,
-  ShoppingBasket
+  ShoppingBasket,
+  Tractor,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -16,6 +18,7 @@ import { usePathname } from 'next/navigation';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/fields', label: 'Fields', icon: Map },
+  { href: '/dashboard/drones', label: 'Drone View', icon: Tractor },
   { href: '/dashboard/treatments', label: 'Treatments', icon: TestTube2 },
   { href: '/dashboard/market', label: 'Mandi Prices', icon: BarChart3 },
   { href: '/dashboard/pesticides', label: 'Buy Pesticides', icon: ShoppingBasket },
@@ -39,6 +42,7 @@ export function DashboardNav({ isMobile = false, isAdmin = false }: { isMobile?:
           href={href}
           className={cn(
             'flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground transition-all hover:text-primary hover:bg-sidebar-accent',
+            pathname.startsWith(href) && href !== '/dashboard' ? 'bg-sidebar-accent text-primary font-semibold' : 
             pathname === href ? 'bg-sidebar-accent text-primary font-semibold' : 'text-muted-foreground',
              isMobile ? 'text-base' : 'text-sm'
           )}
