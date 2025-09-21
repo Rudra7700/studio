@@ -157,64 +157,66 @@ const createMockPrice = (base: number, volatility: number, cropName: string): Ma
   };
 };
 
-export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
-  Cereals: [
-    { ...createMockPrice(2150, 0.1, 'Wheat'), imageUrl: 'https://images.unsplash.com/photo-1437252611977-07f74518abd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3aGVhdHxlbnwwfHx8fDE3NTg0NjMyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'wheat' },
-    { ...createMockPrice(1980, 0.08, 'Rice'), imageUrl: 'https://images.unsplash.com/photo-1635562985686-4f8bb9c0d3bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaWNlfGVufDB8fHx8MTc1ODQ2MzgwMnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'rice' },
-    createMockPrice(2050, 0.12, 'Maize'),
-    createMockPrice(2800, 0.15, 'Jowar'),
-    createMockPrice(2600, 0.18, 'Bajra'),
-    createMockPrice(3200, 0.2, 'Ragi'),
-    createMockPrice(1800, 0.1, 'Barley'),
-  ],
-  Pulses: [
-    createMockPrice(4800, 0.2, 'Gram'),
-    createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'),
-    createMockPrice(8500, 0.3, 'Moong (Mung Bean)'),
-    createMockPrice(8200, 0.28, 'Urad (Black Gram)'),
-    createMockPrice(6500, 0.22, 'Lentil'),
-  ],
-  Oilseeds: [
-    createMockPrice(5500, 0.18, 'Groundnut'),
-    createMockPrice(4500, 0.2, 'Soybean'),
-    createMockPrice(5200, 0.25, 'Rapeseed-Mustard'),
-    createMockPrice(7500, 0.3, 'Sesamum (Sesame)'),
-    createMockPrice(5800, 0.22, 'Sunflower'),
-    createMockPrice(6200, 0.25, 'Safflower'),
-    createMockPrice(6000, 0.2, 'Nigerseed'),
-    createMockPrice(6400, 0.28, 'Castor'),
-  ],
-  'Cash Crops': [
-    createMockPrice(5650, 0.2, 'Cotton'),
-    createMockPrice(310, 0.1, 'Sugarcane'),
-    createMockPrice(7500, 0.15, 'Coffee'),
-    createMockPrice(140, 0.12, 'Tea'),
-    createMockPrice(2500, 0.18, 'Jute'),
-    createMockPrice(4500, 0.22, 'Tobacco'),
-  ],
-  Vegetables: [
-    { ...createMockPrice(2500, 0.4, 'Tomato'), imageUrl: 'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUb21hdG98ZW58MHx8fHwxNzU4NDY0MDM3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'tomato' },
-    { ...createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'), imageUrl: 'https://images.unsplash.com/photo-1605197378540-10ebaf6999e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCcmluamFsJTIwJTI4RWdncGxhbnQlMjl8ZW58MHx8fHwxNzU4NDY0MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'brinjal' },
-    createMockPrice(4000, 0.5, 'Chili'),
-    createMockPrice(2000, 0.35, 'Potato'),
-    createMockPrice(1800, 0.4, 'Onion'),
-    createMockPrice(1500, 0.5, 'Cabbage'),
-    createMockPrice(2800, 0.55, 'Cauliflower'),
-    createMockPrice(3500, 0.6, 'Bitter Gourd'),
-    createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'),
-  ],
-  Fruits: [
-    { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
-    { ...createMockPrice(12000, 0.5, 'Dragon Fruit'), imageUrl: 'https://images.unsplash.com/photo-1623030235422-07f96401f5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmFnb24lMjBGcnVpdHxlbnwwfHx8fDE3NTg0NjM5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'dragon-fruit'},
-    createMockPrice(25000, 0.6, 'Avocado'),
-  ],
-  Spices: [
-    createMockPrice(8000, 0.25, 'Turmeric'),
-    createMockPrice(25000, 0.3, 'Cumin'),
-    createMockPrice(7000, 0.28, 'Coriander'),
-    createMockPrice(200000, 0.4, 'Saffron'),
-  ]
-};
+export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData[]> {
+  return {
+    Cereals: [
+      { ...createMockPrice(2150, 0.1, 'Wheat'), imageUrl: 'https://images.unsplash.com/photo-1437252611977-07f74518abd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3aGVhdHxlbnwwfHx8fDE3NTg0NjMyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'wheat' },
+      { ...createMockPrice(1980, 0.08, 'Rice'), imageUrl: 'https://images.unsplash.com/photo-1635562985686-4f8bb9c0d3bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaWNlfGVufDB8fHx8MTc1ODQ2MzgwMnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'rice' },
+      createMockPrice(2050, 0.12, 'Maize'),
+      createMockPrice(2800, 0.15, 'Jowar'),
+      createMockPrice(2600, 0.18, 'Bajra'),
+      createMockPrice(3200, 0.2, 'Ragi'),
+      createMockPrice(1800, 0.1, 'Barley'),
+    ],
+    Pulses: [
+      createMockPrice(4800, 0.2, 'Gram'),
+      createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'),
+      createMockPrice(8500, 0.3, 'Moong (Mung Bean)'),
+      createMockPrice(8200, 0.28, 'Urad (Black Gram)'),
+      createMockPrice(6500, 0.22, 'Lentil'),
+    ],
+    Oilseeds: [
+      createMockPrice(5500, 0.18, 'Groundnut'),
+      createMockPrice(4500, 0.2, 'Soybean'),
+      createMockPrice(5200, 0.25, 'Rapeseed-Mustard'),
+      createMockPrice(7500, 0.3, 'Sesamum (Sesame)'),
+      createMockPrice(5800, 0.22, 'Sunflower'),
+      createMockPrice(6200, 0.25, 'Safflower'),
+      createMockPrice(6000, 0.2, 'Nigerseed'),
+      createMockPrice(6400, 0.28, 'Castor'),
+    ],
+    'Cash Crops': [
+      createMockPrice(5650, 0.2, 'Cotton'),
+      createMockPrice(310, 0.1, 'Sugarcane'),
+      createMockPrice(7500, 0.15, 'Coffee'),
+      createMockPrice(140, 0.12, 'Tea'),
+      createMockPrice(2500, 0.18, 'Jute'),
+      createMockPrice(4500, 0.22, 'Tobacco'),
+    ],
+    Vegetables: [
+      { ...createMockPrice(2500, 0.4, 'Tomato'), imageUrl: 'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUb21hdG98ZW58MHx8fHwxNzU4NDY0MDM3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'tomato' },
+      { ...createMockPrice(2200, 0.45, 'Brinjal (Eggplant)'), imageUrl: 'https://images.unsplash.com/photo-1605197378540-10ebaf6999e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxCcmluamFsJTIwJTI4RWdncGxhbnQlMjl8ZW58MHx8fHwxNzU4NDY0MDU1fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'brinjal' },
+      createMockPrice(4000, 0.5, 'Chili'),
+      createMockPrice(2000, 0.35, 'Potato'),
+      createMockPrice(1800, 0.4, 'Onion'),
+      createMockPrice(1500, 0.5, 'Cabbage'),
+      createMockPrice(2800, 0.55, 'Cauliflower'),
+      createMockPrice(3500, 0.6, 'Bitter Gourd'),
+      createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'),
+    ],
+    Fruits: [
+      { ...createMockPrice(150, 0.3, 'Banana'), imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYW5hbmF8ZW58MHx8fHwxNzU4NDYzODcwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'banana' },
+      { ...createMockPrice(12000, 0.5, 'Dragon Fruit'), imageUrl: 'https://images.unsplash.com/photo-1623030235422-07f96401f5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkcmFnb24lMjBGcnVpdHxlbnwwfHx8fDE3NTg0NjM5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'dragon-fruit'},
+      createMockPrice(25000, 0.6, 'Avocado'),
+    ],
+    Spices: [
+      createMockPrice(8000, 0.25, 'Turmeric'),
+      createMockPrice(25000, 0.3, 'Cumin'),
+      createMockPrice(7000, 0.28, 'Coriander'),
+      createMockPrice(200000, 0.4, 'Saffron'),
+    ]
+  };
+}
 
 
 export const mockPesticides: Pesticide[] = [
@@ -335,4 +337,5 @@ export const mockPesticides: Pesticide[] = [
     
 
     
+
 
