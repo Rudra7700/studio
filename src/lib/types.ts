@@ -62,6 +62,15 @@ export type MandiPrice = {
     priceAnalysis: string;
 }
 
+export type MandiPriceCardData = {
+  name: string;
+  mandi: string;
+  price: number;
+  change: number;
+  percentChange: number;
+};
+
+
 export type Pesticide = {
     id: string;
     name: string;
