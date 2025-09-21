@@ -97,15 +97,10 @@ export default {
         },
         'drone-stunts': {
           '0%': { transform: 'scale(1.2) translate(0, 0) rotate(0deg)' },
-          '15%': { transform: 'scale(1.5) translate(10%, -5%) rotate(2deg)' }, // Fast forward down a row
-          '25%': { transform: 'scale(1.5) translate(-10%, 0) rotate(-2deg)' }, // Sharp bank turn
-          '35%': { transform: 'scale(1.3) translate(0, 10%) rotate(0deg)' }, // Swoop up
-          '45%': { transform: 'scale(1.6) translate(0, -10%) rotate(0deg)' }, // Swoop down low
-          '50%': { transform: 'scale(1.6) translate(0, -10%) rotate(0deg)' }, // Hover
-          '60%': { transform: 'scale(1.6) translate(5%, -10%) rotate(0deg)' }, // Strafe right
-          '70%': { transform: 'scale(1.6) translate(-5%, -10%) rotate(0deg)' }, // Strafe left
-          '85%': { transform: 'scale(1.4) translate(10%, 5%) rotate(1deg)' }, // Another turn
-          '100%': { transform: 'scale(1.2) translate(0, 0) rotate(0deg)' },
+          '25%': { transform: 'scale(1.5) translate(5%, -20%) rotate(1deg)' }, // Stronger forward push
+          '50%': { transform: 'scale(1.4) translate(-5%, -40%) rotate(-1deg)' }, // Continue forward and bank
+          '75%': { transform: 'scale(1.6) translate(0%, -60%) rotate(0deg)' }, // Level out, still moving fast
+          '100%': { transform: 'scale(1.2) translate(0, -80%) rotate(0deg)' },
         },
       },
       animation: {
