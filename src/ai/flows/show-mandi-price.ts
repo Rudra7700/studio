@@ -9,7 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { searchWeb } from '@/ai/tools/web-search';
+import {searchWeb} from '@genkit-ai/googleai';
 
 const ShowMandiPriceInputSchema = z.object({
   crop: z.string().describe('The name of the crop.'),
