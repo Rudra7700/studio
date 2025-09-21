@@ -136,3 +136,18 @@ export type LeaderboardEntry = {
   farmerId: string;
   points: number;
 };
+
+export type Wallet = {
+  currentBalance: number;
+  totalIncome: number;
+  totalExpenses: number;
+};
+
+export type Transaction = {
+  id: string;
+  date: string;
+  description: string;
+  category?: string;
+  amount: number;
+  type: 'income' | 'expense';
+};
