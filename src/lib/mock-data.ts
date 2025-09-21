@@ -148,7 +148,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A broad-spectrum systemic fungicide for the control of a wide range of leaf and stem diseases in cereals, fruits, and vegetables.',
         price: 1200,
         unit: '1 Litre',
-        imageUrl: 'https://picsum.photos/seed/pest1/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideA/300/300',
         usage: {
             dosage: '200-300 ml per acre.',
             method: 'Foliar spray. Mix with water and apply evenly.',
@@ -162,7 +162,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'An effective insecticide for controlling sucking pests like aphids, jassids, and whiteflies in cotton, rice, and vegetables.',
         price: 850,
         unit: '500 ml',
-        imageUrl: 'https://picsum.photos/seed/pest2/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideB/300/300',
         usage: {
             dosage: '100-150 ml per acre.',
             method: 'Can be used as a foliar spray or for seed treatment.',
@@ -176,7 +176,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A non-selective, post-emergence herbicide for the control of annual and perennial weeds in non-crop areas and for pre-sowing application.',
         price: 1500,
         unit: '1 Litre',
-        imageUrl: 'https://picsum.photos/seed/pest3/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideC/300/300',
         usage: {
             dosage: '0.8-1.2 litres per acre.',
             method: 'Apply to actively growing weeds. Avoid spray drift to desired crops.',
@@ -190,7 +190,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'An organic, broad-spectrum pest control solution effective against mites, aphids, and other common pests. Safe for organic farming.',
         price: 950,
         unit: '1 Litre',
-        imageUrl: 'https://picsum.photos/seed/pest4/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideD/300/300',
         usage: {
             dosage: '5-10 ml per litre of water.',
             method: 'Foliar spray. Apply in the evening to avoid leaf burn.',
@@ -204,7 +204,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A selective, post-emergence herbicide for the control of grassy weeds, especially Phalaris minor, in wheat crops.',
         price: 1800,
         unit: '20 gm',
-        imageUrl: 'https://picsum.photos/seed/nihalplus/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideE/300/300',
         usage: {
             dosage: '13.5 gm per acre.',
             method: 'Mix with 200 liters of water and spray uniformly over one acre.',
@@ -218,7 +218,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A pre-emergence and early post-emergence herbicide for the control of annual grasses and broadleaf weeds in maize, sugarcane, and sorghum.',
         price: 750,
         unit: '500 gm',
-        imageUrl: 'https://picsum.photos/seed/atragil/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideF/300/300',
         usage: {
             dosage: '0.5-1.0 kg per acre.',
             method: 'Spray on soil surface before weed emergence for best results.',
@@ -232,7 +232,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A selective, systemic herbicide used for the control of broad-leaved weeds in cereals, sugarcane, and non-crop areas.',
         price: 600,
         unit: '1 Litre',
-        imageUrl: 'https://picsum.photos/seed/gil24d/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideG/300/300',
         usage: {
             dosage: '400-600 ml per acre.',
             method: 'Apply when weeds are young and actively growing.',
@@ -246,7 +246,7 @@ export const mockPesticides: Pesticide[] = [
         description: 'A plant growth regulator that controls vegetative growth and enhances reproductive growth, leading to better cotton yields.',
         price: 1100,
         unit: '1 Litre',
-        imageUrl: 'https://picsum.photos/seed/khusali/300/300',
+        imageUrl: 'https://picsum.photos/seed/pesticideH/300/300',
         usage: {
             dosage: '250-500 ml per acre.',
             method: 'Apply at the flowering or boll formation stage in cotton.',
