@@ -10,6 +10,9 @@ import { ShoppingCart, Minus, Plus, Info, CheckCircle, AlertTriangle, X } from '
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetDescription } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const typeColor: Record<Pesticide['type'], string> = {
     Fungicide: "bg-blue-100 text-blue-800",
@@ -42,6 +45,16 @@ export default function PesticidesPage() {
 
     const totalItemsInCart = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
 
+    const cartDetails = Object.entries(cart).map(([id, quantity]) => {
+        const pesticide = mockPesticides.find(p => p.id === id);
+        return {
+            ...pesticide!,
+            quantity
+        }
+    }).filter(Boolean);
+
+    const totalPrice = cartDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -49,10 +62,58 @@ export default function PesticidesPage() {
                     <h1 className="text-2xl font-bold font-headline">Buy Pesticides</h1>
                     <p className="text-muted-foreground">Browse and purchase recommended products.</p>
                 </div>
-                <Button variant="outline">
-                    <ShoppingCart className="mr-2 h-4 w-4"/>
-                    Cart ({totalItemsInCart})
-                </Button>
+                 <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline">
+                            <ShoppingCart className="mr-2 h-4 w-4"/>
+                            Cart ({totalItemsInCart})
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent className="flex flex-col">
+                        <SheetHeader>
+                            <SheetTitle>Your Cart</SheetTitle>
+                            <SheetDescription>Review items before checkout.</SheetDescription>
+                        </SheetHeader>
+                        {cartDetails.length === 0 ? (
+                            <div className="flex-grow flex flex-col items-center justify-center text-center">
+                                <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4"/>
+                                <p className="text-muted-foreground">Your cart is empty.</p>
+                            </div>
+                        ) : (
+                             <ScrollArea className="flex-grow -mx-6 px-6">
+                                <div className="space-y-4">
+                                    {cartDetails.map(item => (
+                                        <div key={item.id} className="flex items-start gap-4">
+                                            <Image src={item.imageUrl} alt={item.name} width={64} height={64} className="rounded-md object-contain border"/>
+                                            <div className="flex-grow">
+                                                <p className="font-semibold text-sm">{item.name}</p>
+                                                <p className="text-sm text-muted-foreground">₹{item.price.toLocaleString('en-IN')}</p>
+                                                <div className="flex items-center justify-start mt-2">
+                                                    <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => handleQuantityChange(item.id, -1)}><Minus className="h-4 w-4"/></Button>
+                                                    <span className="font-bold text-base w-10 text-center">{item.quantity}</span>
+                                                    <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => handleQuantityChange(item.id, 1)}><Plus className="h-4 w-4"/></Button>
+                                                </div>
+                                            </div>
+                                            <p className="font-semibold">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                             </ScrollArea>
+                        )}
+                       
+                        {cartDetails.length > 0 && (
+                             <SheetFooter className="mt-auto pt-4 border-t">
+                                 <div className="w-full space-y-4">
+                                    <div className="flex justify-between font-bold text-lg">
+                                        <span>Total</span>
+                                        <span>₹{totalPrice.toLocaleString('en-IN')}</span>
+                                    </div>
+                                    <Button className="w-full" size="lg">Proceed to Checkout</Button>
+                                 </div>
+                            </SheetFooter>
+                        )}
+                    </SheetContent>
+                </Sheet>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
