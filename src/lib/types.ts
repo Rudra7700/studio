@@ -91,10 +91,10 @@ export type Pesticide = {
 
 export type Notification = {
     id: string;
-    type: 'mandiPrice' | 'pesticide' | 'field' | 'general';
+    type: 'mandiPrice' | 'pesticide' | 'field' | 'general' | 'treatment';
     title: string;
     description: string;
     timestamp: string;
-    icon: React.ReactNode;
+    icon: string;
     read: boolean;
 };

@@ -10,6 +10,11 @@ import {
   Wifi,
   WifiOff,
   Check,
+  BarChart3,
+  Bug,
+  Scan,
+  ShoppingCart,
+  TestTube2,
 } from 'lucide-react';
 
 import {
@@ -43,6 +48,14 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { VoiceInputModal } from './voice-input-modal';
 import type { Notification } from '@/lib/types';
+
+const notificationIcons: Record<Notification['type'], React.ReactNode> = {
+  mandiPrice: <BarChart3 className="w-5 h-5 text-green-500" />,
+  pesticide: <ShoppingCart className="w-5 h-5 text-yellow-500" />,
+  field: <Scan className="w-5 h-5 text-blue-500" />,
+  treatment: <TestTube2 className="w-5 h-5 text-purple-500" />,
+  general: <Bug className="w-5 h-5 text-red-500" />,
+};
 
 export function Header() {
   const pathname = usePathname();
@@ -182,7 +195,7 @@ export function Header() {
                     {notifications.length === 0 && <p className="text-sm text-muted-foreground p-4 text-center">No new notifications.</p>}
                     {notifications.map(n => (
                          <DropdownMenuItem key={n.id} className={cn("gap-3 items-start", !n.read && "bg-primary/5")} onSelect={(e) => {e.preventDefault(); markAsRead(n.id)}}>
-                            <div className="mt-1">{n.icon}</div>
+                            <div className="mt-1">{notificationIcons[n.type]}</div>
                             <div className="flex-1">
                                 <p className="font-semibold text-sm">{n.title}</p>
                                 <p className="text-xs text-muted-foreground">{n.description}</p>
