@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.britannica.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.qrserver.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

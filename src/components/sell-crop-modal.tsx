@@ -167,7 +167,7 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
                         <div className="flex flex-col items-center justify-center text-center space-y-4 py-8">
                             <p className="text-muted-foreground">Buyer: <span className="font-semibold text-foreground">{saleData.buyerName}</span></p>
                             <div className="p-4 bg-background border-4 border-dashed rounded-lg">
-                                <Image src="/qr-code.png" alt="QR Code" width={180} height={180} />
+                                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=farmer@fakebank&pn=AgriSprayer%20Farmer&am=${totalSaleValue}&cu=INR&tn=CropSale`} alt="QR Code" width={180} height={180} />
                             </div>
                             <p className="text-sm text-muted-foreground">Amount to be paid</p>
                             <p className="text-4xl font-bold tracking-tight">₹{((saleData.quantity || 0) * (saleData.price || 0)).toLocaleString('en-IN')}</p>
