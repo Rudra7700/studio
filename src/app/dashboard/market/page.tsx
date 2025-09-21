@@ -1,18 +1,21 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { generateMockLiveMandiPrices } from '@/lib/mock-data';
+import { generateMockLiveMandiPrices, mockInventory } from '@/lib/mock-data';
 import type { MandiPriceCardData } from '@/lib/types';
 import { MandiPriceCard } from '@/components/mandi-price-card';
 import { TrendingUp, Sparkles } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getCropImage } from '@/app/actions';
+import { SellCropModal } from '@/components/sell-crop-modal';
 
 export default function MarketPage() {
     const [prices, setPrices] = useState<Record<string, MandiPriceCardData[]>>({});
     const [categories, setCategories] = useState<string[]>([]);
     const [activeTab, setActiveTab] = useState<string>('');
     const [loading, setLoading] = useState(true);
+    const [selectedCrop, setSelectedCrop] = useState<MandiPriceCardData | null>(null);
 
     useEffect(() => {
         const mockData = generateMockLiveMandiPrices();
@@ -55,6 +58,15 @@ export default function MarketPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loading]);
 
+    const handleSellClick = (cropData: MandiPriceCardData) => {
+        setSelectedCrop(cropData);
+    }
+
+    const handleModalClose = () => {
+        setSelectedCrop(null);
+    }
+
+    const inventory = selectedCrop ? mockInventory[selectedCrop.name] || { quantity: 0, unit: 'quintals' } : null;
 
     return (
         <div className="space-y-4">
@@ -94,13 +106,23 @@ export default function MarketPage() {
                         <TabsContent key={category} value={category} className="mt-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {prices[category]?.map(priceData => (
-                                    <MandiPriceCard key={priceData.name} data={priceData} />
+                                    <MandiPriceCard key={priceData.name} data={priceData} onSellClick={handleSellClick} />
                                 ))}
                             </div>
                         </TabsContent>
                     ))}
                 </Tabs>
             )}
+
+            {selectedCrop && inventory && (
+                <SellCropModal 
+                    isOpen={!!selectedCrop}
+                    onClose={handleModalClose}
+                    crop={selectedCrop}
+                    inventory={inventory}
+                />
+            )}
         </div>
     );
 }
+

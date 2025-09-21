@@ -7,13 +7,13 @@ import { MapPin, ArrowUp, ArrowDown, Image as ImageIcon, CircleDollarSign } from
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { Skeleton } from "./ui/skeleton";
 
 interface MandiPriceCardProps {
     data: MandiPriceCardData;
+    onSellClick: (data: MandiPriceCardData) => void;
 }
 
-export function MandiPriceCard({ data }: MandiPriceCardProps) {
+export function MandiPriceCard({ data, onSellClick }: MandiPriceCardProps) {
     const isPositive = data.change >= 0;
     const isPlaceholder = data.imageUrl.includes('picsum.photos');
 
@@ -61,7 +61,7 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
                         <p className="text-xs font-medium">({isPositive ? '+' : ''}{data.percentChange}%)</p>
                     </div>
                 </div>
-                 <Button variant="default" className="w-full mt-3">
+                 <Button variant="default" className="w-full mt-3" onClick={() => onSellClick(data)}>
                     <CircleDollarSign className="w-4 h-4 mr-2"/>
                     Sell Crop
                 </Button>
@@ -69,4 +69,3 @@ export function MandiPriceCard({ data }: MandiPriceCardProps) {
         </Card>
     );
 }
-

@@ -1,5 +1,5 @@
 
-import type { Farmer, Field, Drone, Treatment, SensorData, MandiPrice, Pesticide, MandiPriceCardData, Notification } from './types';
+import type { Farmer, Field, Drone, Treatment, SensorData, MandiPrice, Pesticide, MandiPriceCardData, Notification, Inventory } from './types';
 import { subDays, format, subMinutes, subHours } from 'date-fns';
 
 export const mockFarmers: Farmer[] = [
@@ -381,6 +381,18 @@ export const mockNotifications: Notification[] = [
         read: true,
     }
 ];
+
+export const mockInventory: Record<string, Inventory> = {
+    'Wheat': { quantity: 150, unit: 'quintals' },
+    'Rice': { quantity: 200, unit: 'quintals' },
+    'Maize': { quantity: 120, unit: 'quintals' },
+    'Tur (Pigeon Pea)': { quantity: 80, unit: 'quintals' },
+    'Moong (Mung Bean)': { quantity: 50, unit: 'quintals' },
+    'Urad (Black Gram)': { quantity: 60, unit: 'quintals' },
+    'Tomato': { quantity: 30, unit: 'quintals' },
+    'Potato': { quantity: 250, unit: 'quintals' },
+    'Avocado': { quantity: 5, unit: 'quintals' },
+};
     
 
     

@@ -98,3 +98,8 @@ export type Notification = {
     icon: string;
     read: boolean;
 };
+
+export type Inventory = {
+    quantity: number;
+    unit: string;
+};
