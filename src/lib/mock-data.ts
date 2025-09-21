@@ -170,7 +170,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
     ],
     Pulses: [
       createMockPrice(4800, 0.2, 'Gram'),
-      createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'),
+      { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1595453594346-a6254a6962f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdlb24lMjBwZWF8ZW58MHx8fHwxNzU4NTUxMzI3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
       createMockPrice(8500, 0.3, 'Moong (Mung Bean)'),
       createMockPrice(8200, 0.28, 'Urad (Black Gram)'),
       createMockPrice(6500, 0.22, 'Lentil'),
@@ -337,6 +337,7 @@ export const mockPesticides: Pesticide[] = [
     
 
     
+
 
 
 
