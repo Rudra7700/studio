@@ -1,4 +1,5 @@
-import type { Farmer, Field, Drone, Treatment, SensorData } from './types';
+import type { Farmer, Field, Drone, Treatment, SensorData, MandiPrice, Pesticide } from './types';
+import { subDays, format } from 'date-fns';
 
 export const mockFarmers: Farmer[] = [
   {
@@ -120,3 +121,80 @@ export const mockSensorData: SensorData = {
   humidity: 75,
   temperature: 28,
 };
+
+
+export const mockMandiPrices: MandiPrice = {
+    currentPrice: 2250,
+    nearbyMandis: [
+        { mandiName: "Ujjain", price: 2275 },
+        { mandiName: "Dewas", price: 2240 },
+        { mandiName: "Sehore", price: 2260 },
+    ],
+    priceTrend: Array.from({ length: 7 }, (_, i) => {
+        const date = subDays(new Date(), 6 - i);
+        return {
+            date: date.toISOString(),
+            price: 2200 + (i * 5) + (Math.sin(i) * 20) + (Math.random() * 30),
+        };
+    }),
+    priceAnalysis: "The market for wheat is currently stable with a slight upward trend over the past week. Prices in nearby mandis are competitive. Good demand is expected to continue.",
+};
+
+export const mockPesticides: Pesticide[] = [
+    {
+        id: 'pest-1',
+        name: 'Propiconazole 25% EC',
+        type: 'Fungicide',
+        description: 'A broad-spectrum systemic fungicide for the control of a wide range of leaf and stem diseases in cereals, fruits, and vegetables.',
+        price: 1200,
+        unit: '1 Litre',
+        imageUrl: 'https://picsum.photos/seed/pest1/300/300',
+        usage: {
+            dosage: '200-300 ml per acre.',
+            method: 'Foliar spray. Mix with water and apply evenly.',
+        },
+        safetyNotes: ['Wear protective clothing.', 'Do not inhale.', 'Keep away from children and food.'],
+    },
+    {
+        id: 'pest-2',
+        name: 'Imidacloprid 17.8% SL',
+        type: 'Insecticide',
+        description: 'An effective insecticide for controlling sucking pests like aphids, jassids, and whiteflies in cotton, rice, and vegetables.',
+        price: 850,
+        unit: '500 ml',
+        imageUrl: 'https://picsum.photos/seed/pest2/300/300',
+        usage: {
+            dosage: '100-150 ml per acre.',
+            method: 'Can be used as a foliar spray or for seed treatment.',
+        },
+        safetyNotes: ['Harmful if swallowed.', 'Avoid contact with skin and eyes.', 'Environmentally hazardous.'],
+    },
+    {
+        id: 'pest-3',
+        name: 'Glyphosate 41% SL',
+        type: 'Herbicide',
+        description: 'A non-selective, post-emergence herbicide for the control of annual and perennial weeds in non-crop areas and for pre-sowing application.',
+        price: 1500,
+        unit: '1 Litre',
+        imageUrl: 'https://picsum.photos/seed/pest3/300/300',
+        usage: {
+            dosage: '0.8-1.2 litres per acre.',
+            method: 'Apply to actively growing weeds. Avoid spray drift to desired crops.',
+        },
+        safetyNotes: ['Causes serious eye irritation.', 'Toxic to aquatic life with long-lasting effects.', 'Use a spray shield.'],
+    },
+     {
+        id: 'pest-4',
+        name: 'Neem Oil Concentrate',
+        type: 'Other',
+        description: 'An organic, broad-spectrum pest control solution effective against mites, aphids, and other common pests. Safe for organic farming.',
+        price: 950,
+        unit: '1 Litre',
+        imageUrl: 'https://picsum.photos/seed/pest4/300/300',
+        usage: {
+            dosage: '5-10 ml per litre of water.',
+            method: 'Foliar spray. Apply in the evening to avoid leaf burn.',
+        },
+        safetyNotes: ['Generally safe, but avoid direct contact with eyes.', 'Keep stored in a cool, dark place.'],
+    }
+];

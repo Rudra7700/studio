@@ -6,7 +6,9 @@ import {
   Map,
   TestTube2,
   Settings,
-  Users
+  Users,
+  BarChart3,
+  ShoppingBasket
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -15,6 +17,8 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/fields', label: 'Fields', icon: Map },
   { href: '/dashboard/treatments', label: 'Treatments', icon: TestTube2 },
+  { href: '/dashboard/market', label: 'Mandi Prices', icon: BarChart3 },
+  { href: '/dashboard/pesticides', label: 'Buy Pesticides', icon: ShoppingBasket },
 ];
 
 const adminNavItems = [

@@ -54,3 +54,25 @@ export type Message = {
   role: 'user' | 'assistant';
   text: string;
 };
+
+export type MandiPrice = {
+    currentPrice: number;
+    nearbyMandis: { mandiName: string; price: number }[];
+    priceTrend: { date: string; price: number }[];
+    priceAnalysis: string;
+}
+
+export type Pesticide = {
+    id: string;
+    name: string;
+    type: 'Fungicide' | 'Insecticide' | 'Herbicide' | 'Other';
+    description: string;
+    price: number;
+    unit: string;
+    imageUrl: string;
+    usage: {
+        dosage: string;
+        method: string;
+    };
+    safetyNotes: string[];
+}
