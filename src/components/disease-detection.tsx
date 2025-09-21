@@ -24,10 +24,40 @@ interface DetectionResult {
     reviewRequired: boolean;
     health_score: number;
   };
-  error?: string;
-  message?: string;
-  sprayerPayload?: any;
 }
+
+// Client-side implementation of the backend logic
+function finalizeDetection(detection: any): any {
+  const pc = Number(detection.presence_confidence || 0);
+  const sc = Number(detection.severity_confidence || pc);
+  const area = Number(detection.infected_area_pct || 0);
+  let hs = Number(detection.health_score ?? (100 - area)); // fallback
+
+  if (hs > 85 && area > 5) {
+    detection.reviewRequired = true;
+    detection.finalHealthDisplay = "Uncertain — lesions detected; manual review required";
+    return detection;
+  }
+
+  if (pc >= 0.6 && hs > 85 && sc < 0.75) {
+    detection.reviewRequired = true;
+    detection.finalHealthDisplay = "Uncertain — low severity confidence; manual review required";
+    return detection;
+  }
+
+  if (area >= 5 && pc >= 0.5) {
+    detection.infected = true;
+    detection.infectionLevel = area <= 5 ? "Preventive" : area <= 25 ? "Targeted" : "Intensive";
+    detection.reviewRequired = sc < 0.75;
+    detection.finalHealthDisplay = `${Math.max(0, 100 - Math.round(area))}/100 (estimated)`;
+    return detection;
+  }
+
+  detection.reviewRequired = pc >= 0.5 && pc < 0.75;
+  detection.finalHealthDisplay = `${Math.round(hs)}/100`;
+  return detection;
+}
+
 
 export function DiseaseDetection({ field }: { field: Field }) {
     const [image, setImage] = useState<string | null>(null);
@@ -52,48 +82,41 @@ export function DiseaseDetection({ field }: { field: Field }) {
                 setImage(dataUri);
                 setStatus('analyzing');
                 
-                startTransition(async () => {
-                    try {
-                        const mockPresenceConfidence = 0.65 + Math.random() * 0.3; // 0.65 - 0.95
-                        const mockInfectedArea = Math.random() * 40; // 0 - 40%
-                        
-                        const payload = {
-                            metadata: {
-                                deviceId: 'frontend-uploader',
-                                timestamp: new Date().toISOString(),
-                                cropType: field.cropType,
-                                gps: field.gpsCoordinates,
-                            },
-                            presence_confidence: mockPresenceConfidence,
-                            infected_area_pct: mockInfectedArea,
-                            severity_confidence: mockPresenceConfidence - 0.1,
-                        };
+                startTransition(() => {
+                    // Simulate a short delay for analysis
+                    setTimeout(() => {
+                        try {
+                            const mockPresenceConfidence = 0.65 + Math.random() * 0.3; // 0.65 - 0.95
+                            const mockInfectedArea = Math.random() * 40; // 0 - 40%
+                            const infectionLevel =
+                                mockPresenceConfidence < 0.6 ? "None" :
+                                mockInfectedArea < 5 ? "Preventive" :
+                                mockInfectedArea <= 25 ? "Targeted" : "Intensive";
 
-                        const response = await fetch('/api/detect', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload),
-                        });
+                            let doc = {
+                                infected: infectionLevel !== "None",
+                                infected_area_pct: Number(mockInfectedArea),
+                                infectionLevel,
+                                presence_confidence: Number(mockPresenceConfidence),
+                                severity_confidence: Number(mockPresenceConfidence - 0.1),
+                                health_score: 100 - (Number(mockInfectedArea) * 1.5),
+                            };
 
-                        const contentType = response.headers.get('content-type');
-                        if (!response.ok || !contentType || !contentType.includes('application/json')) {
-                            const errorText = await response.text();
-                            throw new Error(`Server returned an invalid response: ${errorText.substring(0, 200)}...`);
+                            const finalDoc = finalizeDetection(doc);
+
+                            const data: DetectionResult = {
+                                detectionId: `sim-${Date.now()}`,
+                                detection: finalDoc,
+                            };
+                            
+                            setResult(data);
+                            setStatus('complete');
+                        } catch (err: any) {
+                            console.error("Client-side detection error:", err);
+                            setError(err.message || 'An unknown error occurred during analysis.');
+                            setStatus('error');
                         }
-
-                        const data: DetectionResult = await response.json();
-                        
-                        if(data.error) {
-                             throw new Error(data.message || 'The server returned an error.');
-                        }
-
-                        setResult(data);
-                        setStatus('complete');
-                    } catch (err: any) {
-                        console.error("Detection error:", err);
-                        setError(err.message || 'An unknown error occurred during analysis.');
-                        setStatus('error');
-                    }
+                    }, 1000);
                 });
             };
             reader.readAsDataURL(file);
