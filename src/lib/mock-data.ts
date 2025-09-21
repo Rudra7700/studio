@@ -186,7 +186,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       createMockPrice(6400, 0.28, 'Castor'),
     ],
     'Cash Crops': [
-      createMockPrice(5650, 0.2, 'Cotton'),
+      {...createMockPrice(5650, 0.2, 'Cotton'), imageUrl: 'https://images.unsplash.com/photo-1599307718917-063a81a429d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb3R0b258ZW58MHx8fHwxNzU4NjQ2MDI4fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'cotton'},
       createMockPrice(310, 0.1, 'Sugarcane'),
       createMockPrice(7500, 0.15, 'Coffee'),
       createMockPrice(140, 0.12, 'Tea'),
@@ -417,5 +417,7 @@ export const mockInventory: Record<string, Inventory> = {
 
     
 
+
+    
 
     
