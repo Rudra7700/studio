@@ -33,7 +33,7 @@ export const mockFields: Field[] = [
       { lat: 28.613, lng: 77.210 },
     ],
     healthStatus: 'Healthy',
-    imageUrl: 'https://picsum.photos/seed/field1/800/600',
+    imageUrl: 'https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjcm9wJTIwZmllbGR8ZW58MHx8fHwxNzU4NDY2NjE5fDA&ixlib=rb-4.1.0&q=80&w=1080',
     imageHint: 'corn field',
   },
   {
@@ -398,5 +398,6 @@ export const mockNotifications: Notification[] = [
     
 
     
+
 
 
