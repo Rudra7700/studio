@@ -16,7 +16,7 @@ export function FieldMap({ field }: { field: Field }) {
         <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-muted">
           {/* This is a placeholder map. A real implementation would use a mapping library like Mapbox or Google Maps. */}
           <Image 
-            src="https://picsum.photos/seed/map/800/450" 
+            src="https://images.unsplash.com/photo-1649898919283-e8f6276f3fec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmaWxlZHxlbnwwfHx8fDE3NTg0NzM3NjB8MA&ixlib=rb-4.1.0&q=80&w=1080" 
             alt="Map of the field" 
             layout="fill" 
             objectFit="cover"
