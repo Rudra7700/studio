@@ -160,7 +160,7 @@ const createMockPrice = (base: number, volatility: number, cropName: string): Ma
 export const mockLiveMandiPrices: Record<string, MandiPriceCardData[]> = {
   Cereals: [
     { ...createMockPrice(2150, 0.1, 'Wheat'), imageUrl: 'https://images.unsplash.com/photo-1437252611977-07f74518abd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3aGVhdHxlbnwwfHx8fDE3NTg0NjMyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'wheat' },
-    createMockPrice(1980, 0.08, 'Rice'),
+    { ...createMockPrice(1980, 0.08, 'Rice'), imageUrl: 'https://images.unsplash.com/photo-1635562985686-4f8bb9c0d3bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaWNlfGVufDB8fHx8MTc1ODQ2MzgwMnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'rice' },
     createMockPrice(2050, 0.12, 'Maize'),
     createMockPrice(2800, 0.15, 'Jowar'),
     createMockPrice(2600, 0.18, 'Bajra'),
