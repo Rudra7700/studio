@@ -44,7 +44,7 @@ export const mockFields: Field[] = [
     gpsCoordinates: { lat: 28.6100, lng: 77.2050 },
     boundary: [],
     healthStatus: 'Mild',
-    imageUrl: 'https://picsum.photos/seed/field2/800/600',
+    imageUrl: 'https://images.unsplash.com/photo-1595976281013-8024ecc02575?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8d2hlYXQlMjBmaWVsZHxlbnwwfHx8fDE3NTg0NjY3MDd8MA&ixlib=rb-4.1.0&q=80&w=1080',
     imageHint: 'wheat field',
   },
   {
@@ -401,3 +401,6 @@ export const mockNotifications: Notification[] = [
 
 
 
+
+
+    
