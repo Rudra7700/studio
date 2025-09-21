@@ -173,7 +173,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(9500, 0.25, 'Tur (Pigeon Pea)'), imageUrl: 'https://images.unsplash.com/photo-1595453594346-a6254a6962f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaWdlb24lMjBwZWF8ZW58MHx8fHwxNzU4NTUxMzI3fDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pigeon pea' },
       createMockPrice(8500, 0.3, 'Moong (Mung Bean)'),
       createMockPrice(8200, 0.28, 'Urad (Black Gram)'),
-      createMockPrice(6500, 0.22, 'Lentil'),
+      { ...createMockPrice(6500, 0.22, 'Lentil'), imageUrl: 'https://images.unsplash.com/photo-1582379963239-95292a454cfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsZW50aWx8ZW58MHx8fHwxNzU4NTU1MzYwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'lentils'},
     ],
     Oilseeds: [
       createMockPrice(5500, 0.18, 'Groundnut'),
@@ -337,6 +337,7 @@ export const mockPesticides: Pesticide[] = [
     
 
     
+
 
 
 
