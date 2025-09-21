@@ -35,10 +35,13 @@ export default function MarketPage() {
                             if (result.success && result.data) {
                                 setPrices(prevPrices => {
                                     const newPrices = { ...prevPrices };
-                                    const items = [...newPrices[category]];
-                                    items[index] = { ...items[index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${priceData.name}`};
-                                    newPrices[category] = items;
-                                    return newPrices;
+                                    if (newPrices[category]) {
+                                        const items = [...newPrices[category]];
+                                        items[index] = { ...items[index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${priceData.name}`};
+                                        newPrices[category] = items;
+                                        return newPrices;
+                                    }
+                                    return prevPrices;
                                 });
                             }
                         })
@@ -46,7 +49,8 @@ export default function MarketPage() {
                 }
             });
         });
-    }, [loading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading, prices]);
 
 
     return (
