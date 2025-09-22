@@ -107,18 +107,46 @@
 }
 
 @layer utilities {
-  @keyframes splash-progress {
-    from { stroke-dashoffset: 565.48; }
-    to { stroke-dashoffset: 0; }
+    .animate-wheel-spin {
+        animation: wheel-spin 0.5s linear infinite;
+    }
+    .animate-exhaust {
+        animation: exhaust-puff 1.5s ease-out infinite;
+        transform-origin: 35px 55px; /* base of exhaust pipe */
+    }
+
+    @keyframes wheel-spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes exhaust-puff {
+        0% {
+            transform: translateY(0) scale(0);
+            opacity: 0;
+        }
+        20% {
+            transform: translateY(-10px) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-40px) scale(2);
+            opacity: 0;
+        }
+    }
+
+  @keyframes drone-stunts {
+    0% { transform: scale(1.2) translate(0, 0) rotate(0deg); }
+    25% { transform: scale(1.5) translate(5%, -20%) rotate(1deg); }
+    50% { transform: scale(1.4) translate(-5%, -40%) rotate(-1deg); }
+    75% { transform: scale(1.6) translate(0%, -60%) rotate(0deg); }
+    100% { transform: scale(1.2) translate(0, -80%) rotate(0deg); }
   }
-  @keyframes splash-icon-rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .splash-progress-circle {
-    animation: splash-progress 3s ease-out forwards;
-  }
-  .splash-icon-group {
-    animation: splash-icon-rotate 10s linear infinite;
+  .animation-drone-stunts {
+      animation: drone-stunts 20s ease-in-out infinite;
   }
 }

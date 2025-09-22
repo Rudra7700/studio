@@ -1,5 +1,4 @@
 
-
 'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -35,7 +34,7 @@ export default function Home() {
         }
         return prev + 1;
       });
-    }, 28); // Update progress roughly every 28ms to reach 100 in ~2.8s
+    }, 28); 
 
     const timer = setTimeout(() => {
       setLoading(false);
@@ -56,7 +55,9 @@ export default function Home() {
             <GrowthAnimation progress={progress} />
             <h2 className="text-2xl font-bold text-primary mt-4">Initializing AgriSystem</h2>
             <p className="text-muted-foreground animate-pulse">Loading components...</p>
-            <p className="text-muted-foreground italic px-4">&quot;{quote}&quot;</p>
+            <div className={cn("transition-opacity duration-500", progress > 70 ? "opacity-100" : "opacity-0")}>
+              <p className="text-muted-foreground italic px-4">&quot;{quote}&quot;</p>
+            </div>
           </div>
         </div>
       )}
@@ -134,7 +135,7 @@ export default function Home() {
               <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
                   <div className="lg:w-1/2">
                     <Image
-                      src="https://picsum.photos/seed/agritech/600/400"
+                      src="https://images.unsplash.com/photo-1625837406798-9b16c9fa9c2a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmaWVsZHN8ZW58MHx8fHwxNzU4NDczMDIyfDA&ixlib=rb-4.1.0&q=80&w=1080"
                       alt="A drone flying over a farm field"
                       width={600}
                       height={400}
@@ -194,4 +195,3 @@ const Checkmark = () => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
   </svg>
 )
-
