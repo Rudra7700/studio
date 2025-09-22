@@ -4,16 +4,30 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bot, Droplets, Scan, Tractor, Leaf } from 'lucide-react';
+import { Bot, Droplets, Scan, Tractor } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
+import { GrowthAnimation } from '@/components/growth-animation';
+
+const farmingQuotes = [
+  "The farmer has to be an optimist or he wouldn't still be a farmer.",
+  "Agriculture is our wisest pursuit, because it will in the end contribute most to real wealth, good morals, and happiness.",
+  "To make agriculture sustainable, the grower has got to be able to make a profit.",
+  "The discovery of agriculture was the first big step toward a civilized life.",
+  "Farming is a profession of hope.",
+];
+
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [quote, setQuote] = useState('');
 
   useEffect(() => {
+    // Select a random quote on component mount
+    setQuote(farmingQuotes[Math.floor(Math.random() * farmingQuotes.length)]);
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 3000);
@@ -25,15 +39,15 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       {isLoading && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-opacity duration-500 animate-out fade-out">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-4 animate-in fade-in duration-500">
              <div className="flex justify-center">
                 <Logo />
              </div>
             <p className="text-lg text-muted-foreground">Your AI Study Buddy for Farming</p>
-            <div className="relative w-16 h-1 mx-auto bg-primary/20 rounded-full overflow-hidden mt-4">
-                <div className="absolute top-0 left-0 h-full bg-primary animate-pulse w-full"></div>
-            </div>
           </div>
+          
+          <GrowthAnimation quote={quote} />
+
         </div>
       )}
 
