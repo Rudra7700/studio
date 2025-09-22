@@ -6,6 +6,7 @@ export type Farmer = {
   email: string;
   avatarUrl: string;
   fields: string[]; // array of field IDs
+  phone?: string;
 };
 
 export type Field = {

@@ -1,4 +1,3 @@
-
 'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,13 +13,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Save, User, Bell } from 'lucide-react';
+import { Save, User, Bell, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { mockFarmers } from '@/lib/mock-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
 import { ChangeEvent, useRef, useState, useEffect } from 'react';
+import { getFarmerProfile, updateFarmerProfile } from '@/lib/firebase';
+import type { Farmer } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -30,18 +31,12 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const defaultFarmerData = {
-  name: mockFarmers[0].name,
-  email: mockFarmers[0].email,
-  avatarUrl: mockFarmers[0].avatarUrl,
-  phone: '9876543210',
-};
-
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  const [farmer, setFarmer] = useState(defaultFarmerData);
+  const [farmer, setFarmer] = useState<Partial<Farmer> | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -53,32 +48,42 @@ export default function DashboardSettingsPage() {
   });
 
   useEffect(() => {
-    try {
-      const savedFarmer = localStorage.getItem('farmerProfile');
-      const savedAvatar = localStorage.getItem('avatarPreview');
-      if (savedFarmer) {
-        const parsedFarmer = JSON.parse(savedFarmer);
-        setFarmer(parsedFarmer);
-        form.reset(parsedFarmer);
-      } else {
-        setFarmer(defaultFarmerData);
+    async function loadProfile() {
+      setIsLoading(true);
+      // In a real app, the UID would come from an auth context
+      const farmerId = 'farmer-1';
+      const profile = await getFarmerProfile(farmerId);
+      if (profile) {
+        setFarmer(profile);
         form.reset({
-          fullName: defaultFarmerData.name,
-          email: defaultFarmerData.email,
-          phone: defaultFarmerData.phone
+          fullName: profile.name,
+          email: profile.email,
+          phone: profile.phone || '',
         });
+        if (profile.avatarUrl) {
+          setAvatarPreview(profile.avatarUrl);
+        }
+      } else {
+        // Fallback to mock data if no profile exists
+        const mockProfile = {
+            name: mockFarmers[0].name,
+            email: mockFarmers[0].email,
+            avatarUrl: mockFarmers[0].avatarUrl,
+            phone: '9876543210'
+        };
+        setFarmer(mockProfile);
+        form.reset({
+            fullName: mockProfile.name,
+            email: mockProfile.email,
+            phone: mockProfile.phone
+        });
+        if (mockProfile.avatarUrl) {
+          setAvatarPreview(mockProfile.avatarUrl);
+        }
       }
-      if (savedAvatar) {
-        setAvatarPreview(savedAvatar);
-      }
-    } catch (error) {
-      console.error("Failed to parse settings from localStorage", error);
-      form.reset({
-        fullName: defaultFarmerData.name,
-        email: defaultFarmerData.email,
-        phone: defaultFarmerData.phone
-      });
+      setIsLoading(false);
     }
+    loadProfile();
   }, [form]);
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -88,39 +93,45 @@ export default function DashboardSettingsPage() {
           reader.onloadend = () => {
               const result = reader.result as string;
               setAvatarPreview(result);
-              try {
-                localStorage.setItem('avatarPreview', result);
-              } catch (error) {
-                console.error("Failed to save avatar to localStorage", error);
-                toast({ variant: 'destructive', title: "Could not save image", description: "Browser storage might be full." });
-              }
           };
           reader.readAsDataURL(file);
       }
   };
 
-  const onSubmit = (data: ProfileFormValues) => {
+  const onSubmit = async (data: ProfileFormValues) => {
+    if (!farmer || !farmer.id) {
+        toast({ variant: 'destructive', title: "Save Failed", description: "Farmer profile not loaded." });
+        return;
+    }
     try {
-      const updatedProfile = {
+      const updatedProfileData: Partial<Farmer> = {
         name: data.fullName,
         email: data.email,
         phone: data.phone,
-        avatarUrl: farmer.avatarUrl // Keep original avatar URL, preview is handled separately
+        avatarUrl: avatarPreview || farmer.avatarUrl,
       };
-      localStorage.setItem('farmerProfile', JSON.stringify(updatedProfile));
       
-      // Update the name in the farmer state to reflect in fallback
-      setFarmer(prev => ({...prev, name: data.fullName}));
+      await updateFarmerProfile(farmer.id, updatedProfileData);
+      
+      setFarmer(prev => ({...prev, ...updatedProfileData}));
       
       toast({
         title: 'Settings Saved',
-        description: 'Your profile has been updated successfully.',
+        description: 'Your profile has been updated successfully in Firestore.',
       });
     } catch (error) {
-        console.error("Failed to save settings to localStorage", error);
+        console.error("Failed to save settings to Firestore", error);
         toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. Please try again." });
     }
   };
+  
+  const getFallbackInitial = () => {
+    if (farmer?.name) {
+      return farmer.name.charAt(0).toUpperCase();
+    }
+    return 'F';
+  }
+
 
   return (
     <Form {...form}>
@@ -136,72 +147,88 @@ export default function DashboardSettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><User /> Profile Settings</CardTitle>
             <CardDescription>
-              Update your personal information.
+              Update your personal information. Changes are saved permanently.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <FormItem>
-                <FormLabel>Profile Picture</FormLabel>
-                <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20">
-                    <AvatarImage src={avatarPreview || farmer.avatarUrl} alt={farmer.name} />
-                    <AvatarFallback>{farmer.name ? farmer.name.charAt(0) : 'U'}</AvatarFallback>
-                </Avatar>
-                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                    Change Picture
-                    </Button>
-                    <Input 
-                        id="avatar-upload" 
-                        type="file" 
-                        className="hidden" 
-                        ref={fileInputRef}
-                        onChange={handleAvatarChange}
-                        accept="image/png, image/jpeg, image/webp"
-                    />
+            {isLoading ? (
+                <div className="space-y-6">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-20 w-20 rounded-full" />
+                        <Skeleton className="h-10 w-28" />
+                    </div>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                    </div>
                 </div>
-                <FormMessage />
-            </FormItem>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                        <Input placeholder="Your full name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                        <Input placeholder="your.email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                 <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                        <Input placeholder="10-digit mobile number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-            </div>
+            ) : (
+            <>
+              <FormItem>
+                  <FormLabel>Profile Picture</FormLabel>
+                  <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20">
+                      <AvatarImage src={avatarPreview || undefined} alt={farmer?.name} />
+                      <AvatarFallback>{getFallbackInitial()}</AvatarFallback>
+                  </Avatar>
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                      Change Picture
+                      </Button>
+                      <Input 
+                          id="avatar-upload" 
+                          type="file" 
+                          className="hidden" 
+                          ref={fileInputRef}
+                          onChange={handleAvatarChange}
+                          accept="image/png, image/jpeg, image/webp"
+                      />
+                  </div>
+                  <FormMessage />
+              </FormItem>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                          <Input placeholder="Your full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
+                  />
+                  <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                          <Input placeholder="your.email@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
+                  />
+                  <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                          <Input placeholder="10-digit mobile number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
+                  />
+              </div>
+            </>
+            )}
           </CardContent>
         </Card>
 
@@ -244,9 +271,13 @@ export default function DashboardSettingsPage() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg">
-            <Save className="mr-2 h-4 w-4" />
-            Save Changes
+          <Button type="submit" size="lg" disabled={form.formState.isSubmitting || isLoading}>
+            {form.formState.isSubmitting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+                <Save className="mr-2 h-4 w-4" />
+            )}
+            {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </form>
