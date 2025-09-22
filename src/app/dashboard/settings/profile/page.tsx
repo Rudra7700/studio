@@ -71,7 +71,9 @@ export default function ProfileSettingsPage() {
             email: localProfile.email || prev.email,
             phone: localProfile.phone || prev.phone,
         });
-        setAvatarPreview(localProfile.avatarUrl);
+        if (localProfile.avatarUrl) {
+            setAvatarPreview(localProfile.avatarUrl);
+        }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

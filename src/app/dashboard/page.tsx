@@ -1,3 +1,4 @@
+
 'use client';
 import { Droplets, Map, Scan, Tractor } from 'lucide-react';
 import { StatsCard } from '@/components/stats-card';
