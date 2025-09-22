@@ -47,14 +47,13 @@ export default function ProfileSettingsPage() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
+      fullName: farmer.name || '',
+      email: farmer.email || '',
+      phone: farmer.phone || '',
     },
   });
 
    useEffect(() => {
-    // Only read from localStorage on the client-side after mount
     const savedProfileString = localStorage.getItem('farmerProfile');
     let localProfile;
     if (savedProfileString) {
@@ -65,22 +64,17 @@ export default function ProfileSettingsPage() {
         }
     }
     
-    const initialProfile = localProfile || {
-        name: mockFarmers[0].name,
-        email: mockFarmers[0].email,
-        phone: '9876543210',
-        avatarUrl: mockFarmers[0].avatarUrl,
-    };
-    
-    setFarmer(initialProfile);
-    form.reset({
-        fullName: initialProfile.name,
-        email: initialProfile.email,
-        phone: initialProfile.phone,
-    });
-    setAvatarPreview(initialProfile.avatarUrl);
-
-  }, [form]);
+    if (localProfile) {
+        setFarmer(prev => ({...prev, ...localProfile}));
+        form.reset({
+            fullName: localProfile.name || prev.name,
+            email: localProfile.email || prev.email,
+            phone: localProfile.phone || prev.phone,
+        });
+        setAvatarPreview(localProfile.avatarUrl);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
