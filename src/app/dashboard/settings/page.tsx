@@ -20,9 +20,8 @@ import { mockFarmers } from '@/lib/mock-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChangeEvent, useRef, useState, useEffect } from 'react';
-import { getFarmerProfile, updateFarmerProfile } from '@/lib/firebase';
+import { updateFarmerProfile } from '@/lib/firebase';
 import type { Farmer } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -37,7 +36,6 @@ export default function DashboardSettingsPage() {
   const [farmer, setFarmer] = useState<Partial<Farmer> | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -49,35 +47,28 @@ export default function DashboardSettingsPage() {
   });
 
   useEffect(() => {
-    async function loadProfile() {
-      setIsLoading(true);
-      try {
-        if (!navigator.onLine) {
-            console.warn("Client is offline. Loading mock data.");
-            throw new Error("Client is offline.");
-        }
+    // Load profile from localStorage or fall back to mock data
+    try {
+        const savedProfile = localStorage.getItem('farmerProfile');
+        const profile = savedProfile ? JSON.parse(savedProfile) : {
+            id: 'farmer-1',
+            name: mockFarmers[0].name,
+            email: mockFarmers[0].email,
+            avatarUrl: mockFarmers[0].avatarUrl,
+            phone: '9876543210'
+        };
 
-        // In a real app, the UID would come from an auth context
-        const farmerId = 'farmer-1';
-        const profile = await getFarmerProfile(farmerId);
-
-        if (profile) {
-            setFarmer(profile);
-            form.reset({
+        setFarmer(profile);
+        form.reset({
             fullName: profile.name,
             email: profile.email,
-            phone: profile.phone || '',
-            });
-            if (profile.avatarUrl) {
+            phone: profile.phone
+        });
+        if (profile.avatarUrl) {
             setAvatarPreview(profile.avatarUrl);
-            }
-        } else {
-            throw new Error('Profile not found, falling back to mock data.');
         }
-
-      } catch (error) {
-        console.warn("Could not fetch profile, falling back to mock data. Error:", error);
-        // Fallback to mock data if no profile exists or if offline
+    } catch (error) {
+        console.error("Failed to load profile, using mock data.", error);
         const mockProfile = {
             id: 'farmer-1',
             name: mockFarmers[0].name,
@@ -91,14 +82,7 @@ export default function DashboardSettingsPage() {
             email: mockProfile.email,
             phone: mockProfile.phone
         });
-        if (mockProfile.avatarUrl) {
-          setAvatarPreview(mockProfile.avatarUrl);
-        }
-      } finally {
-        setIsLoading(false);
-      }
     }
-    loadProfile();
   }, [form]);
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -131,16 +115,20 @@ export default function DashboardSettingsPage() {
         avatarUrl: avatarPreview || farmer.avatarUrl,
       };
       
+      // Save to Firestore
       await updateFarmerProfile(farmer.id, updatedProfileData);
       
-      setFarmer(prev => ({...prev, ...updatedProfileData}));
+      // Save to localStorage as well for offline persistence
+      const newLocalProfile = {...farmer, ...updatedProfileData};
+      localStorage.setItem('farmerProfile', JSON.stringify(newLocalProfile));
+      setFarmer(newLocalProfile);
       
       toast({
         title: 'Settings Saved',
-        description: 'Your profile has been updated successfully in Firestore.',
+        description: 'Your profile has been updated successfully.',
       });
     } catch (error) {
-        console.error("Failed to save settings to Firestore", error);
+        console.error("Failed to save settings", error);
         toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. Please try again." });
     }
   };
@@ -171,22 +159,6 @@ export default function DashboardSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {isLoading ? (
-                <div className="space-y-6">
-                    <div className="flex items-center gap-4">
-                        <Skeleton className="h-20 w-20 rounded-full" />
-                        <div className="space-y-2">
-                           <Skeleton className="h-10 w-28" />
-                        </div>
-                    </div>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                        <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                    </div>
-                </div>
-            ) : (
-            <>
               <FormItem>
                   <FormLabel>Profile Picture</FormLabel>
                   <div className="flex items-center gap-4">
@@ -249,8 +221,6 @@ export default function DashboardSettingsPage() {
                   )}
                   />
               </div>
-            </>
-            )}
           </CardContent>
         </Card>
 
@@ -293,7 +263,7 @@ export default function DashboardSettingsPage() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg" disabled={form.formState.isSubmitting || isLoading}>
+          <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -306,5 +276,3 @@ export default function DashboardSettingsPage() {
     </Form>
   );
 }
-
-    
