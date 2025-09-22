@@ -60,14 +60,10 @@ export function GrowthAnimation({ quote }: { quote: string }) {
       </div>
 
       <p 
-        className="text-sm text-muted-foreground mt-4 h-10 overflow-hidden whitespace-nowrap animate-in fade-in duration-300"
+        className="text-sm text-muted-foreground mt-4 h-10 animate-in fade-in duration-300"
         style={{ animationDelay: '2000ms' }}
       >
-        <span 
-            className="inline-block"
-        >
-            "{quote}"
-        </span>
+        "{quote}"
       </p>
     </div>
   );
