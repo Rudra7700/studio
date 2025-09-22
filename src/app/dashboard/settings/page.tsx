@@ -43,6 +43,8 @@ export default function DashboardSettingsPage() {
     },
   });
 
+  const avatarRef = form.register("avatar");
+
   const onSubmit = (data: ProfileFormValues) => {
     console.log(data);
     toast({
@@ -84,7 +86,7 @@ export default function DashboardSettingsPage() {
                         Change Picture
                      </Button>
                      <FormControl>
-                        <Input id="avatar-upload" type="file" className="hidden" {...field} />
+                        <Input id="avatar-upload" type="file" className="hidden" {...avatarRef} />
                      </FormControl>
                   </div>
                    <FormMessage />
