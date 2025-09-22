@@ -34,24 +34,12 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
   // Reliably initialize farmer state from local storage or fall back to mock data
-  const [farmer, setFarmer] = useState<Partial<Farmer>>(() => {
-    if (typeof window === 'undefined') {
-      return {
-        id: 'farmer-1',
-        name: mockFarmers[0].name,
-        email: mockFarmers[0].email,
-        avatarUrl: mockFarmers[0].avatarUrl,
-        phone: '9876543210'
-      };
-    }
-    const savedProfileString = localStorage.getItem('farmerProfile');
-    return savedProfileString ? JSON.parse(savedProfileString) : {
-      id: 'farmer-1',
-      name: mockFarmers[0].name,
-      email: mockFarmers[0].email,
-      avatarUrl: mockFarmers[0].avatarUrl,
-      phone: '9876543210'
-    };
+  const [farmer, setFarmer] = useState<Partial<Farmer>>({
+    id: 'farmer-1',
+    name: mockFarmers[0].name,
+    email: mockFarmers[0].email,
+    avatarUrl: mockFarmers[0].avatarUrl,
+    phone: '9876543210'
   });
   
   const [avatarPreview, setAvatarPreview] = useState<string | null>(farmer.avatarUrl || null);
@@ -70,13 +58,18 @@ export default function DashboardSettingsPage() {
    useEffect(() => {
     // This effect now only syncs the form if the farmer state changes from an external source,
     // though with the current logic, it mainly runs once on load.
-    form.reset({
-        fullName: farmer.name || mockFarmers[0].name,
-        email: farmer.email || mockFarmers[0].email,
-        phone: farmer.phone || '9876543210',
-    });
-    setAvatarPreview(farmer.avatarUrl || mockFarmers[0].avatarUrl);
-  }, [farmer, form]);
+    const savedProfileString = localStorage.getItem('farmerProfile');
+    const localProfile = savedProfileString ? JSON.parse(savedProfileString) : null;
+    if(localProfile) {
+        setFarmer(localProfile);
+        form.reset({
+            fullName: localProfile.name || mockFarmers[0].name,
+            email: localProfile.email || mockFarmers[0].email,
+            phone: localProfile.phone || '9876543210',
+        });
+        setAvatarPreview(localProfile.avatarUrl || mockFarmers[0].avatarUrl);
+    }
+  }, [form]);
 
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
