@@ -7,64 +7,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Upload, X, Loader2, Sparkles, TestTube2, AlertTriangle } from 'lucide-react';
+import { Upload, X, Loader2, Sparkles, TestTube2, AlertTriangle, Microscope } from 'lucide-react';
 import type { Field } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { TreatmentRecommendation, TreatmentRecommendationProps } from './treatment-recommendation';
+import { diagnosePlantHealth } from '@/app/actions';
+import type { DiagnosePlantOutput } from '@/ai/flows/diagnose-plant';
 
 type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
-
-interface DetectionResult {
-  detectionId: string;
-  detection: {
-    finalHealthDisplay: string;
-    infectionLevel: 'None' | 'Preventive' | 'Targeted' | 'Intensive';
-    infected_area_pct: number;
-    presence_confidence: number;
-    reviewRequired: boolean;
-    health_score: number;
-    disease: string;
-  };
-}
-
-function finalizeDetection(detection: any): any {
-  const pc = Number(detection.presence_confidence || 0);
-  const sc = Number(detection.severity_confidence || pc);
-  const area = Number(detection.infected_area_pct || 0);
-  let hs = Number(detection.health_score ?? (100 - area));
-
-  if (hs > 85 && area > 5) {
-    detection.reviewRequired = true;
-    detection.finalHealthDisplay = "Uncertain — lesions detected; manual review required";
-    return detection;
-  }
-
-  if (pc >= 0.6 && hs > 85 && sc < 0.75) {
-    detection.reviewRequired = true;
-    detection.finalHealthDisplay = "Uncertain — low severity confidence; manual review required";
-    return detection;
-  }
-
-  if (area >= 5 && pc >= 0.5) {
-    detection.infected = true;
-    detection.infectionLevel = area <= 5 ? "Preventive" : area <= 25 ? "Targeted" : "Intensive";
-    detection.reviewRequired = sc < 0.75;
-    detection.finalHealthDisplay = `${Math.max(0, 100 - Math.round(area))}/100 (estimated)`;
-    return detection;
-  }
-
-  detection.reviewRequired = pc >= 0.5 && pc < 0.75;
-  detection.finalHealthDisplay = `${Math.round(hs)}/100`;
-  return detection;
-}
 
 
 export function DiseaseDetection({ field }: { field: Field }) {
     const [image, setImage] = useState<string | null>(null);
     const [status, setStatus] = useState<DetectionStatus>('idle');
-    const [result, setResult] = useState<DetectionResult | null>(null);
+    const [result, setResult] = useState<DiagnosePlantOutput | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
     const [showTreatmentModal, setShowTreatmentModal] = useState(false);
@@ -85,41 +43,19 @@ export function DiseaseDetection({ field }: { field: Field }) {
                 setImage(dataUri);
                 setStatus('analyzing');
                 
-                startTransition(() => {
-                    setTimeout(() => {
-                        try {
-                            const mockPresenceConfidence = 0.65 + Math.random() * 0.3;
-                            const mockInfectedArea = Math.random() * 40;
-                            const infectionLevel =
-                                mockPresenceConfidence < 0.6 ? "None" :
-                                mockInfectedArea < 5 ? "Preventive" :
-                                mockInfectedArea <= 25 ? "Targeted" : "Intensive";
+                startTransition(async () => {
+                    const response = await diagnosePlantHealth({
+                        photoDataUri: dataUri,
+                        description: `Image of a ${field.cropType} plant from ${field.name}.`,
+                    });
 
-                            let doc = {
-                                infected: infectionLevel !== "None",
-                                infected_area_pct: Number(mockInfectedArea),
-                                infectionLevel,
-                                presence_confidence: Number(mockPresenceConfidence),
-                                severity_confidence: Number(mockPresenceConfidence - 0.1),
-                                health_score: 100 - (Number(mockInfectedArea) * 1.5),
-                                disease: field.cropType === 'Corn' ? 'Northern Corn Leaf Blight' : field.cropType === 'Wheat' ? 'Wheat Rust' : 'Powdery Mildew'
-                            };
-
-                            const finalDoc = finalizeDetection(doc);
-
-                            const data: DetectionResult = {
-                                detectionId: `sim-${Date.now()}`,
-                                detection: finalDoc,
-                            };
-                            
-                            setResult(data);
-                            setStatus('complete');
-                        } catch (err: any) {
-                            console.error("Client-side detection error:", err);
-                            setError(err.message || 'An unknown error occurred during analysis.');
-                            setStatus('error');
-                        }
-                    }, 1000);
+                    if (response.success && response.data) {
+                        setResult(response.data);
+                        setStatus('complete');
+                    } else {
+                        setError(response.error || 'An unknown error occurred during analysis.');
+                        setStatus('error');
+                    }
                 });
             };
             reader.readAsDataURL(file);
@@ -138,7 +74,7 @@ export function DiseaseDetection({ field }: { field: Field }) {
 
     const getHealthInfo = () => {
         if (!result) return { color: 'bg-gray-500', score: 0 };
-        const score = result.detection.health_score;
+        const score = result.diagnosis.healthScore;
         if (score > 85) return { color: 'bg-green-500', score };
         if (score > 50) return { color: 'bg-yellow-500', score };
         return { color: 'bg-red-500', score };
@@ -146,8 +82,8 @@ export function DiseaseDetection({ field }: { field: Field }) {
 
     const healthInfo = getHealthInfo();
     
-    const treatmentProps: TreatmentRecommendationProps | null = result ? {
-        diseaseDetected: result.detection.disease,
+    const treatmentProps: TreatmentRecommendationProps | null = result && !result.diagnosis.isHealthy ? {
+        diseaseDetected: result.diagnosis.disease,
         cropStage: "Vegetative", // Mock data
         weatherConditions: "28°C, 75% Humidity", // Mock data
     } : null;
@@ -157,8 +93,8 @@ export function DiseaseDetection({ field }: { field: Field }) {
         <>
             <Card className="flex flex-col">
                 <CardHeader>
-                    <CardTitle>AI Disease Detection</CardTitle>
-                    <CardDescription>Upload a crop image to analyze its health.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Microscope/> AI Disease Detection</CardTitle>
+                    <CardDescription>Upload a crop image to analyze its health using Gemini.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                     {!image && (
@@ -202,33 +138,29 @@ export function DiseaseDetection({ field }: { field: Field }) {
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm items-center">
                                             <span className="font-semibold">Health Score</span>
-                                            <Badge variant="outline">{result.detection.finalHealthDisplay}</Badge>
+                                            <Badge variant="outline">{result.diagnosis.healthScore}/100</Badge>
                                         </div>
-                                        {!result.detection.finalHealthDisplay.includes('Uncertain') && (
-                                            <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
-                                        )}
+                                        <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
                                     </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        <strong>Detected Issue:</strong> {result.detection.disease}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                        <strong>Infection Level:</strong> {result.detection.infectionLevel}
-                                    </p>
-                                    {result.detection.reviewRequired && (
-                                        <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/50">
-                                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                                            <AlertTitle className="text-yellow-700">Manual Review Recommended</AlertTitle>
-                                            <AlertDescription className="text-yellow-600">
-                                                AI confidence is moderate. An expert should review this scan.
-                                            </AlertDescription>
-                                        </Alert>
-                                    )}
+                                    <div className='text-sm space-y-2'>
+                                        <p><strong>Plant:</strong> {result.identification.commonName} <i>({result.identification.latinName})</i></p>
+                                        <p><strong>Status:</strong> <span className={result.diagnosis.isHealthy ? 'text-green-600' : 'text-red-600'}>{result.diagnosis.isHealthy ? 'Healthy' : 'Diseased'}</span></p>
+                                        <p><strong>Issue:</strong> {result.diagnosis.disease}</p>
+                                        <Card className="bg-background/50 max-h-32 overflow-y-auto">
+                                            <CardHeader className="p-2 pt-2">
+                                                <CardTitle className="text-xs">Detailed Diagnosis</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="p-2 pt-0 text-xs">
+                                                {result.diagnosis.detailedDiagnosis}
+                                            </CardContent>
+                                        </Card>
+                                    </div>
                                 </div>
                             )}
                         </div>
                     )}
                 </CardContent>
-                {status === 'complete' && result && result.detection.infectionLevel !== 'None' && (
+                {status === 'complete' && result && !result.diagnosis.isHealthy && (
                     <CardFooter>
                         <Button className="w-full" disabled={isPending} onClick={() => setShowTreatmentModal(true)}>
                             <TestTube2 className="mr-2 h-4 w-4" />

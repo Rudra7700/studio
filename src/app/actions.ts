@@ -11,6 +11,7 @@ import {
   GetTreatmentRecommendationsInput,
 } from '@/ai/flows/get-treatment-recommendations';
 import { generateCropImage, GenerateCropImageInput } from '@/ai/flows/generate-crop-image';
+import { diagnosePlant, DiagnosePlantInput, DiagnosePlantOutput } from '@/ai/flows/diagnose-plant';
 
 
 export async function generateCropReport(fieldId: string) {
@@ -112,5 +113,15 @@ export async function getCropImage(input: GenerateCropImageInput) {
     } catch (error) {
         console.error('Error generating crop image:', error);
         return { success: false, error: 'Failed to generate crop image.' };
+    }
+}
+
+export async function diagnosePlantHealth(input: DiagnosePlantInput): Promise<{ success: boolean; data?: DiagnosePlantOutput; error?: string }> {
+    try {
+        const result = await diagnosePlant(input);
+        return { success: true, data: result };
+    } catch (error: any) {
+        console.error('Error diagnosing plant health:', error);
+        return { success: false, error: 'Failed to analyze the image with AI. ' + error.message };
     }
 }
