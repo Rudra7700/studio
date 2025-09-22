@@ -14,7 +14,8 @@ import {
 import { generateCropImage, GenerateCropImageInput } from '@/ai/flows/generate-crop-image';
 import { diagnosePlant } from '@/ai/flows/diagnose-plant';
 import type { DiagnosePlantInput, DiagnosePlantOutput } from '@/ai/flows/diagnose-plant.types';
-
+import { generateFarmingChallenges, GenerateFarmingChallengesInput } from '@/ai/flows/generate-farming-challenges';
+import type { Challenge } from '@/lib/types';
 
 export async function generateCropReport(fieldId: string) {
   const field = mockFields.find(f => f.id === fieldId);
@@ -125,5 +126,16 @@ export async function diagnosePlantHealth(input: DiagnosePlantInput): Promise<{ 
     } catch (error: any) {
         console.error('Error diagnosing plant health:', error);
         return { success: false, error: 'Failed to analyze the image with AI. ' + error.message };
+    }
+}
+
+export async function getAiChallenges(input: GenerateFarmingChallengesInput): Promise<{ success: boolean; data?: Challenge[]; error?: string }> {
+    try {
+        const result = await generateFarmingChallenges(input);
+        // The schema returns an object with a 'challenges' property
+        return { success: true, data: result.challenges };
+    } catch (error: any) {
+        console.error('Error generating farming challenges:', error);
+        return { success: false, error: 'Failed to generate new challenges from AI. ' + error.message };
     }
 }
