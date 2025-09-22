@@ -7,12 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Upload, X, Loader2, Sparkles, TestTube2, AlertTriangle, Microscope } from 'lucide-react';
+import { Upload, X, Loader2, TestTube2, AlertTriangle, Microscope, ShieldCheck, SprayCan } from 'lucide-react';
 import type { Field } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
-import { TreatmentRecommendation, TreatmentRecommendationProps } from './treatment-recommendation';
 import { diagnosePlantHealth } from '@/app/actions';
 import type { DiagnosePlantOutput } from '@/ai/flows/diagnose-plant.types';
 
@@ -25,7 +23,6 @@ export function DiseaseDetection({ field }: { field: Field }) {
     const [result, setResult] = useState<DiagnosePlantOutput | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
-    const [showTreatmentModal, setShowTreatmentModal] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -81,25 +78,18 @@ export function DiseaseDetection({ field }: { field: Field }) {
     };
 
     const healthInfo = getHealthInfo();
-    
-    const treatmentProps: TreatmentRecommendationProps | null = result && !result.diagnosis.isHealthy ? {
-        diseaseDetected: result.diagnosis.disease,
-        cropStage: "Vegetative", // Mock data
-        weatherConditions: "28°C, 75% Humidity", // Mock data
-    } : null;
-
 
     return (
         <>
             <Card className="flex flex-col">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><Microscope/> AI Disease Detection</CardTitle>
-                    <CardDescription>Upload a crop image to analyze its health using Gemini.</CardDescription>
+                    <CardDescription>Upload a crop image to get a full diagnosis and treatment plan.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                     {!image && (
                         <div className="flex items-center justify-center w-full">
-                            <Label htmlFor="crop-image" className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-card-foreground/5">
+                            <Label htmlFor="crop-image" className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-card-foreground/5">
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                     <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
                                     <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
@@ -118,9 +108,9 @@ export function DiseaseDetection({ field }: { field: Field }) {
                             </div>
                             
                             {(status === 'analyzing' || status === 'uploading') && (
-                                <div className="text-sm text-center flex items-center justify-center gap-2">
+                                <div className="text-sm text-center flex items-center justify-center gap-2 py-8">
                                     <Loader2 className="w-4 h-4 animate-spin"/>
-                                    {status === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}
+                                    {status === 'uploading' ? 'Uploading...' : 'Analyzing with AI... This may take a moment.'}
                                 </div>
                             )}
                             
@@ -133,55 +123,62 @@ export function DiseaseDetection({ field }: { field: Field }) {
                             )}
 
                             {status === 'complete' && result && (
-                                <div className="p-4 bg-card-foreground/5 rounded-lg space-y-4">
-                                    <div className="text-sm font-medium">Analysis Complete</div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-sm items-center">
-                                            <span className="font-semibold">Health Score</span>
-                                            <Badge variant="outline">{result.diagnosis.healthScore}/100</Badge>
-                                        </div>
-                                        <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
-                                    </div>
-                                    <div className='text-sm space-y-2'>
-                                        <p><strong>Plant:</strong> {result.identification.commonName} <i>({result.identification.latinName})</i></p>
-                                        <p><strong>Status:</strong> <span className={result.diagnosis.isHealthy ? 'text-green-600' : 'text-red-600'}>{result.diagnosis.isHealthy ? 'Healthy' : 'Diseased'}</span></p>
-                                        <p><strong>Issue:</strong> {result.diagnosis.disease}</p>
-                                        <Card className="bg-background/50 max-h-32 overflow-y-auto">
-                                            <CardHeader className="p-2 pt-2">
-                                                <CardTitle className="text-xs">Detailed Diagnosis</CardTitle>
+                                <div className="space-y-4">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-lg">Diagnosis Result</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3">
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between text-sm items-center">
+                                                    <span className="font-semibold">Health Score</span>
+                                                    <Badge variant="outline">{result.diagnosis.healthScore}/100</Badge>
+                                                </div>
+                                                <Progress value={healthInfo.score} className={cn('h-2', healthInfo.color)} />
+                                            </div>
+                                            <div className='text-sm space-y-2'>
+                                                <p><strong>Plant:</strong> {result.identification.commonName}</p>
+                                                <p><strong>Status:</strong> <span className={result.diagnosis.isHealthy ? 'text-green-600' : 'text-red-600'}>{result.diagnosis.isHealthy ? 'Healthy' : 'Diseased'}</span></p>
+                                                <p><strong>Identified Issue:</strong> {result.diagnosis.disease}</p>
+                                                <div className="text-xs text-muted-foreground p-2 border bg-background rounded-md">{result.diagnosis.detailedDiagnosis}</div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    {!result.diagnosis.isHealthy && (
+                                        <Card className="bg-primary/5 border-primary/20">
+                                            <CardHeader>
+                                                <CardTitle className="text-lg flex items-center gap-2"><TestTube2/> Treatment Plan</CardTitle>
                                             </CardHeader>
-                                            <CardContent className="p-2 pt-0 text-xs">
-                                                {result.diagnosis.detailedDiagnosis}
+                                            <CardContent className="text-sm space-y-4">
+                                                <div>
+                                                    <h4 className="font-semibold flex items-center gap-2 mb-1"><SprayCan className="w-4 h-4"/> Pesticide</h4>
+                                                    <p className="text-muted-foreground">{result.treatment.pesticideRecommendation}</p>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold mb-1">Application</h4>
+                                                    <p className="text-muted-foreground whitespace-pre-wrap">{result.treatment.applicationInstructions}</p>
+                                                </div>
+                                                <div>
+                                                     <h4 className="font-semibold flex items-center gap-2 mb-1"><ShieldCheck className="w-4 h-4"/> Safety Notes</h4>
+                                                    <p className="text-muted-foreground whitespace-pre-wrap">{result.treatment.safetyPrecautions}</p>
+                                                </div>
                                             </CardContent>
                                         </Card>
-                                    </div>
+                                    )}
                                 </div>
                             )}
                         </div>
                     )}
                 </CardContent>
-                {status === 'complete' && result && !result.diagnosis.isHealthy && (
+                {status === 'complete' && (
                     <CardFooter>
-                        <Button className="w-full" disabled={isPending} onClick={() => setShowTreatmentModal(true)}>
-                            <TestTube2 className="mr-2 h-4 w-4" />
-                            View Recommended Treatment
+                        <Button className="w-full" variant="outline" disabled={isPending} onClick={() => resetState(true)}>
+                            Analyze Another Image
                         </Button>
                     </CardFooter>
                 )}
             </Card>
-            {showTreatmentModal && treatmentProps && (
-                 <Dialog open={showTreatmentModal} onOpenChange={setShowTreatmentModal}>
-                    <DialogContent className="max-w-3xl">
-                        <DialogHeader>
-                            <DialogTitle>AI Treatment Recommendation</DialogTitle>
-                            <DialogDescription>
-                                AI-generated treatment plan for {treatmentProps.diseaseDetected} in {field.name}.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <TreatmentRecommendation {...treatmentProps} />
-                    </DialogContent>
-                </Dialog>
-            )}
         </>
     );
 }

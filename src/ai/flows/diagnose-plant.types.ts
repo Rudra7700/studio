@@ -57,5 +57,22 @@ export const DiagnosePlantOutputSchema = z.object({
         "A detailed, expert analysis of the plant's health, including visual indicators and potential causes."
       ),
   }),
+  treatment: z.object({
+    pesticideRecommendation: z
+      .string()
+      .describe(
+        'Specific pesticide product names recommended for treatment. "N/A" if healthy.'
+      ),
+    applicationInstructions: z
+      .string()
+      .describe(
+        'Step-by-step instructions for applying the treatment, including dosage and method. "N/A" if healthy.'
+      ),
+    safetyPrecautions: z
+      .string()
+      .describe(
+        'Key safety precautions to take when handling the recommended pesticides. "N/A" if healthy.'
+      ),
+  }),
 });
 export type DiagnosePlantOutput = z.infer<typeof DiagnosePlantOutputSchema>;
