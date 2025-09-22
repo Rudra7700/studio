@@ -1,19 +1,66 @@
 
 
 'use client';
-
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot, Droplets, Scan, Tractor } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
+import { GrowthAnimation } from '@/components/growth-animation';
+import { cn } from '@/lib/utils';
+
+const farmingQuotes = [
+  "The future of agriculture is not in growing more, but in growing better.",
+  "To make agriculture sustainable, the grower has got to be able to make a profit.",
+  "The farmer is the only man in our economy who buys everything at retail, sells everything at wholesale, and pays the freight both ways.",
+  "Agriculture is our wisest pursuit, because it will in the end contribute most to real wealth, good morals, and happiness.",
+  "The ultimate goal of farming is not the growing of crops, but the cultivation and perfection of human beings."
+];
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [quote, setQuote] = useState('');
+
+  useEffect(() => {
+    setQuote(farmingQuotes[Math.floor(Math.random() * farmingQuotes.length)]);
+
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 28); // Update progress roughly every 28ms to reach 100 in ~2.8s
+
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(progressInterval);
+    };
+  }, []);
+  
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div>
+       {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-opacity duration-300">
+          <div className="text-center space-y-4">
+            <GrowthAnimation progress={progress} />
+            <h2 className="text-2xl font-bold text-primary mt-4">Initializing AgriSystem</h2>
+            <p className="text-muted-foreground animate-pulse">Loading components...</p>
+          </div>
+        </div>
+      )}
+
+      <div className={cn("transition-opacity duration-500", loading ? "opacity-0" : "opacity-100")}>
         <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Logo />
           <nav className="flex items-center gap-4">
@@ -44,9 +91,6 @@ export default function Home() {
                 <div className="mt-8 flex justify-center gap-4">
                   <Button size="lg" asChild>
                     <Link href="/dashboard">Get Started</Link>
-                  </Button>
-                  <Button size="lg" variant="outline">
-                    Learn More
                   </Button>
                 </div>
               </div>

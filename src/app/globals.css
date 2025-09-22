@@ -105,3 +105,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes splash-progress {
+    from { stroke-dashoffset: 565.48; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes splash-icon-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .splash-progress-circle {
+    animation: splash-progress 3s ease-out forwards;
+  }
+  .splash-icon-group {
+    animation: splash-icon-rotate 10s linear infinite;
+  }
+}
