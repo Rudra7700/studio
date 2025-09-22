@@ -33,37 +33,50 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  const [farmer, setFarmer] = useState<Partial<Farmer>>({});
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
-    },
-  });
-
-   useEffect(() => {
-    // Load profile from localStorage first for offline support and speed
+  // Reliably initialize farmer state from local storage or fall back to mock data
+  const [farmer, setFarmer] = useState<Partial<Farmer>>(() => {
+    if (typeof window === 'undefined') {
+      return {
+        id: 'farmer-1',
+        name: mockFarmers[0].name,
+        email: mockFarmers[0].email,
+        avatarUrl: mockFarmers[0].avatarUrl,
+        phone: '9876543210'
+      };
+    }
     const savedProfileString = localStorage.getItem('farmerProfile');
-    const initialProfile = savedProfileString ? JSON.parse(savedProfileString) : {
+    return savedProfileString ? JSON.parse(savedProfileString) : {
       id: 'farmer-1',
       name: mockFarmers[0].name,
       email: mockFarmers[0].email,
       avatarUrl: mockFarmers[0].avatarUrl,
       phone: '9876543210'
     };
-    setFarmer(initialProfile);
-    setAvatarPreview(initialProfile.avatarUrl);
+  });
+  
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(farmer.avatarUrl || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    // Initialize form with the loaded farmer data
+    defaultValues: {
+      fullName: farmer.name || '',
+      email: farmer.email || '',
+      phone: farmer.phone || '',
+    },
+  });
+
+   useEffect(() => {
+    // This effect now only syncs the form if the farmer state changes from an external source,
+    // though with the current logic, it mainly runs once on load.
     form.reset({
-        fullName: initialProfile.name,
-        email: initialProfile.email,
-        phone: initialProfile.phone,
+        fullName: farmer.name || mockFarmers[0].name,
+        email: farmer.email || mockFarmers[0].email,
+        phone: farmer.phone || '9876543210',
     });
-  }, [form]);
+    setAvatarPreview(farmer.avatarUrl || mockFarmers[0].avatarUrl);
+  }, [farmer, form]);
 
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
