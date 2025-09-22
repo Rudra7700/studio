@@ -56,6 +56,7 @@ export default function Home() {
             <GrowthAnimation progress={progress} />
             <h2 className="text-2xl font-bold text-primary mt-4">Initializing AgriSystem</h2>
             <p className="text-muted-foreground animate-pulse">Loading components...</p>
+            <p className="text-muted-foreground italic px-4">&quot;{quote}&quot;</p>
           </div>
         </div>
       )}
@@ -193,3 +194,4 @@ const Checkmark = () => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
   </svg>
 )
+
