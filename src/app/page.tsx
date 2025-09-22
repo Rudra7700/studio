@@ -59,7 +59,7 @@ export default function Home() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
               <div className="max-w-3xl mx-auto text-center">
                 <h1 className="text-4xl md:text-6xl font-headline font-bold text-primary tracking-tight">
-                  AgriSprayer AI
+                  EcoFighter's
                 </h1>
                 <p className="mt-4 text-lg md:text-xl text-foreground/80">
                   Revolutionizing Agriculture with Intelligent Precision Spraying.
@@ -146,7 +146,7 @@ export default function Home() {
 
         <footer className="bg-primary/90 text-primary-foreground py-8">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; {new Date().getFullYear()} AgriSprayer AI. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} EcoFighter's. All rights reserved.</p>
           </div>
         </footer>
       </div>

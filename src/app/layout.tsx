@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'AgriSprayer AI',
-  description: 'Intelligent Pesticide Sprinkling System by AgriSprayer AI',
+  title: "EcoFighter's",
+  description: "Intelligent Pesticide Sprinkling System by EcoFighter's",
   manifest: '/manifest.json',
 };
 

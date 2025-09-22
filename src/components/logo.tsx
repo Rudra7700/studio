@@ -8,7 +8,7 @@ export function Logo({ className }: { className?: string }) {
       <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
         <Leaf className="w-5 h-5" />
       </div>
-      <span>AgriSprayer AI</span>
+      <span>EcoFighter's</span>
     </Link>
   );
 }
