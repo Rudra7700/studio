@@ -11,7 +11,8 @@ import {
   GetTreatmentRecommendationsInput,
 } from '@/ai/flows/get-treatment-recommendations';
 import { generateCropImage, GenerateCropImageInput } from '@/ai/flows/generate-crop-image';
-import { diagnosePlant, DiagnosePlantInput, DiagnosePlantOutput } from '@/ai/flows/diagnose-plant';
+import { diagnosePlant } from '@/ai/flows/diagnose-plant';
+import type { DiagnosePlantInput, DiagnosePlantOutput } from '@/ai/flows/diagnose-plant.types';
 
 
 export async function generateCropReport(fieldId: string) {

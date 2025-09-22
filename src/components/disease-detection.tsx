@@ -14,7 +14,7 @@ import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { TreatmentRecommendation, TreatmentRecommendationProps } from './treatment-recommendation';
 import { diagnosePlantHealth } from '@/app/actions';
-import type { DiagnosePlantOutput } from '@/ai/flows/diagnose-plant';
+import type { DiagnosePlantOutput } from '@/ai/flows/diagnose-plant.types';
 
 type DetectionStatus = 'idle' | 'uploading' | 'analyzing' | 'complete' | 'error';
 
