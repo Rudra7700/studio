@@ -22,9 +22,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChangeEvent, useRef, useState, useEffect } from 'react';
 import { updateFarmerProfile } from '@/lib/firebase';
 import type { Farmer } from '@/lib/types';
-import { getFarmerProfile } from '@/lib/firebase';
-import { Skeleton } from '@/components/ui/skeleton';
-
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -36,35 +33,37 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  const [farmer, setFarmer] = useState<Partial<Farmer>>({
-    id: 'farmer-1',
-    name: mockFarmers[0].name,
-    email: mockFarmers[0].email,
-    avatarUrl: mockFarmers[0].avatarUrl,
-    phone: '9876543210'
-  });
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(mockFarmers[0].avatarUrl);
+  const [farmer, setFarmer] = useState<Partial<Farmer>>({});
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: farmer.name || '',
-      email: farmer.email || '',
-      phone: farmer.phone || '',
+      fullName: '',
+      email: '',
+      phone: '',
     },
   });
 
    useEffect(() => {
+    // Load profile from localStorage first for offline support and speed
+    const savedProfileString = localStorage.getItem('farmerProfile');
+    const initialProfile = savedProfileString ? JSON.parse(savedProfileString) : {
+      id: 'farmer-1',
+      name: mockFarmers[0].name,
+      email: mockFarmers[0].email,
+      avatarUrl: mockFarmers[0].avatarUrl,
+      phone: '9876543210'
+    };
+    setFarmer(initialProfile);
+    setAvatarPreview(initialProfile.avatarUrl);
     form.reset({
-        fullName: farmer.name,
-        email: farmer.email,
-        phone: farmer.phone
+        fullName: initialProfile.name,
+        email: initialProfile.email,
+        phone: initialProfile.phone,
     });
-    if (farmer.avatarUrl) {
-        setAvatarPreview(farmer.avatarUrl);
-    }
-  }, [form, farmer]);
+  }, [form]);
 
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,32 +83,33 @@ export default function DashboardSettingsPage() {
         toast({ variant: 'destructive', title: "Save Failed", description: "Farmer profile not loaded." });
         return;
     }
-    if (!navigator.onLine) {
-        toast({ variant: 'destructive', title: "Save Failed", description: "You are offline. Please reconnect to save changes." });
-        return;
-    }
     
-    try {
-      const updatedProfileData: Partial<Farmer> = {
+    const updatedProfileData: Partial<Farmer> = {
         name: data.fullName,
         email: data.email,
         phone: data.phone,
         avatarUrl: avatarPreview || farmer.avatarUrl,
-      };
-      
+    };
+     const newLocalProfile = {...farmer, ...updatedProfileData};
+
+    // Optimistically update local state and localStorage
+    localStorage.setItem('farmerProfile', JSON.stringify(newLocalProfile));
+    setFarmer(newLocalProfile);
+    
+    if (!navigator.onLine) {
+        toast({ title: "Saved Locally", description: "Your profile will be synced when you're back online." });
+        return;
+    }
+    
+    try {
       await updateFarmerProfile(farmer.id, updatedProfileData);
-      
-      const newLocalProfile = {...farmer, ...updatedProfileData};
-      localStorage.setItem('farmerProfile', JSON.stringify(newLocalProfile));
-      setFarmer(newLocalProfile);
-      
       toast({
         title: 'Settings Saved',
         description: 'Your profile has been updated successfully.',
       });
     } catch (error) {
-        console.error("Failed to save settings", error);
-        toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. Please try again." });
+        console.error("Failed to save settings to Firebase", error);
+        toast({ variant: 'destructive', title: "Sync Failed", description: "Could not save settings to the cloud. Changes are saved locally." });
     }
   };
   
@@ -119,6 +119,8 @@ export default function DashboardSettingsPage() {
     }
     return 'F';
   }
+  
+  const { formState: { isSubmitting } } = form;
 
   return (
     <Form {...form}>
@@ -145,7 +147,7 @@ export default function DashboardSettingsPage() {
                       <AvatarImage src={avatarPreview || undefined} alt={farmer?.name} />
                       <AvatarFallback>{getFallbackInitial()}</AvatarFallback>
                   </Avatar>
-                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isSubmitting}>
                       Change Picture
                       </Button>
                       <Input 
@@ -167,7 +169,7 @@ export default function DashboardSettingsPage() {
                       <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                          <Input placeholder="Your full name" {...field} />
+                          <Input placeholder="Your full name" {...field} disabled={isSubmitting}/>
                       </FormControl>
                       <FormMessage />
                       </FormItem>
@@ -180,7 +182,7 @@ export default function DashboardSettingsPage() {
                       <FormItem>
                       <FormLabel>Email Address</FormLabel>
                       <FormControl>
-                          <Input placeholder="your.email@example.com" {...field} />
+                          <Input placeholder="your.email@example.com" {...field} disabled={isSubmitting}/>
                       </FormControl>
                       <FormMessage />
                       </FormItem>
@@ -193,7 +195,7 @@ export default function DashboardSettingsPage() {
                       <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                          <Input placeholder="10-digit mobile number" {...field} />
+                          <Input placeholder="10-digit mobile number" {...field} disabled={isSubmitting}/>
                       </FormControl>
                       <FormMessage />
                       </FormItem>
@@ -218,7 +220,7 @@ export default function DashboardSettingsPage() {
                   Receive alerts directly on your device.
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked disabled={isSubmitting}/>
             </div>
             <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
               <div className="space-y-0.5">
@@ -227,7 +229,7 @@ export default function DashboardSettingsPage() {
                   Get a summary and critical alerts via email.
                 </p>
               </div>
-              <Switch />
+              <Switch disabled={isSubmitting}/>
             </div>
              <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
               <div className="space-y-0.5">
@@ -236,24 +238,22 @@ export default function DashboardSettingsPage() {
                   For critical alerts like severe weather warnings.
                 </p>
               </div>
-              <Switch defaultChecked/>
+              <Switch defaultChecked disabled={isSubmitting}/>
             </div>
           </CardContent>
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? (
+          <Button type="submit" size="lg" disabled={isSubmitting}>
+            {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
                 <Save className="mr-2 h-4 w-4" />
             )}
-            {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+            {isSubmitting ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </form>
     </Form>
   );
 }
-
-    
