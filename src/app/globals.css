@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,4 +104,71 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes fill-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes seed-crack-left {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-5px, 5px) rotate(-15deg); }
+}
+
+@keyframes seed-crack-right {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(5px, 5px) rotate(15deg); }
+}
+
+@keyframes grow-roots {
+  from { stroke-dasharray: 0 100; }
+  to { stroke-dasharray: 100 100; }
+}
+
+@keyframes grow-stem {
+  from { stroke-dashoffset: 45; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes unfurl-leaves {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes plant-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.seed-left {
+  animation: seed-crack-left 0.8s forwards;
+  transform-origin: 50px 98px;
+}
+.seed-right {
+  animation: seed-crack-right 0.8s forwards;
+  transform-origin: 50px 98px;
+}
+
+.roots path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: grow-roots 1s 0.8s forwards;
+}
+
+.stem {
+  stroke-dasharray: 45;
+  stroke-dashoffset: 45;
+  animation: grow-stem 0.8s 1.8s forwards;
+}
+
+.leaves {
+  transform-origin: 50px 70px;
+  animation: unfurl-leaves 0.5s 2.1s forwards, plant-sway 2s 2.6s infinite ease-in-out;
+  opacity: 0;
+}
+
+.soil-line {
+  transform-origin: center;
+  animation: plant-sway 2s 2.6s infinite ease-in-out;
 }

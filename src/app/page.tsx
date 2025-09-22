@@ -40,10 +40,10 @@ export default function Home() {
       {isLoading && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-opacity duration-500 animate-out fade-out">
           <div className="text-center space-y-4 animate-in fade-in duration-500">
-             <div className="flex justify-center">
+             <div className="flex justify-center" style={{ animationDelay: '500ms'}}>
                 <Logo />
              </div>
-            <p className="text-lg text-muted-foreground">Your AI Study Buddy for Farming</p>
+            <p className="text-lg text-muted-foreground" style={{ animationDelay: '500ms'}}>Your AI Study Buddy for Farming</p>
           </div>
           
           <GrowthAnimation quote={quote} />
