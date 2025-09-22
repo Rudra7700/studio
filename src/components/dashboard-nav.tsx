@@ -26,6 +26,7 @@ const navItems = [
   { href: '/dashboard/market', label: 'Mandi Prices', icon: BarChart3 },
   { href: '/dashboard/pesticides', label: 'Buy Pesticides', icon: ShoppingBasket },
   { href: '/dashboard/challenges', label: 'Challenges', icon: Trophy },
+  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
 const adminNavItems = [

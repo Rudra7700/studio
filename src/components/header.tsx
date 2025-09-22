@@ -219,20 +219,22 @@ export function Header() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Image
-              src={mockFarmers[0].avatarUrl}
-              width={36}
-              height={36}
-              alt="Avatar"
-              className="overflow-hidden"
-              data-ai-hint="person smiling"
-            />
+            <Link href="/dashboard/settings">
+              <Image
+                src={mockFarmers[0].avatarUrl}
+                width={36}
+                height={36}
+                alt="Avatar"
+                className="overflow-hidden"
+                data-ai-hint="person smiling"
+              />
+            </Link>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <Link href="/dashboard"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
+          <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Logout</DropdownMenuItem>
