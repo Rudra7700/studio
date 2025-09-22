@@ -1,3 +1,4 @@
+
 'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +20,7 @@ import { mockFarmers } from '@/lib/mock-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState, useEffect } from 'react';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -29,38 +30,96 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
+const defaultFarmerData = {
+  name: mockFarmers[0].name,
+  email: mockFarmers[0].email,
+  avatarUrl: mockFarmers[0].avatarUrl,
+  phone: '9876543210',
+};
+
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  const farmer = mockFarmers[0];
+  const [farmer, setFarmer] = useState(defaultFarmerData);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: farmer.name,
-      email: farmer.email,
-      phone: '9876543210', // mock phone
+      fullName: '',
+      email: '',
+      phone: '',
     },
   });
+
+  useEffect(() => {
+    try {
+      const savedFarmer = localStorage.getItem('farmerProfile');
+      const savedAvatar = localStorage.getItem('avatarPreview');
+      if (savedFarmer) {
+        const parsedFarmer = JSON.parse(savedFarmer);
+        setFarmer(parsedFarmer);
+        form.reset(parsedFarmer);
+      } else {
+        setFarmer(defaultFarmerData);
+        form.reset({
+          fullName: defaultFarmerData.name,
+          email: defaultFarmerData.email,
+          phone: defaultFarmerData.phone
+        });
+      }
+      if (savedAvatar) {
+        setAvatarPreview(savedAvatar);
+      }
+    } catch (error) {
+      console.error("Failed to parse settings from localStorage", error);
+      form.reset({
+        fullName: defaultFarmerData.name,
+        email: defaultFarmerData.email,
+        phone: defaultFarmerData.phone
+      });
+    }
+  }, [form]);
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
           const file = e.target.files[0];
           const reader = new FileReader();
           reader.onloadend = () => {
-              setAvatarPreview(reader.result as string);
+              const result = reader.result as string;
+              setAvatarPreview(result);
+              try {
+                localStorage.setItem('avatarPreview', result);
+              } catch (error) {
+                console.error("Failed to save avatar to localStorage", error);
+                toast({ variant: 'destructive', title: "Could not save image", description: "Browser storage might be full." });
+              }
           };
           reader.readAsDataURL(file);
       }
   };
 
   const onSubmit = (data: ProfileFormValues) => {
-    console.log(data);
-    toast({
-      title: 'Settings Saved',
-      description: 'Your profile has been updated successfully.',
-    });
+    try {
+      const updatedProfile = {
+        name: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        avatarUrl: farmer.avatarUrl // Keep original avatar URL, preview is handled separately
+      };
+      localStorage.setItem('farmerProfile', JSON.stringify(updatedProfile));
+      
+      // Update the name in the farmer state to reflect in fallback
+      setFarmer(prev => ({...prev, name: data.fullName}));
+      
+      toast({
+        title: 'Settings Saved',
+        description: 'Your profile has been updated successfully.',
+      });
+    } catch (error) {
+        console.error("Failed to save settings to localStorage", error);
+        toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. Please try again." });
+    }
   };
 
   return (
@@ -86,21 +145,19 @@ export default function DashboardSettingsPage() {
                 <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
                     <AvatarImage src={avatarPreview || farmer.avatarUrl} alt={farmer.name} />
-                    <AvatarFallback>{farmer.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{farmer.name ? farmer.name.charAt(0) : 'U'}</AvatarFallback>
                 </Avatar>
                     <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
                     Change Picture
                     </Button>
-                    <FormControl>
-                        <Input 
-                            id="avatar-upload" 
-                            type="file" 
-                            className="hidden" 
-                            ref={fileInputRef}
-                            onChange={handleAvatarChange}
-                            accept="image/png, image/jpeg, image/webp"
-                        />
-                    </FormControl>
+                    <Input 
+                        id="avatar-upload" 
+                        type="file" 
+                        className="hidden" 
+                        ref={fileInputRef}
+                        onChange={handleAvatarChange}
+                        accept="image/png, image/jpeg, image/webp"
+                    />
                 </div>
                 <FormMessage />
             </FormItem>
