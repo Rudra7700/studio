@@ -1,4 +1,3 @@
-
 'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,12 +19,12 @@ import { mockFarmers } from '@/lib/mock-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
+import { ChangeEvent, useRef, useState } from 'react';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
   email: z.string().email('Invalid email address.'),
   phone: z.string().regex(/^\d{10}$/, 'Phone number must be 10 digits.'),
-  avatar: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -33,6 +32,8 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
   const farmer = mockFarmers[0];
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -43,7 +44,16 @@ export default function DashboardSettingsPage() {
     },
   });
 
-  const avatarRef = form.register("avatar");
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.onloadend = () => {
+              setAvatarPreview(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+      }
+  };
 
   const onSubmit = (data: ProfileFormValues) => {
     console.log(data);
@@ -71,28 +81,29 @@ export default function DashboardSettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="avatar"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Profile Picture</FormLabel>
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage src={farmer.avatarUrl} alt={farmer.name} />
-                      <AvatarFallback>{farmer.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                     <Button type="button" variant="outline" onClick={() => document.getElementById('avatar-upload')?.click()}>
-                        Change Picture
-                     </Button>
-                     <FormControl>
-                        <Input id="avatar-upload" type="file" className="hidden" {...avatarRef} />
-                     </FormControl>
-                  </div>
-                   <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormItem>
+                <FormLabel>Profile Picture</FormLabel>
+                <div className="flex items-center gap-4">
+                <Avatar className="h-20 w-20">
+                    <AvatarImage src={avatarPreview || farmer.avatarUrl} alt={farmer.name} />
+                    <AvatarFallback>{farmer.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    Change Picture
+                    </Button>
+                    <FormControl>
+                        <Input 
+                            id="avatar-upload" 
+                            type="file" 
+                            className="hidden" 
+                            ref={fileInputRef}
+                            onChange={handleAvatarChange}
+                            accept="image/png, image/jpeg, image/webp"
+                        />
+                    </FormControl>
+                </div>
+                <FormMessage />
+            </FormItem>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                 control={form.control}
