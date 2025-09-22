@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Suspense } from 'react';
@@ -86,7 +87,7 @@ function CheckoutPageContent() {
             title: "Order Placed Successfully!",
             description: "Your pesticide order has been confirmed. You will receive an update shortly.",
         });
-        router.push('/dashboard/treatments');
+        router.push('/dashboard/financials');
     }, 2000);
   }
 

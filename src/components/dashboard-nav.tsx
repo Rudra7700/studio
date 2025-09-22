@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { cn } from '@/lib/utils';
@@ -21,7 +22,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/fields', label: 'Fields', icon: Map },
   { href: '/dashboard/drones', label: 'Drone View', icon: Tractor },
-  { href: '/dashboard/treatments', label: 'Financials', icon: PiggyBank },
+  { href: '/dashboard/financials', label: 'Financials', icon: PiggyBank },
   { href: '/dashboard/market', label: 'Mandi Prices', icon: BarChart3 },
   { href: '/dashboard/pesticides', label: 'Buy Pesticides', icon: ShoppingBasket },
   { href: '/dashboard/challenges', label: 'Challenges', icon: Trophy },
