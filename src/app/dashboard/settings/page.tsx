@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Save, User, Bell, Loader2 } from 'lucide-react';
+import { Save, User, Bell, Loader2, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { mockFarmers } from '@/lib/mock-data';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -33,7 +33,6 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  // Reliably initialize farmer state from local storage or fall back to mock data
   const [farmer, setFarmer] = useState<Partial<Farmer>>({
     id: 'farmer-1',
     name: mockFarmers[0].name,
@@ -44,22 +43,30 @@ export default function DashboardSettingsPage() {
   
   const [avatarPreview, setAvatarPreview] = useState<string | null>(farmer.avatarUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [justSaved, setJustSaved] = useState(false);
+
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    // Initialize form with the loaded farmer data
     defaultValues: {
-      fullName: farmer.name || '',
-      email: farmer.email || '',
-      phone: farmer.phone || '',
+      fullName: '',
+      email: '',
+      phone: '',
     },
   });
 
    useEffect(() => {
-    // This effect now only syncs the form if the farmer state changes from an external source,
-    // though with the current logic, it mainly runs once on load.
+    // Only read from localStorage on the client-side after mount
     const savedProfileString = localStorage.getItem('farmerProfile');
-    const localProfile = savedProfileString ? JSON.parse(savedProfileString) : null;
+    let localProfile;
+    if (savedProfileString) {
+        try {
+            localProfile = JSON.parse(savedProfileString);
+        } catch (e) {
+            console.error("Failed to parse farmerProfile from localStorage", e);
+        }
+    }
+    
     if(localProfile) {
         setFarmer(localProfile);
         form.reset({
@@ -68,6 +75,14 @@ export default function DashboardSettingsPage() {
             phone: localProfile.phone || '9876543210',
         });
         setAvatarPreview(localProfile.avatarUrl || mockFarmers[0].avatarUrl);
+    } else {
+        // Fallback to mock data if nothing in localStorage
+         form.reset({
+            fullName: mockFarmers[0].name,
+            email: mockFarmers[0].email,
+            phone: '9876543210',
+        });
+        setAvatarPreview(mockFarmers[0].avatarUrl);
     }
   }, [form]);
 
@@ -98,12 +113,13 @@ export default function DashboardSettingsPage() {
     };
      const newLocalProfile = {...farmer, ...updatedProfileData};
 
-    // Optimistically update local state and localStorage
     localStorage.setItem('farmerProfile', JSON.stringify(newLocalProfile));
     setFarmer(newLocalProfile);
     
     if (!navigator.onLine) {
         toast({ title: "Saved Locally", description: "Your profile will be synced when you're back online." });
+        setJustSaved(true);
+        setTimeout(() => setJustSaved(false), 2000);
         return;
     }
     
@@ -113,6 +129,8 @@ export default function DashboardSettingsPage() {
         title: 'Settings Saved',
         description: 'Your profile has been updated successfully.',
       });
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2000);
     } catch (error) {
         console.error("Failed to save settings to Firebase", error);
         toast({ variant: 'destructive', title: "Sync Failed", description: "Could not save settings to the cloud. Changes are saved locally." });
@@ -127,6 +145,32 @@ export default function DashboardSettingsPage() {
   }
   
   const { formState: { isSubmitting } } = form;
+
+  const getButtonContent = () => {
+    if (isSubmitting) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Saving...
+        </>
+      );
+    }
+    if (justSaved) {
+      return (
+        <>
+          <Check className="mr-2 h-4 w-4" />
+          Saved!
+        </>
+      );
+    }
+    return (
+      <>
+        <Save className="mr-2 h-4 w-4" />
+        Save Changes
+      </>
+    );
+  };
+
 
   return (
     <Form {...form}>
@@ -250,13 +294,8 @@ export default function DashboardSettingsPage() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" size="lg" disabled={isSubmitting}>
-            {isSubmitting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-                <Save className="mr-2 h-4 w-4" />
-            )}
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+          <Button type="submit" size="lg" disabled={isSubmitting || justSaved}>
+            {getButtonContent()}
           </Button>
         </div>
       </form>
