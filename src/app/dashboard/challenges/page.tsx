@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockChallenges, mockBadges, mockLeaderboard, mockFarmers } from '@/lib/mock-data';
 import { ChallengeCard } from '@/components/challenges/challenge-card';
-import { Trophy, Award, Shield, Gem, Sparkles, Loader2 } from 'lucide-react';
+import { Trophy, Award, Shield, Gem, Sparkles, Loader2, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -22,6 +22,7 @@ import type { Challenge } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { FarmingQuiz } from '@/components/challenges/farming-quiz';
 
 const iconMap: { [key: string]: React.ElementType } = {
   Sprout: Shield,
@@ -88,8 +89,8 @@ export default function ChallengesPage() {
                              <Tabs defaultValue="daily">
                                 <TabsList>
                                     <TabsTrigger value="daily">Daily Tasks</TabsTrigger>
+                                    <TabsTrigger value="quiz">Daily Quiz</TabsTrigger>
                                     <TabsTrigger value="weekly">Weekly Quests</TabsTrigger>
-                                    <TabsTrigger value="seasonal" disabled>Seasonal Campaigns</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="daily" className="mt-4 space-y-3">
                                     {error && (
@@ -110,6 +111,9 @@ export default function ChallengesPage() {
                                             <ChallengeCard key={task.id} challenge={task} />
                                         ))
                                     )}
+                                </TabsContent>
+                                <TabsContent value="quiz" className="mt-4">
+                                    <FarmingQuiz />
                                 </TabsContent>
                                 <TabsContent value="weekly" className="mt-4 space-y-3">
                                      {weeklyQuests.map(quest => (

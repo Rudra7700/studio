@@ -16,6 +16,9 @@ import { diagnosePlant } from '@/ai/flows/diagnose-plant';
 import type { DiagnosePlantInput, DiagnosePlantOutput } from '@/ai/flows/diagnose-plant.types';
 import { generateFarmingChallenges, GenerateFarmingChallengesInput } from '@/ai/flows/generate-farming-challenges';
 import type { Challenge } from '@/lib/types';
+import { generateFarmingQuiz } from '@/ai/flows/generate-farming-quiz';
+import type { QuizQuestion } from '@/ai/flows/generate-farming-quiz.types';
+
 
 export async function generateCropReport(fieldId: string) {
   const field = mockFields.find(f => f.id === fieldId);
@@ -137,5 +140,15 @@ export async function getAiChallenges(input: GenerateFarmingChallengesInput): Pr
     } catch (error: any) {
         console.error('Error generating farming challenges:', error);
         return { success: false, error: 'Failed to generate new challenges from AI. ' + error.message };
+    }
+}
+
+export async function getAiQuiz(): Promise<{ success: boolean; data?: QuizQuestion[]; error?: string; }> {
+    try {
+        const result = await generateFarmingQuiz({});
+        return { success: true, data: result.questions };
+    } catch (error: any) {
+        console.error('Error generating farming quiz:', error);
+        return { success: false, error: 'Failed to generate a new quiz from AI. ' + error.message };
     }
 }
