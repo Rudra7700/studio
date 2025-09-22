@@ -87,7 +87,7 @@ export default function PesticidesPage() {
                                 <div className="space-y-4">
                                     {cartDetails.map(item => (
                                         <div key={item.id} className="flex items-start gap-4">
-                                            <Image src={item.imageUrl} alt={item.name} width={64} height={64} className="rounded-md object-contain border"/>
+                                            
                                             <div className="flex-grow">
                                                 <p className="font-semibold text-sm">{item.name}</p>
                                                 <p className="text-sm text-muted-foreground">₹{item.price.toLocaleString('en-IN')}</p>
@@ -125,9 +125,7 @@ export default function PesticidesPage() {
                 {mockPesticides.map(pesticide => (
                     <Card key={pesticide.id} className="flex flex-col">
                         <CardHeader>
-                            <div className="relative aspect-square w-full mb-4">
-                                <Image src={pesticide.imageUrl} alt={pesticide.name} fill objectFit="contain" />
-                            </div>
+                            
                             <CardTitle className="text-lg leading-tight">{pesticide.name}</CardTitle>
                             <Badge variant="outline" className={typeColor[pesticide.type]}>{pesticide.type}</Badge>
                         </CardHeader>
