@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import { getAiQuiz } from '@/app/actions';
@@ -8,11 +9,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { AlertTriangle, BookOpen, Lightbulb, Sparkles, CheckCircle, XCircle } from 'lucide-react';
+import { AlertTriangle, BookOpen, Lightbulb, Sparkles, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-export function FarmingQuiz() {
+interface FarmingQuizProps {
+    onQuizComplete: (score: number) => void;
+}
+
+export function FarmingQuiz({ onQuizComplete }: FarmingQuizProps) {
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -22,19 +27,22 @@ export function FarmingQuiz() {
     const [score, setScore] = useState(0);
     const { toast } = useToast();
 
+     const fetchQuiz = async () => {
+        setIsLoading(true);
+        setError(null);
+        handleReset();
+        const result = await getAiQuiz();
+        if (result.success && result.data) {
+            setQuestions(result.data);
+        } else {
+            setError(result.error || "Could not load the daily quiz. Please try again later.");
+        }
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const fetchQuiz = async () => {
-            setIsLoading(true);
-            setError(null);
-            const result = await getAiQuiz();
-            if (result.success && result.data) {
-                setQuestions(result.data);
-            } else {
-                setError(result.error || "Could not load the daily quiz. Please try again later.");
-            }
-            setIsLoading(false);
-        };
         fetchQuiz();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleAnswerSubmit = () => {
@@ -48,10 +56,14 @@ export function FarmingQuiz() {
         }
         setIsAnswered(true);
         if (selectedAnswer === questions[currentQuestionIndex].correctAnswerIndex) {
-            setScore(prev => prev + questions[currentQuestionIndex].points);
+            const points = questions[currentQuestionIndex].points;
+            const newScore = score + points;
+            setScore(newScore);
+            onQuizComplete(newScore);
+
             toast({
                 title: 'Correct!',
-                description: `You earned ${questions[currentQuestionIndex].points} points.`,
+                description: `You earned ${points} points.`,
                 className: 'bg-green-100 dark:bg-green-900',
             });
         } else {
@@ -72,6 +84,7 @@ export function FarmingQuiz() {
     const handleReset = () => {
         setCurrentQuestionIndex(0);
         setScore(0);
+        onQuizComplete(0);
         setIsAnswered(false);
         setSelectedAnswer(null);
     }
@@ -89,6 +102,10 @@ export function FarmingQuiz() {
             <AlertTriangle className="h-4 w-4"/>
             <AlertTitle>Error Loading Quiz</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
+             <Button onClick={fetchQuiz} variant="secondary" className="mt-4">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+            </Button>
         </Alert>;
     }
     
@@ -107,7 +124,10 @@ export function FarmingQuiz() {
                     <p className="text-muted-foreground">Come back tomorrow for a new quiz!</p>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleReset} className="w-full">Try Again</Button>
+                    <Button onClick={fetchQuiz} className="w-full">
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Play a New Quiz
+                    </Button>
                 </CardFooter>
             </Card>
         );
@@ -128,7 +148,7 @@ export function FarmingQuiz() {
                 </CardTitle>
                  <CardDescription className="flex items-center gap-2 pt-2">
                     <Sparkles className="h-4 w-4 text-accent" />
-                    <span>Test your knowledge and earn points!</span>
+                    <span>Test your knowledge and earn points! Current Score: {score}</span>
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

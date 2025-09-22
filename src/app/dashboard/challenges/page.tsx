@@ -16,9 +16,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getAiChallenges } from '@/app/actions';
-import type { Challenge } from '@/lib/types';
+import type { Challenge, LeaderboardEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
@@ -35,24 +35,26 @@ const iconMap: { [key: string]: React.ElementType } = {
 
 export default function ChallengesPage() {
     const [dailyTasks, setDailyTasks] = useState<Challenge[]>([]);
+    const [weeklyQuests, setWeeklyQuests] = useState<Challenge[]>(mockChallenges.filter(c => c.type === 'weekly'));
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const weeklyQuests = mockChallenges.filter(c => c.type === 'weekly');
+    const [quizScore, setQuizScore] = useState(0);
 
     useEffect(() => {
         const fetchChallenges = async () => {
             setIsLoading(true);
             setError(null);
-            const existingTitles = [...mockChallenges, ...dailyTasks].map(c => c.title);
+            const initialDailyTasks = mockChallenges.filter(c => c.type === 'daily');
+            const existingTitles = [...initialDailyTasks, ...weeklyQuests].map(c => c.title);
+            
             const result = await getAiChallenges({ existingChallenges: existingTitles });
+            
             if (result.success && result.data) {
-                // Ensure AI-generated challenges have isCompleted set to false initially
                 const newChallenges = result.data.map(c => ({...c, isCompleted: false}));
                 setDailyTasks(newChallenges);
             } else {
-                setError(result.error || "Could not load new daily challenges. Please try again.");
-                // Fallback to mock data on error
-                setDailyTasks(mockChallenges.filter(c => c.type === 'daily'));
+                setError(result.error || "Could not load new daily challenges. Displaying sample tasks.");
+                setDailyTasks(initialDailyTasks);
             }
             setIsLoading(false);
         };
@@ -60,6 +62,32 @@ export default function ChallengesPage() {
         fetchChallenges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const handleChallengeToggle = (id: string, type: 'daily' | 'weekly') => {
+        const taskList = type === 'daily' ? dailyTasks : weeklyQuests;
+        const setTaskList = type === 'daily' ? setDailyTasks : setWeeklyQuests;
+
+        setTaskList(
+            taskList.map(task =>
+                task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
+            )
+        );
+    };
+    
+    const totalPoints = useMemo(() => {
+        const dailyPoints = dailyTasks.filter(t => t.isCompleted).reduce((sum, t) => sum + t.points, 0);
+        const weeklyPoints = weeklyQuests.filter(q => q.isCompleted).reduce((sum, q) => sum + q.points, 0);
+        return dailyPoints + weeklyPoints + quizScore;
+    }, [dailyTasks, weeklyQuests, quizScore]);
+
+    const updatedLeaderboard: LeaderboardEntry[] = useMemo(() => {
+        const userEntry = mockLeaderboard.find(e => e.farmerId === 'farmer-1');
+        if (userEntry) {
+            userEntry.points = totalPoints;
+        }
+        return [...mockLeaderboard].sort((a, b) => b.points - a.points).map((entry, index) => ({...entry, rank: index + 1}));
+    }, [totalPoints]);
+
 
     return (
         <div className="space-y-6">
@@ -70,6 +98,10 @@ export default function ChallengesPage() {
                         Farming Challenges & Rewards
                     </h1>
                     <p className="text-muted-foreground">Complete tasks to earn points, unlock badges, and climb the leaderboard.</p>
+                </div>
+                 <div className="text-right">
+                    <p className="text-muted-foreground">Your Total Points</p>
+                    <p className="text-3xl font-bold text-primary">{totalPoints}</p>
                 </div>
             </div>
 
@@ -97,7 +129,7 @@ export default function ChallengesPage() {
                                         <Alert variant="destructive">
                                             <AlertTriangle className="h-4 w-4"/>
                                             <AlertTitle>Error Loading Challenges</AlertTitle>
-                                            <AlertDescription>{error} Displaying sample tasks.</AlertDescription>
+                                            <AlertDescription>{error}</AlertDescription>
                                         </Alert>
                                     )}
                                     {isLoading ? (
@@ -108,16 +140,16 @@ export default function ChallengesPage() {
                                         </div>
                                     ) : (
                                         dailyTasks.map(task => (
-                                            <ChallengeCard key={task.id} challenge={task} />
+                                            <ChallengeCard key={task.id} challenge={task} onToggle={() => handleChallengeToggle(task.id, 'daily')} />
                                         ))
                                     )}
                                 </TabsContent>
                                 <TabsContent value="quiz" className="mt-4">
-                                    <FarmingQuiz />
+                                    <FarmingQuiz onQuizComplete={setQuizScore}/>
                                 </TabsContent>
                                 <TabsContent value="weekly" className="mt-4 space-y-3">
                                      {weeklyQuests.map(quest => (
-                                        <ChallengeCard key={quest.id} challenge={quest} />
+                                        <ChallengeCard key={quest.id} challenge={quest} onToggle={() => handleChallengeToggle(quest.id, 'weekly')} />
                                     ))}
                                 </TabsContent>
                             </Tabs>
@@ -173,11 +205,11 @@ export default function ChallengesPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {mockLeaderboard.map(entry => {
+                                    {updatedLeaderboard.map(entry => {
                                         const farmer = mockFarmers.find(f => f.id === entry.farmerId);
                                         const isCurrentUser = entry.farmerId === 'farmer-1';
                                         return (
-                                             <TableRow key={entry.rank} className={cn(isCurrentUser && 'bg-primary/10')}>
+                                             <TableRow key={entry.farmerId} className={cn(isCurrentUser && 'bg-primary/10')}>
                                                 <TableCell className="font-bold">{entry.rank}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">
