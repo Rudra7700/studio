@@ -52,25 +52,30 @@ export default function DashboardSettingsPage() {
     async function loadProfile() {
       setIsLoading(true);
       try {
-        // In a real app, the UID would come from an auth context
-        const farmerId = 'farmer-1';
-        const profile = await getFarmerProfile(farmerId);
+        if (navigator.onLine) {
+            // In a real app, the UID would come from an auth context
+            const farmerId = 'farmer-1';
+            const profile = await getFarmerProfile(farmerId);
 
-        if (profile) {
-          setFarmer(profile);
-          form.reset({
-            fullName: profile.name,
-            email: profile.email,
-            phone: profile.phone || '',
-          });
-          if (profile.avatarUrl) {
-            setAvatarPreview(profile.avatarUrl);
-          }
+            if (profile) {
+              setFarmer(profile);
+              form.reset({
+                fullName: profile.name,
+                email: profile.email,
+                phone: profile.phone || '',
+              });
+              if (profile.avatarUrl) {
+                setAvatarPreview(profile.avatarUrl);
+              }
+            } else {
+              throw new Error('Profile not found, falling back to mock data.');
+            }
         } else {
-          throw new Error('Profile not found, falling back to mock data.');
+            console.warn("Client is offline. Loading mock data.");
+            throw new Error("Client is offline.");
         }
       } catch (error) {
-        console.warn("Could not fetch profile from Firestore, falling back to mock data. Error:", error);
+        console.warn("Could not fetch profile, falling back to mock data. Error:", error);
         // Fallback to mock data if no profile exists or if offline
         const mockProfile = {
             id: 'farmer-1',
