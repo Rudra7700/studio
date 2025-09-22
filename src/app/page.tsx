@@ -2,57 +2,18 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot, Droplets, Scan, Tractor } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
-import { cn } from '@/lib/utils';
-import { GrowthAnimation } from '@/components/growth-animation';
-
-const farmingQuotes = [
-  "The farmer has to be an optimist or he wouldn't still be a farmer.",
-  "Agriculture is our wisest pursuit, because it will in the end contribute most to real wealth, good morals, and happiness.",
-  "To make agriculture sustainable, the grower has got to be able to make a profit.",
-  "The discovery of agriculture was the first big step toward a civilized life.",
-  "Farming is a profession of hope.",
-];
-
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [quote, setQuote] = useState('');
-
-  useEffect(() => {
-    // Select a random quote on component mount
-    setQuote(farmingQuotes[Math.floor(Math.random() * farmingQuotes.length)]);
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {isLoading && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-opacity duration-500 animate-out fade-out">
-          <div className="text-center space-y-4 animate-in fade-in duration-500">
-             <div className="flex justify-center" style={{ animationDelay: '500ms'}}>
-                <Logo />
-             </div>
-            <p className="text-lg text-muted-foreground" style={{ animationDelay: '500ms'}}>Your AI Study Buddy for Farming</p>
-          </div>
-          
-          <GrowthAnimation quote={quote} />
-
-        </div>
-      )}
-
-      <div className={cn("transition-opacity duration-500", isLoading ? "opacity-0" : "opacity-100")}>
+      <div>
         <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Logo />
           <nav className="flex items-center gap-4">
