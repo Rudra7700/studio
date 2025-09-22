@@ -44,11 +44,11 @@ export function GrowthAnimation({ progress }: GrowthAnimationProps) {
           <rect x="50" y="65" width="15" height="10" fill="hsl(var(--accent))" /> {/* Window */}
 
           {/* Wheels */}
-          <g className="animate-wheel-spin origin-center">
+          <g style={{ transformOrigin: '20px 95px' }} className="animate-wheel-spin">
              <circle cx="20" cy="95" r="12" fill="#333" stroke="hsl(var(--foreground))" strokeWidth="2" />
              <circle cx="20" cy="95" r="4" fill="hsl(var(--muted))" />
           </g>
-           <g className="animate-wheel-spin origin-center">
+           <g style={{ transformOrigin: '60px 95px' }} className="animate-wheel-spin">
              <circle cx="60" cy="95" r="18" fill="#333" stroke="hsl(var(--foreground))" strokeWidth="2" />
              <circle cx="60" cy="95" r="6" fill="hsl(var(--muted))" />
           </g>
