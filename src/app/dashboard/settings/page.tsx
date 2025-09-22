@@ -22,6 +22,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChangeEvent, useRef, useState, useEffect } from 'react';
 import { updateFarmerProfile } from '@/lib/firebase';
 import type { Farmer } from '@/lib/types';
+import { getFarmerProfile } from '@/lib/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Full name is required.'),
@@ -33,57 +36,36 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function DashboardSettingsPage() {
   const { toast } = useToast();
-  const [farmer, setFarmer] = useState<Partial<Farmer> | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [farmer, setFarmer] = useState<Partial<Farmer>>({
+    id: 'farmer-1',
+    name: mockFarmers[0].name,
+    email: mockFarmers[0].email,
+    avatarUrl: mockFarmers[0].avatarUrl,
+    phone: '9876543210'
+  });
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(mockFarmers[0].avatarUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
+      fullName: farmer.name || '',
+      email: farmer.email || '',
+      phone: farmer.phone || '',
     },
   });
 
-  useEffect(() => {
-    // Load profile from localStorage or fall back to mock data
-    try {
-        const savedProfile = localStorage.getItem('farmerProfile');
-        const profile = savedProfile ? JSON.parse(savedProfile) : {
-            id: 'farmer-1',
-            name: mockFarmers[0].name,
-            email: mockFarmers[0].email,
-            avatarUrl: mockFarmers[0].avatarUrl,
-            phone: '9876543210'
-        };
-
-        setFarmer(profile);
-        form.reset({
-            fullName: profile.name,
-            email: profile.email,
-            phone: profile.phone
-        });
-        if (profile.avatarUrl) {
-            setAvatarPreview(profile.avatarUrl);
-        }
-    } catch (error) {
-        console.error("Failed to load profile, using mock data.", error);
-        const mockProfile = {
-            id: 'farmer-1',
-            name: mockFarmers[0].name,
-            email: mockFarmers[0].email,
-            avatarUrl: mockFarmers[0].avatarUrl,
-            phone: '9876543210'
-        };
-        setFarmer(mockProfile);
-        form.reset({
-            fullName: mockProfile.name,
-            email: mockProfile.email,
-            phone: mockProfile.phone
-        });
+   useEffect(() => {
+    form.reset({
+        fullName: farmer.name,
+        email: farmer.email,
+        phone: farmer.phone
+    });
+    if (farmer.avatarUrl) {
+        setAvatarPreview(farmer.avatarUrl);
     }
-  }, [form]);
+  }, [form, farmer]);
+
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files[0]) {
@@ -115,10 +97,8 @@ export default function DashboardSettingsPage() {
         avatarUrl: avatarPreview || farmer.avatarUrl,
       };
       
-      // Save to Firestore
       await updateFarmerProfile(farmer.id, updatedProfileData);
       
-      // Save to localStorage as well for offline persistence
       const newLocalProfile = {...farmer, ...updatedProfileData};
       localStorage.setItem('farmerProfile', JSON.stringify(newLocalProfile));
       setFarmer(newLocalProfile);
@@ -139,7 +119,6 @@ export default function DashboardSettingsPage() {
     }
     return 'F';
   }
-
 
   return (
     <Form {...form}>
@@ -276,3 +255,5 @@ export default function DashboardSettingsPage() {
     </Form>
   );
 }
+
+    
