@@ -27,6 +27,7 @@ import { QuickActionsToolbar } from '@/components/quick-actions-toolbar';
 import { FieldConditions } from '@/components/field-conditions';
 import { CropReport } from '@/components/crop-report';
 import { useState } from 'react';
+import { IrrigationControl } from '@/components/irrigation-control';
 
 export default function DashboardPage() {
     const upcomingTreatments = mockTreatments.filter(t => t.status === 'Scheduled').slice(0, 3);
@@ -71,6 +72,7 @@ export default function DashboardPage() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
                 <div className="space-y-4">
                   <DroneControl />
+                  <IrrigationControl />
                   <FieldConditions />
                   <QuickActionsToolbar />
                 </div>
