@@ -50,10 +50,10 @@ You will be provided with an image of a plant and a brief description. Use this 
 
 1.  **Identification**: Determine if the image contains a plant. If it does, identify its common and Latin names.
 2.  **Diagnosis**:
-    *   Assess the overall health and assign a `healthScore` from 0 (very sick) to 100 (perfectly healthy).
-    *   Set `isHealthy` based on your assessment.
+    *   Assess the overall health and assign a \`healthScore\` from 0 (very sick) to 100 (perfectly healthy).
+    *   Set \`isHealthy\` based on your assessment.
     *   If the plant is diseased, identify the specific disease (e.g., "Northern Corn Leaf Blight", "Powdery Mildew"). If healthy, this should be "None".
-    *   Provide a `detailedDiagnosis` explaining your reasoning. Describe the visual symptoms (e.g., lesions, discoloration, wilting) you observe in the image and explain what they indicate.
+    *   Provide a \`detailedDiagnosis\` explaining your reasoning. Describe the visual symptoms (e.g., lesions, discoloration, wilting) you observe in the image and explain what they indicate.
 
 Your final output must be in the structured JSON format.
 
