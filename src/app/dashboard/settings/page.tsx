@@ -50,22 +50,29 @@ export default function DashboardSettingsPage() {
   useEffect(() => {
     async function loadProfile() {
       setIsLoading(true);
-      // In a real app, the UID would come from an auth context
-      const farmerId = 'farmer-1';
-      const profile = await getFarmerProfile(farmerId);
-      if (profile) {
-        setFarmer(profile);
-        form.reset({
-          fullName: profile.name,
-          email: profile.email,
-          phone: profile.phone || '',
-        });
-        if (profile.avatarUrl) {
-          setAvatarPreview(profile.avatarUrl);
+      try {
+        // In a real app, the UID would come from an auth context
+        const farmerId = 'farmer-1';
+        const profile = await getFarmerProfile(farmerId);
+
+        if (profile) {
+          setFarmer(profile);
+          form.reset({
+            fullName: profile.name,
+            email: profile.email,
+            phone: profile.phone || '',
+          });
+          if (profile.avatarUrl) {
+            setAvatarPreview(profile.avatarUrl);
+          }
+        } else {
+          throw new Error('Profile not found, falling back to mock data.');
         }
-      } else {
-        // Fallback to mock data if no profile exists
+      } catch (error) {
+        console.warn("Could not fetch profile from Firestore, falling back to mock data. Error:", error);
+        // Fallback to mock data if no profile exists or if offline
         const mockProfile = {
+            id: 'farmer-1',
             name: mockFarmers[0].name,
             email: mockFarmers[0].email,
             avatarUrl: mockFarmers[0].avatarUrl,
@@ -80,8 +87,9 @@ export default function DashboardSettingsPage() {
         if (mockProfile.avatarUrl) {
           setAvatarPreview(mockProfile.avatarUrl);
         }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
     loadProfile();
   }, [form]);
@@ -121,7 +129,7 @@ export default function DashboardSettingsPage() {
       });
     } catch (error) {
         console.error("Failed to save settings to Firestore", error);
-        toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. Please try again." });
+        toast({ variant: 'destructive', title: "Save Failed", description: "Could not save settings. You may be offline." });
     }
   };
   
