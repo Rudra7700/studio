@@ -34,11 +34,11 @@ export default function Home() {
         }
         return prev + 1;
       });
-    }, 28); 
+    }, 48); 
 
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearTimeout(timer);
