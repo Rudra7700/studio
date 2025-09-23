@@ -53,6 +53,25 @@ export function VoiceInput({ show, onClose, onResult }: VoiceInputProps) {
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
+        if (event.error === 'audio-capture') {
+            toast({
+                variant: 'destructive',
+                title: 'Microphone Not Found',
+                description: 'Could not access the microphone. Please check your browser permissions and ensure a microphone is connected.',
+            });
+        } else if (event.error === 'not-allowed') {
+            toast({
+                variant: 'destructive',
+                title: 'Permission Denied',
+                description: 'Microphone access was denied. Please enable it in your browser settings.',
+            });
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Voice Input Error',
+                description: `An error occurred: ${event.error}`,
+            });
+        }
         onResult('');
       };
 
