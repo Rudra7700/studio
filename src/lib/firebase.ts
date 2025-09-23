@@ -61,6 +61,8 @@ export const signInWithGoogle = async () => {
             errorMessage = 'Sign-in window closed. Please try again.';
         } else if (error.code === 'auth/account-exists-with-different-credential') {
             errorMessage = 'An account already exists with the same email address but different sign-in credentials.';
+        } else if (error.code === 'auth/configuration-not-found') {
+            errorMessage = 'Google Sign-In is not enabled for this project. Please enable it in your Firebase Console under Authentication > Sign-in method.';
         }
         console.error("Google Sign-In Error:", error);
         return { success: false, error: errorMessage };
