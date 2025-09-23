@@ -18,6 +18,7 @@ import { generateFarmingChallenges, GenerateFarmingChallengesInput } from '@/ai/
 import type { Challenge } from '@/lib/types';
 import { generateFarmingQuiz } from '@/ai/flows/generate-farming-quiz';
 import type { QuizQuestion } from '@/ai/flows/generate-farming-quiz.types';
+import { textToSpeech } from '@/ai/flows/text-to-speech';
 
 
 export async function generateCropReport(fieldId: string) {
@@ -100,12 +101,18 @@ export async function getHealthSummary(
   }
 }
 
-export async function sendToAssistant(prompt: string) {
+export async function sendToAssistant(prompt: string, generateAudio: boolean) {
   try {
     const { text } = await ai.generate({
       prompt: `You are a friendly agricultural AI assistant. Answer queries about pesticide spraying, crop disease, weather, and drone operations in English or Hindi. User query: ${prompt}`,
     });
-    return { success: true, data: { text } };
+
+    if (generateAudio) {
+        const audioResponse = await textToSpeech(text);
+        return { success: true, data: { text, audioDataUri: audioResponse.media } };
+    }
+
+    return { success: true, data: { text, audioDataUri: null } };
   } catch (error) {
     console.error('Error calling AI assistant:', error);
     return { success: false, error: 'Failed to get assistant response.' };

@@ -5,13 +5,21 @@ import { Button } from './ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-interface VoiceInputModalProps {
+interface VoiceInputProps {
   show: boolean;
   onClose: () => void;
   onResult: (transcript: string) => void;
 }
 
-export function VoiceInputModal({ show, onClose, onResult }: VoiceInputModalProps) {
+declare global {
+    interface Window {
+        SpeechRecognition: any;
+        webkitSpeechRecognition: any;
+    }
+}
+
+
+export function VoiceInput({ show, onClose, onResult }: VoiceInputProps) {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
@@ -31,7 +39,7 @@ export function VoiceInputModal({ show, onClose, onResult }: VoiceInputModalProp
 
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.lang = 'en-US';
+      recognition.lang = 'en-IN'; // Set to Indian English
       recognition.interimResults = false;
 
       recognition.onstart = () => {

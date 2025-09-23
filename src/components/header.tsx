@@ -48,6 +48,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { VoiceInputModal } from './voice-input-modal';
 import type { Notification } from '@/lib/types';
+import { AiAssistant } from './ai-assistant';
 
 const notificationIcons: Record<Notification['type'], React.ReactNode> = {
   mandiPrice: <BarChart3 className="w-5 h-5 text-green-500" />,
@@ -86,7 +87,9 @@ export function Header() {
   }, []);
 
   const handleMicClick = () => {
-      setIsListening(prev => !prev);
+      // The actual logic is now inside AiAssistant component
+      // This is just a placeholder to show the concept
+      toast({title: "Voice input is handled by the main assistant window now."});
   }
 
   const markAsRead = (id: string) => {
@@ -206,11 +209,6 @@ export function Header() {
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>
-
-       <Button variant="outline" size="icon" className={cn("shrink-0", isListening && "bg-destructive/20 ring-2 ring-destructive")} onClick={handleMicClick}>
-        <Mic className="h-5 w-5" />
-        <span className="sr-only">Voice Commands</span>
-      </Button>
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -242,7 +240,6 @@ export function Header() {
       </DropdownMenu>
       </div>
     </header>
-    <VoiceInputModal show={isListening} onClose={() => setIsListening(false)} />
     </>
   );
 }

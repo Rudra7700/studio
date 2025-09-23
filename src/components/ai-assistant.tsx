@@ -1,13 +1,16 @@
+
 'use client';
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bot, Send, User, Loader2, Languages } from 'lucide-react';
+import { Bot, Send, User, Loader2, Languages, Mic, Volume2, Pause } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { sendToAssistant } from '@/app/actions';
 import type { Message } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { VoiceInput } from './voice-input';
 
 const initialMessages: Message[] = [
     { id: '1', role: 'assistant', text: "Hello! I'm your Agri-AI assistant. How can I help you today? You can ask in English or हिंदी." },
@@ -19,6 +22,25 @@ export function AiAssistant() {
     const [isPending, startTransition] = useTransition();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const [language, setLanguage] = useState<'English' | 'Hindi'>('English');
+    const [isListening, setIsListening] = useState(false);
+    const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+    const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        const player = new Audio();
+        setAudioPlayer(player);
+
+        const handlePlaybackEnd = () => setPlayingMessageId(null);
+        player.addEventListener('ended', handlePlaybackEnd);
+        player.addEventListener('pause', handlePlaybackEnd);
+
+        return () => {
+            player.removeEventListener('ended', handlePlaybackEnd);
+            player.removeEventListener('pause', handlePlaybackEnd);
+        }
+    }, []);
+
 
     const scrollToBottom = () => {
         if (scrollAreaRef.current) {
@@ -27,25 +49,39 @@ export function AiAssistant() {
     };
     
     useEffect(scrollToBottom, [messages]);
+    
+    const playAudio = (audioDataUri: string, messageId: string) => {
+        if (audioPlayer) {
+            if (playingMessageId === messageId && !audioPlayer.paused) {
+                audioPlayer.pause();
+                setPlayingMessageId(null);
+            } else {
+                audioPlayer.src = audioDataUri;
+                audioPlayer.play();
+                setPlayingMessageId(messageId);
+            }
+        }
+    }
+    
+    const processMessage = (messageText: string, fromVoice: boolean) => {
+        if (!messageText.trim() || isPending) return;
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isPending) return;
-
-        const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input };
+        const userMessage: Message = { id: Date.now().toString(), role: 'user', text: messageText };
         setMessages(prev => [...prev, userMessage]);
-        const currentInput = input;
         setInput('');
 
         startTransition(async () => {
             const assistantLoadingMessage: Message = { id: 'loading', role: 'assistant', text: '...' };
             setMessages(prev => [...prev, assistantLoadingMessage]);
             
-            const response = await sendToAssistant(currentInput);
+            const response = await sendToAssistant(messageText, fromVoice);
             
             let assistantResponse: Message;
             if (response.success && response.data) {
-                assistantResponse = { id: Date.now().toString(), role: 'assistant', text: response.data.text };
+                assistantResponse = { id: Date.now().toString(), role: 'assistant', text: response.data.text, audioDataUri: response.data.audioDataUri };
+                if (response.data.audioDataUri && fromVoice) {
+                    playAudio(response.data.audioDataUri, assistantResponse.id);
+                }
             } else {
                  assistantResponse = { id: Date.now().toString(), role: 'assistant', text: "I'm having trouble connecting to my knowledge base. Please try again later." };
             }
@@ -53,6 +89,21 @@ export function AiAssistant() {
             setMessages(prev => prev.filter(m => m.id !== 'loading'));
             setMessages(prev => [...prev, assistantResponse]);
         });
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        processMessage(input, false);
+    };
+
+    const handleVoiceResult = (transcript: string) => {
+        setIsListening(false);
+        if (transcript) {
+            toast({ title: "Voice input received", description: `Processing: "${transcript}"`});
+            processMessage(transcript, true);
+        } else {
+            toast({ variant: 'destructive', title: "Voice input failed", description: "Couldn't hear you. Please try again."});
+        }
     };
     
     const toggleLanguage = () => {
@@ -66,6 +117,7 @@ export function AiAssistant() {
     }
 
     return (
+        <>
         <Card className="flex flex-col h-full max-h-[600px]">
             <CardHeader className='flex-row items-center justify-between'>
                 <CardTitle className="flex items-center gap-2">
@@ -82,17 +134,31 @@ export function AiAssistant() {
                     <div className="space-y-4">
                         {messages.map((message) => (
                             <div key={message.id} className={cn('flex items-start gap-3', message.role === 'user' ? 'justify-end' : 'justify-start')}>
-                                {message.role === 'assistant' && <div className="p-2 bg-primary rounded-full text-primary-foreground"><Bot className="w-5 h-5" /></div>}
+                                {message.role === 'assistant' && (
+                                    <div className="flex-shrink-0 p-2 bg-primary rounded-full text-primary-foreground">
+                                        <Bot className="w-5 h-5" />
+                                    </div>
+                                )}
                                 <div className={cn(
-                                    'p-3 rounded-lg max-w-[80%]',
+                                    'p-3 rounded-lg max-w-[80%] relative group',
                                     message.role === 'user'
                                         ? 'bg-primary text-primary-foreground'
                                         : 'bg-card-foreground/5',
                                      message.id === 'loading' && 'animate-pulse'
                                 )}>
                                     <p className="text-sm break-words">{message.text}</p>
+                                    {message.audioDataUri && (
+                                        <Button 
+                                            size="icon" 
+                                            variant="ghost" 
+                                            className="absolute -bottom-2 -right-2 h-7 w-7 rounded-full bg-background/80 backdrop-blur-sm text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                                            onClick={() => playAudio(message.audioDataUri!, message.id)}
+                                        >
+                                            {playingMessageId === message.id ? <Pause className="w-4 h-4"/> : <Volume2 className="w-4 h-4"/>}
+                                        </Button>
+                                    )}
                                 </div>
-                                {message.role === 'user' && <div className="p-2 bg-muted rounded-full text-muted-foreground"><User className="w-5 h-5" /></div>}
+                                {message.role === 'user' && <div className="flex-shrink-0 p-2 bg-muted rounded-full text-muted-foreground"><User className="w-5 h-5" /></div>}
                             </div>
                         ))}
                          {isPending && (
@@ -121,8 +187,18 @@ export function AiAssistant() {
                         <Send className="h-4 w-4" />
                         <span className="sr-only">Send</span>
                     </Button>
+                     <Button type="button" variant="outline" size="icon" onClick={() => setIsListening(true)} disabled={isPending || isListening}>
+                        <Mic className="h-4 w-4" />
+                        <span className="sr-only">Use Voice</span>
+                    </Button>
                 </form>
             </CardFooter>
         </Card>
+        <VoiceInput
+            show={isListening}
+            onClose={() => setIsListening(false)}
+            onResult={handleVoiceResult}
+        />
+        </>
     );
 }
