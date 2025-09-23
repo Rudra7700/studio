@@ -34,7 +34,7 @@ const GoogleIcon = () => (
 );
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const { toast } = useToast();
@@ -47,7 +47,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    setIsLoading(true);
+    setIsEmailLoading(true);
     const { email, password } = values;
     let result;
 
@@ -72,7 +72,7 @@ export function LoginForm() {
         description: result.error,
       });
     }
-    setIsLoading(false);
+    setIsEmailLoading(false);
   }
 
   const handleGoogleSignIn = async () => {
@@ -88,13 +88,14 @@ export function LoginForm() {
   }
 
   const toggleFormMode = () => {
+    if (isEmailLoading || isGoogleLoading) return;
     setIsRegistering(!isRegistering);
     form.reset();
   };
 
   return (
     <div className="grid gap-6">
-      <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
+      <Button variant="outline" onClick={handleGoogleSignIn} disabled={isEmailLoading || isGoogleLoading}>
         {isGoogleLoading ? <Loader2 className="mr-2 animate-spin" /> : <GoogleIcon />}
         Sign in with Google
       </Button>
@@ -143,8 +144,8 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
-            {isLoading && <Loader2 className="mr-2 animate-spin" />}
+          <Button type="submit" className="w-full" disabled={isEmailLoading || isGoogleLoading}>
+            {isEmailLoading && <Loader2 className="mr-2 animate-spin" />}
             {isRegistering ? 'Create Account' : 'Login'}
           </Button>
         </form>
@@ -163,7 +164,7 @@ export function LoginForm() {
         )}
       </div>
        <Separator />
-        <Button variant="secondary" onClick={setGuest}>
+        <Button variant="secondary" onClick={setGuest} disabled={isEmailLoading || isGoogleLoading}>
             Continue as Guest
         </Button>
     </div>

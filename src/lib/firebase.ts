@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, enableIndexedDbPersistence } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
 import type { Farmer } from './types';
 
@@ -19,6 +19,20 @@ const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : get
 const db = getFirestore(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+
+// Enable offline persistence
+enableIndexedDbPersistence(db)
+  .catch((err) => {
+    if (err.code == 'failed-precondition') {
+      // Multiple tabs open, persistence can only be enabled in one.
+      // This is a normal scenario.
+      console.warn('Firestore persistence failed: multiple tabs open.');
+    } else if (err.code == 'unimplemented') {
+      // The current browser does not support all of the
+      // features required to enable persistence.
+      console.warn('Firestore persistence is not supported in this browser.');
+    }
+  });
 
 
 // --- Firestore Functions ---
@@ -63,6 +77,8 @@ export const signInWithGoogle = async () => {
             errorMessage = 'An account already exists with the same email address but different sign-in credentials.';
         } else if (error.code === 'auth/configuration-not-found') {
             errorMessage = 'Google Sign-In is not enabled for this project. Please enable it in your Firebase Console under Authentication > Sign-in method.';
+        } else if (error.code === 'auth/unauthorized-domain') {
+            errorMessage = 'This domain is not authorized for authentication. Please add it to the list of authorized domains in your Firebase project.';
         }
         console.error("Google Sign-In Error:", error);
         return { success: false, error: errorMessage };
@@ -81,7 +97,13 @@ export const registerWithEmail = async (email: string, password: string):Promise
         });
         return { success: true, user };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        let friendlyError = 'An unexpected error occurred.';
+        if (error.code === 'auth/email-already-in-use') {
+            friendlyError = 'This email is already registered. Please try logging in.';
+        } else if (error.code === 'auth/weak-password') {
+            friendlyError = 'The password is too weak. Please use at least 6 characters.';
+        }
+        return { success: false, error: friendlyError };
     }
 };
 
@@ -101,6 +123,9 @@ export const signInWithEmail = async (email: string, password: string):Promise<{
         }
         return { success: true, user: result.user };
     } catch (error: any) {
+        if(error.code === 'auth/invalid-credential') {
+            return { success: false, error: 'Invalid email or password.' };
+        }
         return { success: false, error: error.message };
     }
 };
