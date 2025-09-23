@@ -107,24 +107,45 @@ export const registerWithEmail = async (email: string, password: string):Promise
     }
 };
 
-export const signInWithEmail = async (email: string, password: string):Promise<{success: boolean; user?: User; error?: string}> => {
+export const signInWithEmail = async (email: string, password: string): Promise<{success: boolean; user?: User; error?: string}> => {
     try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const user = result.user;
 
-        const userDoc = await getDoc(doc(db, 'farmers', user.uid));
-        if (!userDoc.exists()) {
-             // If user document doesn't exist, create one
-            await updateFarmerProfile(user.uid, {
-                name: user.email?.split('@')[0],
-                email: user.email,
-                avatarUrl: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
-            });
+        try {
+            const userDoc = await getDoc(doc(db, 'farmers', user.uid));
+            if (!userDoc.exists()) {
+                // If user document doesn't exist, create one
+                await updateFarmerProfile(user.uid, {
+                    name: user.email?.split('@')[0],
+                    email: user.email,
+                    avatarUrl: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+                });
+            }
+        } catch (docError: any) {
+            // This is the special case to handle offline issues during the getDoc call
+            if (docError.message.includes('offline')) {
+                console.warn("Could not fetch document while offline. Assuming profile exists or creating a local version.");
+                // We can proceed, and if the doc is truly missing, it will be created on the next online interaction.
+                // Or, we can proactively write it, which is safer.
+                 await updateFarmerProfile(user.uid, {
+                    name: user.email?.split('@')[0],
+                    email: user.email,
+                    avatarUrl: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+                });
+            } else {
+                // Re-throw other document errors
+                throw docError;
+            }
         }
-        return { success: true, user: result.user };
+        
+        return { success: true, user };
     } catch (error: any) {
-        if(error.code === 'auth/invalid-credential') {
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
             return { success: false, error: 'Invalid email or password.' };
+        }
+        if (error.message.includes('offline')) {
+             return { success: false, error: 'Failed to login because the client is offline. Please check your connection.' };
         }
         return { success: false, error: error.message };
     }
