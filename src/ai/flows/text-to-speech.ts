@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview An AI agent for converting text to speech.
  *
@@ -18,13 +17,6 @@ export const TextToSpeechOutputSchema = z.object({
   media: z.string().describe('The base64 encoded WAV audio data URI.'),
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
-
-// This function is the server action that can be called from client components.
-export async function textToSpeech(
-  input: TextToSpeechInput
-): Promise<TextToSpeechOutput> {
-  return textToSpeechFlow(input);
-}
 
 // Helper function to convert PCM audio data to WAV format
 async function toWav(
@@ -55,7 +47,7 @@ async function toWav(
 }
 
 // The Genkit flow is defined here but not exported directly.
-const textToSpeechFlow = ai.defineFlow(
+export const textToSpeechFlow = ai.defineFlow(
   {
     name: 'textToSpeechFlow',
     inputSchema: TextToSpeechInputSchema,

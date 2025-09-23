@@ -11,4 +11,3 @@ import '@/ai/flows/diagnose-plant.ts';
 import '@/ai/flows/generate-farming-challenges.ts';
 import '@/ai/flows/generate-farming-quiz.ts';
 import '@/ai/flows/text-to-speech.ts';
-

@@ -18,7 +18,7 @@ import { generateFarmingChallenges, GenerateFarmingChallengesInput } from '@/ai/
 import type { Challenge } from '@/lib/types';
 import { generateFarmingQuiz } from '@/ai/flows/generate-farming-quiz';
 import type { QuizQuestion } from '@/ai/flows/generate-farming-quiz.types';
-import { textToSpeech } from '@/ai/flows/text-to-speech';
+import { textToSpeech } from '@/ai/actions/text-to-speech';
 
 
 export async function generateCropReport(fieldId: string) {
