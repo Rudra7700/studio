@@ -67,7 +67,7 @@ export default function Home() {
           <Logo />
           <nav className="flex items-center gap-4">
             <Button asChild>
-              <Link href="/dashboard">Farmer Login</Link>
+              <Link href="/login">Farmer Login</Link>
             </Button>
           </nav>
         </header>
@@ -89,7 +89,7 @@ export default function Home() {
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                   <Button size="lg" asChild>
-                    <Link href="/dashboard">Get Started</Link>
+                    <Link href="/login">Get Started</Link>
                   </Button>
                 </div>
               </div>

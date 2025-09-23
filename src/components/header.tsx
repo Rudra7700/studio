@@ -15,6 +15,7 @@ import {
   Scan,
   ShoppingCart,
   TestTube2,
+  LogOut
 } from 'lucide-react';
 
 import {
@@ -40,7 +41,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { DashboardNav } from './dashboard-nav';
 import { Logo } from './logo';
 import { mockFarmers, mockNotifications } from '@/lib/mock-data';
@@ -50,6 +51,10 @@ import { VoiceInputModal } from './voice-input-modal';
 import type { Notification } from '@/lib/types';
 import { AiAssistant } from './ai-assistant';
 import { ThemeToggle } from './theme-toggle';
+import { useAuth } from '@/context/auth-context';
+import { doSignOut } from '@/lib/firebase';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+
 
 const notificationIcons: Record<Notification['type'], React.ReactNode> = {
   mandiPrice: <BarChart3 className="w-5 h-5 text-green-500" />,
@@ -61,8 +66,10 @@ const notificationIcons: Record<Notification['type'], React.ReactNode> = {
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const segments = pathname.split('/').filter(Boolean);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   const [language, setLanguage] = React.useState('en');
   const [isListening, setIsListening] = React.useState(false);
@@ -99,6 +106,22 @@ export function Header() {
   
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({...n, read: true})));
+  }
+
+  const handleLogout = async () => {
+    await doSignOut();
+    router.push('/login');
+    toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+  }
+
+  const getFallbackInitial = () => {
+    if (user?.displayName) {
+      return user.displayName.charAt(0).toUpperCase();
+    }
+    if (user?.email) {
+        return user.email.charAt(0).toUpperCase();
+    }
+    return 'F';
   }
 
   return (
@@ -220,25 +243,22 @@ export function Header() {
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Link href="/dashboard/settings">
-              <Image
-                src={mockFarmers[0].avatarUrl}
-                width={36}
-                height={36}
-                alt="Avatar"
-                className="overflow-hidden"
-                data-ai-hint="person smiling"
-              />
-            </Link>
+            <Avatar>
+                <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || 'User'} />
+                <AvatarFallback>{getFallbackInitial()}</AvatarFallback>
+            </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{user?.displayName || user?.email}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       </div>
@@ -246,5 +266,3 @@ export function Header() {
     </>
   );
 }
-
-    

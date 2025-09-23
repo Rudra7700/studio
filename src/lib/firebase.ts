@@ -1,19 +1,24 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
 import type { Farmer } from './types';
 
+
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  "projectId": "studio-3384337403-b24f3",
+  "appId": "1:651522288971:web:462f61482346b81c030cce",
+  "apiKey": "AIzaSyAyi2oHDeL2S_QApOJ9icjsS2ISXHePkIA",
+  "authDomain": "studio-3384337403-b24f3.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "651522288971"
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
 
 // --- Firestore Functions ---
 
@@ -34,3 +39,60 @@ export async function updateFarmerProfile(uid: string, data: Partial<Farmer & { 
     throw error;
   }
 }
+
+// --- Auth Functions ---
+export const signInWithGoogle = async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        // Create a user profile in Firestore if it's a new user
+        const userDocRef = doc(db, 'farmers', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (!userDoc.exists()) {
+            await setDoc(userDocRef, {
+                name: user.displayName,
+                email: user.email,
+                avatarUrl: user.photoURL,
+            }, { merge: true });
+        }
+        return { success: true, user };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+};
+
+export const registerWithEmail = async (email: string, password: string):Promise<{success: boolean; user?: User; error?: string}> => {
+    try {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        const user = result.user;
+        // Create a basic profile
+        await setDoc(doc(db, 'farmers', user.uid), {
+            name: email.split('@')[0], // default name
+            email: user.email,
+            avatarUrl: `https://i.pravatar.cc/150?u=${user.uid}`
+        });
+        return { success: true, user };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+};
+
+export const signInWithEmail = async (email: string, password: string):Promise<{success: boolean; user?: User; error?: string}> => {
+    try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        return { success: true, user: result.user };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+};
+
+
+export const onAuthChange = (callback: (user: User | null) => void) => {
+    return onAuthStateChanged(auth, callback);
+};
+
+export const doSignOut = () => {
+    return signOut(auth);
+};
+
+export { auth, db };
