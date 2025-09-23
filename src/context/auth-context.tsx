@@ -2,7 +2,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthChange, User } from '@/lib/firebase';
+import { onAuthChange, User, doSignOut } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 
 interface AuthContextType {
@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   isGuest: boolean;
   setGuest: () => void;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,23 +23,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthChange((user) => {
-      setUser(user);
-      setLoading(false);
-      
-      if (user && pathname === '/login') {
-          router.replace('/dashboard');
-      }
-    });
-
-    // Check for guest status in session storage
     const guestStatus = sessionStorage.getItem('isGuest');
     if (guestStatus === 'true') {
         setIsGuest(true);
+        setLoading(false);
+    } else {
+        const unsubscribe = onAuthChange((user) => {
+          setUser(user);
+          setLoading(false);
+          if (user && (pathname === '/login' || pathname === '/')) {
+              router.replace('/dashboard');
+          }
+        });
+        return () => unsubscribe();
     }
-
-
-    return () => unsubscribe();
   }, [router, pathname]);
 
   const setGuest = () => {
@@ -47,7 +45,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/dashboard');
   };
 
-  const value = { user, loading, isGuest, setGuest };
+  const logout = async () => {
+    await doSignOut();
+    setUser(null);
+    setIsGuest(false);
+    router.push('/login');
+  };
+
+  const value = { user, loading, isGuest, setGuest, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

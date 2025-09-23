@@ -52,7 +52,6 @@ import type { Notification } from '@/lib/types';
 import { AiAssistant } from './ai-assistant';
 import { ThemeToggle } from './theme-toggle';
 import { useAuth } from '@/context/auth-context';
-import { doSignOut } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 
@@ -66,10 +65,8 @@ const notificationIcons: Record<Notification['type'], React.ReactNode> = {
 
 export function Header() {
   const pathname = usePathname();
-  const router = useRouter();
-  const segments = pathname.split('/').filter(Boolean);
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, logout, isGuest } = useAuth();
   
   const [language, setLanguage] = React.useState('en');
   const [isListening, setIsListening] = React.useState(false);
@@ -109,12 +106,12 @@ export function Header() {
   }
 
   const handleLogout = async () => {
-    await doSignOut();
-    router.push('/login');
+    await logout();
     toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
   }
 
   const getFallbackInitial = () => {
+    if (isGuest) return 'G';
     if (user?.displayName) {
       return user.displayName.charAt(0).toUpperCase();
     }
@@ -146,15 +143,15 @@ export function Header() {
               <Link href="/dashboard">Dashboard</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          {segments.slice(1).map((segment, index) => (
+          {pathname.split('/').filter(Boolean).slice(1).map((segment, index, arr) => (
             <React.Fragment key={segment}>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                {index === segments.length - 2 ? (
+                {index === arr.length - 1 ? (
                   <BreadcrumbPage className="capitalize">{segment}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                     <Link href={`/${segments.slice(0, index + 2).join('/')}`} className="capitalize">
+                     <Link href={`/${['dashboard', ...arr.slice(1, index + 2)].join('/')}`} className="capitalize">
                       {segment}
                     </Link>
                   </BreadcrumbLink>
@@ -244,13 +241,13 @@ export function Header() {
             className="overflow-hidden rounded-full"
           >
             <Avatar>
-                <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || 'User'} />
+                <AvatarImage src={user?.photoURL || (isGuest ? '' : undefined)} alt={user?.displayName || 'User'} />
                 <AvatarFallback>{getFallbackInitial()}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>{user?.displayName || user?.email}</DropdownMenuLabel>
+          <DropdownMenuLabel>{isGuest ? 'Guest User' : (user?.displayName || user?.email)}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
           <DropdownMenuItem>Support</DropdownMenuItem>

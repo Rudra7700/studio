@@ -1,3 +1,4 @@
+
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
@@ -31,7 +32,7 @@ export async function updateFarmerProfile(uid: string, data: Partial<Farmer & { 
   try {
     const docRef = doc(db, "farmers", uid);
     // Use setDoc with merge: true to create the document if it doesn't exist,
-    // or update it if it does.
+    // or update it if it does. This is more robust than just updateDoc.
     await setDoc(docRef, data, { merge: true });
     console.log("Profile updated successfully for UID:", uid);
   } catch (error) {
@@ -45,19 +46,24 @@ export const signInWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
-        // Create a user profile in Firestore if it's a new user
-        const userDocRef = doc(db, 'farmers', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (!userDoc.exists()) {
-            await setDoc(userDocRef, {
-                name: user.displayName,
-                email: user.email,
-                avatarUrl: user.photoURL,
-            }, { merge: true });
-        }
+        // Create or update a user profile in Firestore
+        const userProfileData: Partial<Farmer> = {
+            name: user.displayName || user.email?.split('@')[0],
+            email: user.email || '',
+            avatarUrl: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+        };
+        await updateFarmerProfile(user.uid, userProfileData);
         return { success: true, user };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        // Handle specific errors for better user feedback
+        let errorMessage = 'An unexpected error occurred during Google Sign-In.';
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Sign-in window closed. Please try again.';
+        } else if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'An account already exists with the same email address but different sign-in credentials.';
+        }
+        console.error("Google Sign-In Error:", error);
+        return { success: false, error: errorMessage };
     }
 };
 
@@ -92,7 +98,9 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
 };
 
 export const doSignOut = () => {
+    sessionStorage.removeItem('isGuest');
     return signOut(auth);
 };
 
 export { auth, db };
+export type { User };
