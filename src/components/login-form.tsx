@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, LogIn, UserPlus } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { signInWithGoogle, registerWithEmail, signInWithEmail } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
@@ -87,9 +87,9 @@ export function LoginForm() {
     setIsGoogleLoading(false);
   }
 
-  const toggleFormMode = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const toggleFormMode = () => {
     setIsRegistering(!isRegistering);
+    form.reset();
   };
 
   return (
@@ -153,12 +153,12 @@ export function LoginForm() {
         {isRegistering ? (
           <>
             Already have an account?{' '}
-            <Button variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign In</Button>
+            <Button type="button" variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign In</Button>
           </>
         ) : (
           <>
             Don&apos;t have an account?{' '}
-             <Button variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign Up</Button>
+             <Button type="button" variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign Up</Button>
           </>
         )}
       </div>
