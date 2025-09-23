@@ -87,6 +87,11 @@ export function LoginForm() {
     setIsGoogleLoading(false);
   }
 
+  const toggleFormMode = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsRegistering(!isRegistering);
+  };
+
   return (
     <div className="grid gap-6">
       <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
@@ -148,12 +153,12 @@ export function LoginForm() {
         {isRegistering ? (
           <>
             Already have an account?{' '}
-            <Button variant="link" onClick={() => setIsRegistering(false)} className="p-0 h-auto">Sign In</Button>
+            <Button variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign In</Button>
           </>
         ) : (
           <>
             Don&apos;t have an account?{' '}
-             <Button variant="link" onClick={() => setIsRegistering(true)} className="p-0 h-auto">Sign Up</Button>
+             <Button variant="link" onClick={toggleFormMode} className="p-0 h-auto">Sign Up</Button>
           </>
         )}
       </div>
