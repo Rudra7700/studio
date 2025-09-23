@@ -55,7 +55,7 @@ export const mockFields: Field[] = [
     gpsCoordinates: { lat: 28.5900, lng: 77.2150 },
     boundary: [],
     healthStatus: 'Severe',
-    imageUrl: 'https://images.unsplash.com/photo-1665030996763-ac0d56a956f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8cmljZSUyMHBhZGR5fGVufDB8fHx8MTc1ODQ2NjkxNHww&ixlib.rb-4.1.0&q=80&w=1080',
+    imageUrl: 'https://images.unsplash.com/photo-1665030996763-ac0d56a956f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8cmljZSUyMHBhZGR5fGVufDB8fHx8MTc1ODQ2NjkxNHww&ixlib=rb-4.1.0&q=80&w=1080',
     imageHint: 'rice paddy',
   },
 ];
@@ -164,7 +164,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(1980, 0.08, 'Rice'), imageUrl: 'https://images.unsplash.com/photo-1635562985686-4f8bb9c0d3bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaWNlfGVufDB8fHx8MTc1ODQ2MzgwMnww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'rice' },
       { ...createMockPrice(2050, 0.12, 'Maize'), imageUrl: 'https://images.unsplash.com/photo-1649251037465-72c9d378acb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxNYWl6ZXxlbnwwfHx8fDE3NTg2MzMxODV8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'maize field' },
       { ...createMockPrice(2800, 0.15, 'Jowar'), imageUrl: 'https://images.unsplash.com/photo-1666987570506-f8c3e05b6c58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxqb3dhciUyMGNyb3B8ZW58MHx8fHwxNzU4NTYzOTUxfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'sorghum field' },
-      { ...createMockPrice(2600, 0.18, 'Bajra'), imageUrl: 'https://images.unsplash.com/photo-1708449094139-dd5cd2dd61ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8QmFqcmElMjBjcm9wfGVufDB8fHx8MTc1ODYzMzQ5N3ww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'pearl millet' },
+      { ...createMockPrice(2600, 0.18, 'Bajra'), imageUrl: 'https://images.unsplash.com/photo-1708449094139-dd5cd2dd61ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8QmFqcmElMjBjcm9wfGVufDB8fHx8MTc1ODYzMzQ5N3ww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'pearl millet' },
       { ...createMockPrice(3200, 0.2, 'Ragi'), imageUrl: 'https://images.unsplash.com/photo-1653580524515-77b19c176b88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxSYWdpfGVufDB8fHx8MTc1ODYzMzc5Nnww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'finger millet'},
       { ...createMockPrice(1800, 0.1, 'Barley'), imageUrl: 'https://images.unsplash.com/photo-1437252611977-07f74518abd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxCYXJsZXl8ZW58MHx8fHwxNzU4NjMzOTM1fDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'barley field' },
     ],
@@ -212,7 +212,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
     Spices: [
       { ...createMockPrice(8000, 0.25, 'Turmeric'), imageUrl: 'https://images.unsplash.com/photo-1666818398897-381dd5eb9139?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxUdXJtZXJpY3xlbnwwfHx8fDE3NTg2MzYxMzh8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'turmeric root' },
       { ...createMockPrice(25000, 0.3, 'Cumin'), imageUrl: 'https://images.unsplash.com/photo-1609324160773-7f3cfacc27ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxDdW1pbnxlbnwwfHx8fDE3NTg2MzY1ODR8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cumin seeds' },
-      { ...createMockPrice(7000, 0.28, 'Coriander'), imageUrl: 'https://images.unsplash.com/photo-1604859951139-5517b189a66d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxcorJpYW5kZXIlMjBzZWVkc3xlbnwwfHx8fDE3NTg3MTA3ODR8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'coriander seeds' },
+      { ...createMockPrice(7000, 0.28, 'Coriander'), imageUrl: 'https://images.unsplash.com/photo-1723810330043-dd05647294cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxDb3JpYW5kZXJ8ZW58MHx8fHwxNzU4NjM3MTEzfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'coriander seeds' },
       { ...createMockPrice(200000, 0.4, 'Saffron'), imageUrl: 'https://images.unsplash.com/photo-1656568866961-03e9dcc0fbc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxTYWZmcm9ufGVufDB8fHx8MTc1ODYzNjc4NHww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'saffron threads' },
     ]
   };
@@ -586,5 +586,7 @@ export const mockTransactions: Transaction[] = [
 
 
 
+
+    
 
     
