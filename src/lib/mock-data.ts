@@ -199,7 +199,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(4000, 0.5, 'Chili'), imageUrl: 'https://images.unsplash.com/photo-1568661272228-22de33148f43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlsaSUyMHBlcHBlcnN8ZW58MHx8fHwxNzU4NTU0MzUxfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'chili peppers' },
       { ...createMockPrice(2000, 0.35, 'Potato'), imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3RhdG98ZW58MHx8fHwxNzU4NTU0MTgxfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'potatoes' },
       { ...createMockPrice(1800, 0.4, 'Onion'), imageUrl: 'https://images.unsplash.com/photo-1587049352851-d8a835c97cb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvbmlvbnxlbnwwfHx8fDE3NTg3MTA0OTZ8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'onions' },
-      { ...createMockPrice(1500, 0.5, 'Cabbage'), imageUrl: 'https://images.unsplash.com/photo-1569186634303-3058c475d401?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYWJiYWdlfGVufDB8fHx8MTc1ODcxMDUzOXww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'cabbage' },
+      { ...createMockPrice(1500, 0.5, 'Cabbage'), imageUrl: 'https://images.unsplash.com/photo-1569186634303-3058c475d401?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYWJiYWdlfGVufDB8fHx8MTc1ODcxMDUzOXww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cabbage' },
       { ...createMockPrice(2800, 0.55, 'Cauliflower'), imageUrl: 'https://images.unsplash.com/photo-1602163923086-455b597c5513?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYXVsaWZsb3dlcnxlbnwwfHx8fDE3NTg3MTA1Nzh8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cauliflower' },
       { ...createMockPrice(3500, 0.6, 'Bitter Gourd'), imageUrl: 'https://images.unsplash.com/photo-1605792281898-70781d431fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxiaXR0ZXIlMjBnb3VyZHxlbnwwfHx8fDE3NTg3MTA2MTJ8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'bitter gourd' },
       { ...createMockPrice(4500, 0.6, 'Okra (Lady\'s Finger)'), imageUrl: 'https://images.unsplash.com/photo-1549491612-257529452b47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvcmthfGVufDB8fHx8MTc1ODcxMDY0NHww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'okra' },
@@ -210,10 +210,10 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(25000, 0.6, 'Avocado'), imageUrl: 'https://cdn.britannica.com/72/170772-050-D52BF8C2/Avocado-fruits.jpg', imageHint: 'avocado' },
     ],
     Spices: [
-      { ...createMockPrice(8000, 0.25, 'Turmeric'), imageUrl: 'https://images.unsplash.com/photo-1596043594921-2c733719468e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0dXJtZXJpYyUyMHJvb3R8ZW58MHx8fHwxNzU4NzEwNzEwfDA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'turmeric root' },
-      { ...createMockPrice(25000, 0.3, 'Cumin'), imageUrl: 'https://images.unsplash.com/photo-1599557421869-d4ac6c04f938?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjdW1pbiUyMHNlZWRzfGVufDB8fHx8MTc1ODcxMDc0NXww&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'cumin seeds' },
+      { ...createMockPrice(8000, 0.25, 'Turmeric'), imageUrl: 'https://images.unsplash.com/photo-1596043594921-2c733719468e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0dXJtZXJpYyUyMHJvb3R8ZW58MHx8fHwxNzU4NzEwNzEwfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'turmeric root' },
+      { ...createMockPrice(25000, 0.3, 'Cumin'), imageUrl: 'https://images.unsplash.com/photo-1599557421869-d4ac6c04f938?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjdW1pbiUyMHNlZWRzfGVufDB8fHx8MTc1ODcxMDc0NXww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cumin seeds' },
       { ...createMockPrice(7000, 0.28, 'Coriander'), imageUrl: 'https://images.unsplash.com/photo-1604859951139-5517b189a66d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxcorJpYW5kZXIlMjBzZWVkc3xlbnwwfHx8fDE3NTg3MTA3ODR8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'coriander seeds' },
-      { ...createMockPrice(200000, 0.4, 'Saffron'), imageUrl: 'https://images.unsplash.com/photo-1598971714581-2a240b91c49e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzYWZmcm9uJTIwdGhyZWFkc3xlbnwwfHx8fDE3NTg3MTA4MjB8MA&ixlib=rb-4.1.0&q=80&w=1080', imageHint: 'saffron threads' },
+      { ...createMockPrice(200000, 0.4, 'Saffron'), imageUrl: 'https://images.unsplash.com/photo-1598971714581-2a240b91c49e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzYWZmcm9uJTIwdGhyZWFkc3xlbnwwfHx8fDE3NTg3MTA4MjB8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'saffron threads' },
     ]
   };
 }
@@ -577,5 +577,8 @@ export const mockTransactions: Transaction[] = [
     
 
     
+
+    
+
 
     
