@@ -49,6 +49,7 @@ import { cn } from '@/lib/utils';
 import { VoiceInputModal } from './voice-input-modal';
 import type { Notification } from '@/lib/types';
 import { AiAssistant } from './ai-assistant';
+import { ThemeToggle } from './theme-toggle';
 
 const notificationIcons: Record<Notification['type'], React.ReactNode> = {
   mandiPrice: <BarChart3 className="w-5 h-5 text-green-500" />,
@@ -154,6 +155,8 @@ export function Header() {
             {isOnline ? <Wifi className="h-5 w-5" /> : <WifiOff className="h-5 w-5 text-destructive"/>}
             <span className="sr-only">Connectivity Status</span>
         </Button>
+        
+        <ThemeToggle />
 
          <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -243,3 +246,5 @@ export function Header() {
     </>
   );
 }
+
+    
