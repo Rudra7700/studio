@@ -14,16 +14,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
-import { signInWithGoogle, registerWithEmail, signInWithEmail } from '@/lib/firebase';
+import { signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email.'),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
+  password: z.string().min(1, 'Password is required.'),
 });
 
 const GoogleIcon = () => (
@@ -48,31 +47,9 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsEmailLoading(true);
-    const { email, password } = values;
-    let result;
-
-    if(isRegistering){
-        result = await registerWithEmail(email, password);
-        if(result.success) {
-            toast({ title: "Registration Successful", description: "Welcome! You are now logged in." });
-            router.push('/dashboard');
-        }
-    } else {
-        result = await signInWithEmail(email, password);
-         if(result.success) {
-            toast({ title: "Login Successful", description: "Welcome back!" });
-            router.push('/dashboard');
-        }
-    }
-
-    if (result && !result.success) {
-      toast({
-        variant: 'destructive',
-        title: isRegistering ? 'Registration Failed' : 'Login Failed',
-        description: result.error,
-      });
-    }
-    setIsEmailLoading(false);
+    toast({ title: "Welcome!", description: "Entering the dashboard as a guest." });
+    setGuest();
+    // No need to set loading to false, as we are navigating away.
   }
 
   const handleGoogleSignIn = async () => {
