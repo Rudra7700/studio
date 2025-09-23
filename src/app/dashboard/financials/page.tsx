@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight, ArrowDownLeft, PiggyBank, BarChart, ShoppingCart, Tractor } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, PiggyBank, BarChart } from 'lucide-react';
 import { format } from 'date-fns';
 import { mockWallet, mockTransactions } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ import { StatsCard } from '@/components/stats-card';
 import { Area, AreaChart, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { useEffect, useState } from 'react';
+import type { Transaction, Wallet } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 const initialChartData = [
   { month: 'Jan', savings: 45000 },
@@ -30,31 +32,40 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function FinancialsPage() {
-    const [wallet, setWallet] = useState(mockWallet);
-    const [transactions, setTransactions] = useState(mockTransactions);
+    const [wallet, setWallet] = useState<Wallet>(mockWallet);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [chartData, setChartData] = useState(initialChartData);
     
     useEffect(() => {
-        // In a real app, you would fetch this data or get it from a global state management library
-        const newWallet = {
-            currentBalance: transactions.reduce((acc, tx) => acc + (tx.type === 'income' ? tx.amount : -tx.amount), 0),
-            totalIncome: transactions.filter(tx => tx.type === 'income').reduce((acc, tx) => acc + tx.amount, 0),
-            totalExpenses: transactions.filter(tx => tx.type === 'expense').reduce((acc, tx) => acc + tx.amount, 0),
+        const storedTransactionsString = localStorage.getItem('transactions');
+        const storedTransactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : mockTransactions;
+        
+        // Sort transactions by date, most recent first
+        const sortedTransactions = storedTransactions.sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setTransactions(sortedTransactions);
+        
+        const newWallet: Wallet = {
+            currentBalance: sortedTransactions.reduce((acc: number, tx: Transaction) => acc + (tx.type === 'income' ? tx.amount : -tx.amount), 0),
+            totalIncome: sortedTransactions.filter((tx: Transaction) => tx.type === 'income').reduce((acc: number, tx: Transaction) => acc + tx.amount, 0),
+            totalExpenses: sortedTransactions.filter((tx: Transaction) => tx.type === 'expense').reduce((acc: number, tx: Transaction) => acc + tx.amount, 0),
         };
         setWallet(newWallet);
         
-        // Update chart
-        const lastMonthSavings = newWallet.currentBalance - transactions.filter(tx => new Date(tx.date) > new Date(new Date().setMonth(new Date().getMonth() - 1))).reduce((acc, tx) => acc + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
+        // Update chart data based on new balance
+        const lastMonthSavings = newWallet.currentBalance - sortedTransactions.filter((tx: Transaction) => new Date(tx.date) > new Date(new Date().setMonth(new Date().getMonth() - 1))).reduce((acc: number, tx: Transaction) => acc + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
         const newChartData = [...initialChartData.slice(0, -1), { month: 'Jun', savings: newWallet.currentBalance }];
-        
-        // A bit of a hack to make the chart look like it's updating
         newChartData[newChartData.length-2].savings = lastMonthSavings > 0 ? lastMonthSavings : initialChartData[initialChartData.length-2].savings;
         setChartData(newChartData);
 
-    }, [transactions]);
+    }, []);
     
     const { currentBalance, totalIncome, totalExpenses } = wallet;
     const netProfit = totalIncome - totalExpenses;
+    
+    const handleReset = () => {
+        localStorage.removeItem('transactions');
+        window.location.reload();
+    }
 
     return (
         <div className="space-y-6">
@@ -66,6 +77,7 @@ export default function FinancialsPage() {
                     </h1>
                     <p className="text-muted-foreground">Track your income, expenses, and overall farm profitability.</p>
                 </div>
+                 <Button variant="outline" onClick={handleReset}>Reset Financial Data</Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">

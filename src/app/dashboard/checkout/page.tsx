@@ -12,12 +12,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { mockPesticides } from '@/lib/mock-data';
+import { mockPesticides, mockTransactions } from '@/lib/mock-data';
 import Image from 'next/image';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { CreditCard, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import type { Transaction } from '@/lib/types';
 
 const addressSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -87,6 +88,23 @@ function CheckoutPageContent() {
             title: "Order Placed Successfully!",
             description: "Your pesticide order has been confirmed. You will receive an update shortly.",
         });
+
+        // Record transaction
+        const newTransaction: Transaction = {
+          id: `tx-${Date.now()}`,
+          date: new Date().toISOString(),
+          description: `Purchase of ${cartDetails.length} pesticide item(s)`,
+          category: 'Pesticides',
+          amount: total,
+          type: 'expense',
+        };
+        
+        const storedTransactionsString = localStorage.getItem('transactions');
+        const transactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : mockTransactions;
+        transactions.push(newTransaction);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+
         router.push('/dashboard/financials');
     }, 2000);
   }

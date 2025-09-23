@@ -1,4 +1,5 @@
 
+
 'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,10 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import type { MandiPriceCardData, Inventory } from '@/lib/types';
+import type { MandiPriceCardData, Inventory, Transaction } from '@/lib/types';
 import { AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { mockTransactions } from '@/lib/mock-data';
 
 interface SellCropModalProps {
     isOpen: boolean;
@@ -65,6 +67,21 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
         setTimeout(() => {
             setIsProcessing(false);
             setStep('confirmation');
+
+            // Record transaction
+            const newTransaction: Transaction = {
+                id: `tx-${Date.now()}`,
+                date: new Date().toISOString(),
+                description: `Sale of ${saleData.quantity} ${inventory.unit} of ${crop.name}`,
+                category: 'Crop Sale',
+                amount: totalSaleValue,
+                type: 'income',
+            };
+            
+            const storedTransactionsString = localStorage.getItem('transactions');
+            const transactions = storedTransactionsString ? JSON.parse(storedTransactionsString) : mockTransactions;
+            transactions.push(newTransaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
             
              setTimeout(() => {
                 toast({
@@ -78,7 +95,12 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
     }
 
     const handleClose = () => {
-        form.reset();
+        form.reset({
+            quantity: '' as any,
+            price: crop.price,
+            buyerName: '',
+            buyerPhone: '',
+        });
         setStep('details');
         setSaleData(null);
         onClose();
@@ -87,7 +109,7 @@ export function SellCropModal({ isOpen, onClose, crop, inventory }: SellCropModa
     const isPriceDown = crop.change < 0;
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
             <DialogContent className="sm:max-w-[480px]">
                 {step === 'details' && (
                     <>
