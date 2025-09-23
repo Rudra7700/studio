@@ -66,9 +66,6 @@ export default function Home() {
         <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Logo />
           <nav className="flex items-center gap-4">
-            <Button variant="ghost" asChild>
-              <Link href="/admin">Admin</Link>
-            </Button>
             <Button asChild>
               <Link href="/dashboard">Farmer Login</Link>
             </Button>
