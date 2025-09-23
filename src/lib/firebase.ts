@@ -74,7 +74,7 @@ export const registerWithEmail = async (email: string, password: string):Promise
         const result = await createUserWithEmailAndPassword(auth, email, password);
         const user = result.user;
         // Create a basic profile
-        await setDoc(doc(db, 'farmers', user.uid), {
+        await updateFarmerProfile(user.uid, {
             name: email.split('@')[0], // default name
             email: user.email,
             avatarUrl: `https://i.pravatar.cc/150?u=${user.uid}`
@@ -88,6 +88,17 @@ export const registerWithEmail = async (email: string, password: string):Promise
 export const signInWithEmail = async (email: string, password: string):Promise<{success: boolean; user?: User; error?: string}> => {
     try {
         const result = await signInWithEmailAndPassword(auth, email, password);
+        const user = result.user;
+
+        const userDoc = await getDoc(doc(db, 'farmers', user.uid));
+        if (!userDoc.exists()) {
+             // If user document doesn't exist, create one
+            await updateFarmerProfile(user.uid, {
+                name: user.email?.split('@')[0],
+                email: user.email,
+                avatarUrl: user.photoURL || `https://i.pravatar.cc/150?u=${user.uid}`,
+            });
+        }
         return { success: true, user: result.user };
     } catch (error: any) {
         return { success: false, error: error.message };
