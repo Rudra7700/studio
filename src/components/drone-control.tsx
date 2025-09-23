@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AlertCircle, Battery, Bot, Droplets, LocateFixed, Zap, Play, Scan, Orbit, CircleStop, Home } from 'lucide-react';
+import { AlertCircle, Battery, Bot, Droplets, LocateFixed, Zap, Play, Scan, Orbit, CircleStop, Home, TestTube, Leaf, Bug, Sprout } from 'lucide-react';
 import { mockDrones } from '@/lib/mock-data';
 import type { Drone } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Label } from './ui/label';
 
 type DroneStatus = 'Idle' | 'Scanning' | 'Spraying' | 'Returning' | 'Charging' | 'Emergency' | 'Takeoff';
 
@@ -28,6 +39,14 @@ const statusInfo = {
   Takeoff: { icon: <Orbit className="w-4 h-4" />, color: 'text-indigo-500' },
 };
 
+const sprayOptions = [
+    { id: 'herbicide', label: 'Herbicide', description: 'e.g., Glyphosate, 2,4-D', icon: <TestTube className="w-5 h-5 text-red-500" /> },
+    { id: 'pesticide', label: 'Pesticide', description: 'e.g., Malathion, Chlorpyrifos', icon: <Bug className="w-5 h-5 text-orange-500" /> },
+    { id: 'fungicide', label: 'Fungicide', description: 'e.g., Copper Sulfate, Propiconazole', icon: <Leaf className="w-5 h-5 text-blue-500" /> },
+    { id: 'fertilizer', label: 'Fertilizer', description: 'e.g., Urea, NPK blend', icon: <Sprout className="w-5 h-5 text-green-500" /> },
+    { id: 'organic', label: 'Organic Pesticide', description: 'e.g., Neem Oil, Pyrethrin', icon: <Leaf className="w-5 h-5 text-green-700" /> },
+];
+
 
 export function DroneControl() {
   const [selectedDroneId, setSelectedDroneId] = useState(mockDrones[0].id);
@@ -35,6 +54,8 @@ export function DroneControl() {
   const [status, setStatus] = useState<DroneStatus>('Idle');
   const [battery, setBattery] = useState(0);
   const [tank, setTank] = useState(0);
+  const [isSprayModalOpen, setIsSprayModalOpen] = useState(false);
+  const [selectedSpray, setSelectedSpray] = useState(sprayOptions[1].id);
   
   useEffect(() => {
     const selected = mockDrones.find(d => d.id === selectedDroneId);
@@ -85,12 +106,23 @@ export function DroneControl() {
     }, 2000);
   }
 
+  const handleSprayClick = () => {
+    setIsSprayModalOpen(true);
+  }
+
+  const handleConfirmSpray = () => {
+    setIsSprayModalOpen(false);
+    handleAction('Spraying');
+  }
+
+
   if (!drone) return <Card><CardHeader><CardTitle>No Drone Selected</CardTitle></CardHeader></Card>;
   
   const isBusy = status !== 'Idle' && status !== 'Charging' && status !== 'Emergency';
   const isDisabled = drone.status === 'Maintenance' || drone.status === 'Charging' || isBusy;
 
   return (
+    <>
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Drone Control</CardTitle>
@@ -131,7 +163,7 @@ export function DroneControl() {
         <div className="grid grid-cols-2 gap-2">
             <Button variant="outline" onClick={() => handleAction('Takeoff')} disabled={isDisabled}><Play className="mr-2 h-4 w-4"/> Takeoff</Button>
             <Button variant="outline" onClick={() => handleAction('Scanning')} disabled={isDisabled}><Scan className="mr-2 h-4 w-4"/> Scan</Button>
-            <Button variant="outline" onClick={() => handleAction('Spraying')} disabled={isDisabled}><Orbit className="mr-2 h-4 w-4"/> Spray</Button>
+            <Button variant="outline" onClick={handleSprayClick} disabled={isDisabled}><Orbit className="mr-2 h-4 w-4"/> Spray</Button>
             <Button variant="outline" onClick={() => handleAction('Returning')} disabled={isDisabled}><Home className="mr-2 h-4 w-4"/> Return</Button>
         </div>
       </CardContent>
@@ -141,5 +173,30 @@ export function DroneControl() {
         </Button>
       </CardFooter>
     </Card>
+    <Dialog open={isSprayModalOpen} onOpenChange={setIsSprayModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Select Spray Type</DialogTitle>
+                <DialogDescription>Choose the substance to spray on the field.</DialogDescription>
+            </DialogHeader>
+            <RadioGroup value={selectedSpray} onValueChange={setSelectedSpray} className="grid gap-3">
+                {sprayOptions.map((option) => (
+                     <Label key={option.id} htmlFor={option.id} className="flex items-center gap-4 p-4 border rounded-lg cursor-pointer hover:bg-accent hover:text-accent-foreground has-[:checked]:bg-accent has-[:checked]:text-accent-foreground">
+                        <RadioGroupItem value={option.id} id={option.id} className="sr-only" />
+                        {option.icon}
+                        <div className="flex-1">
+                            <p className="font-semibold">{option.label}</p>
+                            <p className="text-xs">{option.description}</p>
+                        </div>
+                    </Label>
+                ))}
+            </RadioGroup>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsSprayModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleConfirmSpray}>Confirm & Spray</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    </>
   );
 }
