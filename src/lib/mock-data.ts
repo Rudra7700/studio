@@ -55,7 +55,7 @@ export const mockFields: Field[] = [
     gpsCoordinates: { lat: 28.5900, lng: 77.2150 },
     boundary: [],
     healthStatus: 'Severe',
-    imageUrl: 'https://images.unsplash.com/photo-1665030996763-ac0d56a956f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8cmljZSUyMHBhZGR5fGVufDB8fHx8MTc1ODQ2NjkxNHww&ixlib=rb-4.1.0&q=80&w=1080',
+    imageUrl: 'https://images.unsplash.com/photo-1665030996763-ac0d56a956f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8cmljZSUyMHBhZGR5fGVufDB8fHx8MTc1ODQ2NjkxNHww&ixlib.rb-4.1.0&q=80&w=1080',
     imageHint: 'rice paddy',
   },
 ];
@@ -180,7 +180,7 @@ export function generateMockLiveMandiPrices(): Record<string, MandiPriceCardData
       { ...createMockPrice(4500, 0.2, 'Soybean'), imageUrl: 'https://images.unsplash.com/photo-1639843606783-b2f9c50a7468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzb3liZWFufGVufDB8fHx8MTc1ODYzNDYxMnww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'soybean field' },
       { ...createMockPrice(5800, 0.22, 'Sunflower'), imageUrl: 'https://images.unsplash.com/photo-1596708398933-281a8a25c60e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdW5mbG93ZXIlMjBmaWVsZHxlbnwwfHx8fDE3NTg3MTAxMjN8MA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'sunflower field' },
       { ...createMockPrice(6000, 0.2, 'Nigerseed'), imageUrl: 'https://images.unsplash.com/photo-1563220098-903960411342?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuaWdlciUyMHNlZWR8ZW58MHx8fHwxNzU4NzEwMjAyfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'niger seed' },
-      { ...createMockPrice(6400, 0.28, 'Castor'), imageUrl: 'https://images.unsplash.com/photo-1627541242337-97592a404c06?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYXN0b3IlMjBiZWFufGVufDB8fHx8MTc1ODcxMDI0M3ww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'castor bean' },
+      { ...createMockPrice(6400, 0.28, 'Castor'), imageUrl: 'https://images.unsplash.com/photo-1704785119987-1d255fecb1a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxDYXN0b3IlMjBjcm9wfGVufDB8fHx8MTc1ODYzNzg2NHww&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'castor bean' },
     ],
     'Cash Crops': [
       {...createMockPrice(5650, 0.2, 'Cotton'), imageUrl: 'https://images.unsplash.com/photo-1633873972250-e69cd8b5e31c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb3R0b258ZW58MHx8fHwxNzU4NDY4ODcxfDA&ixlib.rb-4.1.0&q=80&w=1080', imageHint: 'cotton'},
