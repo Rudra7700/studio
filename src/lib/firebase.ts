@@ -92,7 +92,7 @@ export const registerWithEmail = async (email: string, password: string):Promise
         // Create a basic profile
         await updateFarmerProfile(user.uid, {
             name: email.split('@')[0], // default name
-            email: user.email,
+            email: user.email || email,
             avatarUrl: `https://i.pravatar.cc/150?u=${user.uid}`
         });
         return { success: true, user };
