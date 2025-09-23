@@ -95,10 +95,13 @@ export function LoginForm() {
 
   return (
     <div className="grid gap-6">
-      <Button variant="outline" onClick={handleGoogleSignIn} disabled={isEmailLoading || isGoogleLoading}>
-        {isGoogleLoading ? <Loader2 className="mr-2 animate-spin" /> : <GoogleIcon />}
-        Sign in with Google
-      </Button>
+        <Button size="lg" onClick={setGuest} disabled={isEmailLoading || isGoogleLoading}>
+            Continue as Guest
+        </Button>
+        <Button variant="outline" onClick={handleGoogleSignIn} disabled={isEmailLoading || isGoogleLoading}>
+            {isGoogleLoading ? <Loader2 className="mr-2 animate-spin" /> : <GoogleIcon />}
+            Sign in with Google
+        </Button>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -144,9 +147,9 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isEmailLoading || isGoogleLoading}>
+          <Button type="submit" variant="secondary" className="w-full" disabled={isEmailLoading || isGoogleLoading}>
             {isEmailLoading && <Loader2 className="mr-2 animate-spin" />}
-            {isRegistering ? 'Create Account' : 'Login'}
+            {isRegistering ? 'Create Account' : 'Login with Email'}
           </Button>
         </form>
       </Form>
@@ -163,10 +166,6 @@ export function LoginForm() {
           </>
         )}
       </div>
-       <Separator />
-        <Button variant="secondary" onClick={setGuest} disabled={isEmailLoading || isGoogleLoading}>
-            Continue as Guest
-        </Button>
     </div>
   );
 }
