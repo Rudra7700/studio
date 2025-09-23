@@ -18,16 +18,26 @@ export default function MarketPage() {
     const [selectedCrop, setSelectedCrop] = useState<MandiPriceCardData | null>(null);
 
     useEffect(() => {
-        const mockData = generateMockLiveMandiPrices();
-        const cats = Object.keys(mockData);
-        setPrices(mockData);
-        setCategories(cats);
-        setActiveTab(cats[0]);
-        setLoading(false);
+        const fetchAndSetPrices = () => {
+            const mockData = generateMockLiveMandiPrices();
+            if (categories.length === 0) {
+                const cats = Object.keys(mockData);
+                setCategories(cats);
+                setActiveTab(cats[0]);
+            }
+            setPrices(mockData);
+            setLoading(false);
+        };
+        
+        fetchAndSetPrices();
+        const interval = setInterval(fetchAndSetPrices, 3600000); // Refresh every hour
+
+        return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (loading) return;
+        if (loading || Object.keys(prices).length === 0) return;
 
         const updateOrGenerateImages = async () => {
             const allCrops = Object.entries(prices).flatMap(([category, crops]) => 
@@ -42,9 +52,13 @@ export default function MarketPage() {
                     if (result.success && result.data) {
                         setPrices(prevPrices => {
                             const newPrices = { ...prevPrices };
+                            if (!newPrices[crop.category]) return prevPrices; // Category might not exist anymore
                             const items = [...newPrices[crop.category]];
-                            items[crop.index] = { ...items[crop.index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${crop.name}` };
-                            newPrices[crop.category] = items;
+                            // Ensure index is valid before assignment
+                            if(items[crop.index]) {
+                                items[crop.index] = { ...items[crop.index], imageUrl: result.data.imageUrl, imageHint: `ai-generated ${crop.name}` };
+                                newPrices[crop.category] = items;
+                            }
                             return newPrices;
                         });
                     }
@@ -56,7 +70,7 @@ export default function MarketPage() {
 
         updateOrGenerateImages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loading]);
+    }, [loading, prices]);
 
     const handleSellClick = (cropData: MandiPriceCardData) => {
         setSelectedCrop(cropData);
